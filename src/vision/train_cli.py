@@ -45,7 +45,9 @@ def main():
                 seed=int(cfg.get("seed", 42)),
                 only_folds=only_folds,
                 name=v.get("name"),
-                eval_every=int(v.get("eval_every", 1)))
+                eval_every=int(v.get("eval_every", 1)),
+                save_ckpt=bool(v.get("save_ckpt", True)),
+                ckpt_dir=cfg.paths.experiments)
     T.save(res, cfg.paths.experiments)
 
     if not a.no_log:

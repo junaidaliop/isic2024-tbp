@@ -33,6 +33,7 @@ Config-driven knobs (all optional; defaults follow the proven ISIC-2024 recipe):
 """
 from __future__ import annotations
 
+import json
 import math
 import time
 from pathlib import Path
@@ -226,6 +227,67 @@ def _predict_fold(model, dl_va, device: str, n_tta: int = 1):
     return np.concatenate(probs), np.concatenate(embs), idx
 
 
+def _eval_state_dict(model: torch.nn.Module,
+                     ema_obj: Optional["EMA"]) -> dict:
+    """The state_dict we EVALUATE/PREDICT with -> what we ship per fold.
+
+    Without EMA this is just the trained model's weights. With EMA we return a
+    FULL state_dict (every key the model has) whose floating-point entries are
+    replaced by the EMA shadow values, while integer buffers (e.g. BatchNorm's
+    ``num_batches_tracked``, which EMA never tracks) are kept from the live
+    model. The result is therefore complete and loads with no missing/unexpected
+    keys into a fresh ImageExpert, and exactly mirrors ``EMA.apply_to`` -- i.e.
+    the weights used to produce the reported OOF. Everything is detached and
+    moved to CPU so the saved file is device-independent.
+    """
+    msd = model.state_dict()
+    if ema_obj is None:
+        return {k: v.detach().cpu().clone() for k, v in msd.items()}
+    out = {}
+    for k, v in msd.items():
+        src = ema_obj.shadow[k] if k in ema_obj.shadow else v
+        out[k] = src.detach().cpu().clone()
+    return out
+
+
+def _save_fold_ckpt(model: torch.nn.Module, ema_obj: Optional["EMA"],
+                    out_dir: str, name: str, fold: int) -> Path:
+    """Save the per-fold EVAL weights to ``{out_dir}/ckpt/{name}_fold{k}.pt``.
+
+    A plain ``torch.save`` of the state_dict (EMA shadow when EMA is on). This is
+    additive: it does not touch the OOF / embeddings / reported pAUC.
+    """
+    ckpt_dir = Path(out_dir) / "ckpt"
+    ckpt_dir.mkdir(parents=True, exist_ok=True)
+    path = ckpt_dir / f"{name}_fold{int(fold)}.pt"
+    torch.save(_eval_state_dict(model, ema_obj), path)
+    return path
+
+
+def _write_manifest(out_dir: str, name: str, backbone: str, timm_id: str,
+                    img_size: int, embed_dim: int, folds: list, ema: bool) -> Path:
+    """Write the rebuild recipe alongside the per-fold checkpoints.
+
+    Captures everything kaggle_stack_inference.py needs to reconstruct the exact
+    ImageExpert and locate its fold checkpoints, without importing the training
+    config.
+    """
+    ckpt_dir = Path(out_dir) / "ckpt"
+    ckpt_dir.mkdir(parents=True, exist_ok=True)
+    path = ckpt_dir / f"{name}_manifest.json"
+    manifest = {
+        "name": name,
+        "backbone": backbone,
+        "timm_id": timm_id,
+        "img_size": int(img_size),
+        "embed_dim": int(embed_dim),
+        "folds": [int(k) for k in folds],
+        "ema": bool(ema),
+    }
+    path.write_text(json.dumps(manifest, indent=2, sort_keys=True))
+    return path
+
+
 def run(meta: pd.DataFrame, folds: pd.DataFrame, hdf5_path: str, backbone: str,
         img_size: int = 128, epochs: int = 8, bs: int = 256, lr: float = 1e-4,
         weight_decay: float = 1e-3, loss: Optional[dict] = None,
@@ -234,7 +296,8 @@ def run(meta: pd.DataFrame, folds: pd.DataFrame, hdf5_path: str, backbone: str,
         ema: Optional[dict] = None, mixup: Optional[dict] = None,
         num_workers: int = 8, seed: int = 42, only_folds: Optional[list] = None,
         verbose: bool = True, device: str = "cuda",
-        name: Optional[str] = None, eval_every: int = 1) -> dict:
+        name: Optional[str] = None, eval_every: int = 1,
+        save_ckpt: bool = True, ckpt_dir: str = "experiments") -> dict:
     df = meta.merge(folds[[ID, "fold"]], on=ID, how="left").reset_index(drop=True)
     assert df["fold"].notna().all(), "run src.cv first to freeze folds"
     y = df[TARGET].values
@@ -259,6 +322,8 @@ def run(meta: pd.DataFrame, folds: pd.DataFrame, hdf5_path: str, backbone: str,
         mix_alpha = 0.0
 
     fold_paucs: dict = {}
+    saved_folds: list = []
+    saved_embed_dim: int = 0
     all_folds = sorted(df["fold"].unique())
     folds_to_run = (all_folds if only_folds is None
                     else [k for k in all_folds if k in set(only_folds)])
@@ -373,6 +438,34 @@ def run(meta: pd.DataFrame, folds: pd.DataFrame, hdf5_path: str, backbone: str,
             embeds = np.zeros((len(df), e.shape[1]), dtype=np.float32)
         embeds[pos] = _align_2d(e, ids_va, va)
         fold_paucs[int(k)] = float(cv.oof_pauc(va[TARGET].values, _align(p, ids_va, va)))
+
+        # --- per-fold checkpoint (additive; never touches the OOF above) ---
+        # We save the EVAL weights -- the EMA shadow when EMA is on -- read
+        # straight from ``_eval_state_dict`` (independent of whether EMA is
+        # currently swapped into the live model). One file per fold.
+        if save_ckpt:
+            out_name = name or backbone
+            ck = _save_fold_ckpt(model, ema_obj, ckpt_dir, out_name, int(k))
+            if verbose:
+                print(f"[fold {k}] saved checkpoint -> {ck} "
+                      f"(eval weights{' = EMA shadow' if ema_obj is not None else ''})",
+                      flush=True)
+            saved_folds.append(int(k))
+            saved_embed_dim = int(model.embed_dim)
+
+    # --- manifest: the rebuild recipe for kaggle_stack_inference (additive) ---
+    # Written once all requested folds are trained+saved. Note: when only a
+    # SUBSET of folds is run (smoke), ``folds`` lists just those -- rerunning the
+    # full sweep overwrites it with the complete [0..4] set.
+    if save_ckpt and saved_folds:
+        out_name = name or backbone
+        timm_id = backbones.FRONTIER.get(backbone, backbone)
+        mpath = _write_manifest(
+            ckpt_dir, out_name, backbone, timm_id, img_size,
+            saved_embed_dim, saved_folds, ema=ema_on,
+        )
+        if verbose:
+            print(f"wrote manifest -> {mpath}  folds={saved_folds}", flush=True)
 
     # If only a subset of folds ran, score only those rows (single-fold smoke).
     if only_folds is not None:
