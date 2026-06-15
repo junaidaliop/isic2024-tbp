@@ -1,0 +1,23 @@
+# Conda environment for the ISIC-2024 SLICE-3D efficiency-frontier study.
+# Build:   conda env create -f environment.yml
+# Update:  conda env update -f environment.yml --prune
+# Refreeze from a live env:  make env-export
+#
+# torch/torchvision are installed via pip against the CUDA 12.8 wheel index.
+# CPU-only graders (no GPU): replace the cu128 index URL below with
+#   https://download.pytorch.org/whl/cpu
+name: isic2024
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      # GPU build (CUDA 12.8). For CPU-only, swap the index URL (see header).
+      - --extra-index-url https://download.pytorch.org/whl/cu128
+      - torch
+      - torchvision
+      # the package + its pinned deps (see pyproject.toml) and dev tooling
+      - -e .[dev]
+      - kaggle
+      - pre-commit

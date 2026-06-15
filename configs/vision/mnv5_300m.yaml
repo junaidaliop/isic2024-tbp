@@ -1,0 +1,32 @@
+# Heavy anchor of the frontier (Gemma 3n encoder). needs timm>=1.0.16.
+# CAVEAT: the timm MobileNetV5 encoder shipped with a post-release bug; verified
+# SANE on timm 1.0.27 (finite, non-degenerate, input-sensitive embeddings).
+vision:
+  backbone: mnv5_300m
+  img_size: 256          # mnv5 is designed for 256/512/768; upsample crops
+  epochs: 10
+  batch_size: 64         # larger model -> smaller batch on 16GB
+  lr: 0.00005            # heavier model -> smaller lr
+  weight_decay: 0.001
+  num_workers: 8
+
+  loss:
+    name: bce
+    label_smoothing: 0.05
+    pos_weight: null
+
+  sampler:
+    name: neg_subsample
+    neg_ratio: 7
+    pos_mult: 2
+
+  aug:
+    variant: transV2
+
+  sched:
+    name: cosine
+    warmup_frac: 0.05
+    min_lr_frac: 0.01
+
+  tta:
+    n_tta: 1

@@ -1,0 +1,47 @@
+# ConvNeXt-V2 tiny @224px -- the bigger ConvNeXt-V2 anchor on the frontier.
+# .fcmae_ft_in22k_in1k = MAE self-supervised init then in22k->in1k fine-tune
+# (natural-image pretrain only; no skin labels -> no-external-data claim survives).
+#
+# ~28M params, native 224px. Tiny undersampled epochs make 30 epochs affordable.
+# EMA + mixup added (2nd/4th place recipe).
+vision:
+  backbone: convnextv2_tiny
+  img_size: 224
+  epochs: 30
+  batch_size: 96           # capped (host NVML mismatch asserts on large cold growths)
+  lr: 0.0001               # AdamW; 1e-4 for ConvNeXt
+  weight_decay: 0.001
+  num_workers: 8
+  eval_every: 5            # throttle the costly full-fold per-epoch diagnostic eval
+
+  loss:
+    name: bce
+    label_smoothing: 0.05
+    pos_weight: null
+
+  sampler:
+    name: neg_subsample
+    neg_ratio: 7
+    pos_mult: 2
+
+  aug:
+    variant: transV2
+
+  sched:
+    name: cosine
+    warmup_frac: 0.05
+    min_lr_frac: 0.01
+
+  # decay 0.995 + step-warmup: 0.999 lags in the tiny undersampled epochs (~23
+  # steps/epoch) and hurts; 0.995 + warmup helps (fold-0 nano@224 ablation).
+  ema:
+    enabled: true
+    decay: 0.995
+    warmup: true
+
+  mixup:
+    enabled: true
+    alpha: 0.2
+
+  tta:
+    n_tta: 1

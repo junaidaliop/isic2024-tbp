@@ -1,0 +1,32 @@
+# MobileNetV4-conv-small @128px -- cheap end of the cost frontier.
+vision:
+  backbone: mnv4_small
+  img_size: 128
+  epochs: 15
+  batch_size: 256
+  lr: 0.0001
+  weight_decay: 0.001
+  num_workers: 8
+
+  # imbalance loss: bce (proven default) | focal | weighted_bce | pauc_surrogate
+  loss:
+    name: bce
+    label_smoothing: 0.05
+    pos_weight: null
+
+  # per-epoch negative subsampling (proven). oversample | none also available.
+  sampler:
+    name: neg_subsample
+    neg_ratio: 7
+    pos_mult: 2
+
+  aug:
+    variant: transV2
+
+  sched:
+    name: cosine
+    warmup_frac: 0.05
+    min_lr_frac: 0.01
+
+  tta:
+    n_tta: 1

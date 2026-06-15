@@ -1,0 +1,190 @@
+---
+title: "ISIC-2024 SLICE-3D"
+subtitle: "An efficiency-frontier, single-dataset, no-external-data study of skin-lesion classification"
+pagetitle: "ISIC-2024 SLICE-3D · Pakistan.AI"
+author:
+  - name: "Raja, Muhammad Junaid Ali Asif"
+    note: "M11217073"
+  - name: "Sultan, Adil"
+    note: "M11217078"
+  - name: "Hassan, Shahzaib Ahmed"
+    note: "M11217081"
+date: last-modified
+toc: true
+---
+
+::: {.hero}
+[Pakistan.AI · Neural Networks · CSIE, NYUST]{.eyebrow}
+
+# ISIC-2024 SLICE-3D — the honest frontier
+
+Detecting the **393 malignant lesions hidden among 400,666 benign crops** (a 1,021:1
+imbalance) — using **only** the ISIC-2024 SLICE-3D dataset, **no** external dermoscopy,
+and **no** synthetic/generative positives.
+
+::: {.claim}
+**The claim under test:** *state-of-the-art among single-dataset, no-external-data,
+no-synthetic solutions — reported not as one number, but as a **quality-vs-cost Pareto frontier**.*
+:::
+:::
+
+::: {.stat-cards}
+::: {.stat-card .is-feature}
+[0.1743]{.stat-value}
+[Stack OOF pAUC@80%TPR]{.stat-label}
+:::
+::: {.stat-card}
+[0.1689]{.stat-value}
+[Tabular GBDT OOF pAUC]{.stat-label}
+:::
+::: {.stat-card}
+[0.098[%]{.unit}]{.stat-value}
+[Malignant prevalence]{.stat-label}
+:::
+::: {.stat-card}
+[401[k]{.unit}]{.stat-value}
+[Lesion crops, 1 dataset]{.stat-label}
+:::
+::: {.stat-card}
+[12]{.stat-value}
+[Backbones on the frontier]{.stat-label}
+:::
+:::
+
+::: {.callout-note appearance="simple" icon=false}
+## On this site
+This is the complete companion report for the project. It is written to be read by anyone —
+from someone meeting the partial-AUC metric for the first time, to a reviewer checking that
+every headline number is reproducible from disk.
+
+- **[Data & EDA](data.qmd)** — the dataset, the imbalance, the nine exploratory figures, the leak columns we drop.
+- **[Methods](methods.qmd)** — basic → complex: the metric, the CV spine, tabular features, the GBDT, the image experts, the stack.
+- **[Results](results.qmd)** — the three-axis Pareto frontier, ROC / pAUC region, per-fold, calibration.
+- **[Ablations](ablations.qmd)** — every complexity increase we tried, including the ones that lost (that *is* the finding).
+- **[Reproduce](reproducibility.qmd)** — the exact env, seeds, and commands; how each number was re-verified.
+- **[Credits](credits.qmd)** — gracious credit to the leaderboard champions and the public-notebook lineage.
+- **[References](references.qmd)** — full citations; dataset, metric, backbones, GBDTs.
+
+**Offline copies:** [report PDF](ISIC2024-report.pdf) · [slide deck (HTML)](slides.qmd)
+:::
+
+## Abstract
+
+We study the **ISIC-2024 SLICE-3D** skin-lesion task — classifying ~401,059 lesion crops
+extracted from 3D total-body photography (TBP) as malignant or benign — under a deliberately
+strict regime. The competition's top private-leaderboard solutions reached pAUC ≈ 0.173, but
+they did so by importing **external** dermoscopy archives **and** roughly **30,000
+diffusion-synthesized malignant lesions**. We ban both. On medical images, training or
+validating on fabricated pathology is a label-validity hole; and importing external data
+breaks the "single dataset" premise. Removing those two crutches is exactly what our
+experiment isolates.
+
+Because the absolute leaderboard number is then **out of reach by construction**, we re-pose
+the problem as a **Pareto frontier**: the best official **pAUC above 80% TPR** achievable per
+unit of inference cost (parameters, FLOPs, and single-thread CPU latency), on SLICE-3D data
+alone. The architecture is a **hybrid**: a LightGBM tabular expert over intrinsic engineered
+features (geometry, color/hue contrast, size ratios, and patient-relative "ugly-duckling"
+deviations) provides the efficient anchor; a **small** ImageNet-pretrained image backbone
+contributes an out-of-fold (OOF) malignancy probability that is fused into the final score by
+a **trivial rank-average** combiner.
+
+The honest punchline: **every increase in model complexity we tried lost.** The trivial
+2-way rank-average beats a meta-LightGBM stacker, a learned per-lesion gate, and the addition
+of image embeddings; the small `convnextv2_nano` backbone beats heavy transformers
+(SwinV2, EVA-02) that collapse to near-random at 393 positives. Our best frontier point —
+`rank-avg[GBDT, convnextv2_nano@224]` — reaches **OOF pAUC 0.17430** at **15.8 M params /
+2.46 GFLOPs / 61 ms CPU per image**.
+
+## Headline results {#headline}
+
+All numbers are **out-of-fold (OOF)** on the frozen patient-grouped folds
+(`data/folds.parquet`, 5 folds, SEED = 42), and every pAUC is computed **only** by the
+official scorer (`src/cv.py`), pinned at **80% TPR** (range `[0, 0.20]`; random ≈ 0.02,
+perfect = 0.20). All values were independently re-derived from the OOF parquet files by the
+`cv-guardian` agent.
+
+| Model | OOF pAUC@80%TPR | Params (M) | GFLOPs | CPU ms/img | Role |
+|---|---:|---:|---:|---:|---|
+| **GBDT (tabular only)** | **0.16890** | 0.86 | ~0 | 0.02 | the efficient anchor — ≈ free |
+| Best image (`convnextv2_nano@224`) | 0.15945 | 14.98 | 2.46 | 60.9 | the protagonist backbone |
+| **Stack — `rank-avg[GBDT, nano@224]`** | **[0.17430]{.metric-chip}** | 15.84 | 2.46 | 60.9 | best overall; **Pareto-optimal** |
+| Cheap stack (`gbdt+3img+udk`) | 0.17117 | 23.84 | 1.22 | 32.9 | also on the frontier (cheaper) |
+| Frontier — cheap end (`effvit_b0`) | 0.13706 | 2.13 | 0.034 | 3.5 | most accuracy per millisecond |
+| Frontier — cheapest (`mnv4_small`) | 0.11242 | 2.49 | 0.062 | 3.1 | floor of the cost axis |
+
+::: {.callout-tip appearance="simple"}
+**Reading the metric.** pAUC@80%TPR integrates the ROC curve only in the high-sensitivity tail
+(TPR ≥ 0.80). It is bounded in `[0, 0.20]`, so a move from 0.169 → 0.174 is a **+3.2% relative**
+improvement, not a rounding error. See [Methods → The metric](methods.qmd#the-metric).
+:::
+
+### Where the score comes from
+
+The single most important finding for *understanding* the task: the dominant signal is not the
+raw lesion, it is **how anomalous a lesion is relative to the same patient's other moles** —
+the classic "ugly-duckling" sign. Patient-relative features (`pdev_*`, `prank_*`, `pxc_*`)
+account for **~65% of total GBDT gain**. The top features:
+
+| Rank | Feature | Mean gain % | What it is |
+|---:|---|---:|---|
+| 1 | `tbp_lv_H` | 3.28 | lesion hue angle (univariate AUC 0.81 on its own) |
+| 2 | `pdev_tbp_lv_H` | 3.05 | how far this lesion's hue deviates from the patient's mean |
+| 3 | `pdev_clin_size_long_diam_mm` | 2.19 | size deviation vs the patient's own lesions |
+| 4 | `pxc_tbp_lv_H_location` | 1.88 | hue × body-location patient interaction |
+
+## The pipeline
+
+```{mermaid}
+%%| label: fig-pipeline
+%%| fig-cap: "End-to-end pipeline. Patient-grouped folds are frozen once; every expert and the stack read the same split. Nothing trains until the no-leak guarantee passes."
+flowchart TD
+    A["ISIC-2024 SLICE-3D<br/>401,059 crops · 1,042 patients<br/>393 malignant / 400,666 benign"] --> B
+
+    B["Patient-grouped<br/>StratifiedGroupKFold<br/>(5 folds · SEED=42 · frozen)<br/><b>no patient straddles folds</b>"]
+
+    B --> C["Tabular feature engineering<br/>geometry · color/hue · size ratios<br/>3D position · patient-relative<br/>ugly-duckling (pdev / prank / pxc)<br/>per-fold smoothed target encoding"]
+    B --> E["Image crops @128 / @224<br/>small ImageNet-pretrained backbone<br/>per-epoch neg-undersample ~1:1<br/>BCE+LS · EMA(0.995) · mixup · TTA"]
+
+    C --> D["Bagged GBDT expert<br/>LightGBM (5-seed) + CatBoost<br/>rank-blend<br/><b>OOF pAUC 0.16890</b>"]
+    E --> F["Image expert<br/>OOF malignancy prob<br/>(+ embedding, ablated)<br/><b>OOF pAUC 0.15945</b>"]
+
+    D --> G["Combiner = rank-average<br/>(param-free, robust)"]
+    F --> G
+
+    G --> H["Final OOF score<br/><b>pAUC 0.17430</b><br/>15.8M params · 2.46 GFLOPs · 61 ms CPU"]
+    H --> I["Submission / frontier point"]
+
+    style A fill:#0b6e4f,color:#fff
+    style B fill:#117a65,color:#fff
+    style H fill:#1e8449,color:#fff
+    style I fill:#073b2c,color:#fff
+```
+
+## Scope honesty {#scope-honesty}
+
+::: {.callout-important}
+## What we are — and are not — claiming
+- We are **not** claiming to beat the unconstrained leaderboard winner's private pAUC ≈ 0.1755.
+  That score used external data + ~30k synthetic positives; matching it under our rules is
+  **impossible by construction**, and that is precisely the point of the experiment.
+- We **are** claiming SOTA *within the no-external-data / no-synthetic / single-dataset class*,
+  on a transparent quality-vs-cost frontier, with leak-audited CV.
+- The 1st-place team's own ablation shows their ~30k synthetic lesions added only **+0.0007**
+  pAUC — a sobering data point for the "just add synthetic data" reflex on a 393-positive task.
+- Our OOF number is, if anything, a **more honest** predictor of generalization than a
+  leaderboard-tuned number, because no part of our pipeline ever saw out-of-distribution data.
+  Expect a typical public→private drop of **~0.013–0.021** on this task; we report the OOF CV
+  and state that projection openly.
+:::
+
+::: {.callout-note appearance="simple"}
+## Licensing note on figures
+Every figure on this site is **our own** (generated by `reports/eda/make_eda.py`,
+`reports/perf/make_perf.py`, `reports/frontier.py`) plus Mermaid diagrams. We deliberately use
+**no external copyrighted images** — appropriate for a medical-imaging deliverable and for the
+dataset's CC BY-NC 4.0 terms.
+:::
+
+---
+
+*Continue to [Data & EDA →](data.qmd)*

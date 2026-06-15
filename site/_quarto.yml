@@ -1,0 +1,113 @@
+project:
+  type: website
+  output-dir: ../docs
+  render:
+    - "index.qmd"
+    - "data.qmd"
+    - "methods.qmd"
+    - "results.qmd"
+    - "submission.qmd"
+    - "ablations.qmd"
+    - "reproducibility.qmd"
+    - "credits.qmd"
+    - "references.qmd"
+    - "team.qmd"
+    - "slides.qmd"
+  resources:
+    - "figures/**"
+
+website:
+  title: "ISIC-2024 SLICE-3D · Pakistan.AI"
+  description: >-
+    Efficiency-frontier skin-lesion classification on ISIC-2024 SLICE-3D:
+    single-dataset, no external data, no synthetic augmentation. An honest
+    quality-vs-cost Pareto study by group Pakistan.AI (Neural Networks course).
+  site-url: "https://junaidaliop.github.io/isic2024-tbp/"
+  repo-url: "https://github.com/junaidaliop/isic2024-tbp"
+  open-graph: true
+  twitter-card: true
+  favicon: figures/frontier.png
+  reader-mode: true
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    background: primary
+    pinned: true
+    logo: ""
+    title: "ISIC-2024 SLICE-3D · Pakistan.AI"
+    left:
+      - href: index.qmd
+        text: Overview
+      - href: data.qmd
+        text: Data & EDA
+      - href: methods.qmd
+        text: Methods
+      - href: results.qmd
+        text: Results
+      - href: submission.qmd
+        text: Submission
+      - href: ablations.qmd
+        text: Ablations
+      - href: reproducibility.qmd
+        text: Reproduce
+      - href: credits.qmd
+        text: Credits
+      - href: references.qmd
+        text: References
+      - href: team.qmd
+        text: Team
+    right:
+      - text: "Slides"
+        href: slides.qmd
+        icon: easel
+      - text: "PDF"
+        href: ISIC2024-report.pdf
+        icon: file-pdf
+      - icon: github
+        href: https://github.com/junaidaliop/isic2024-tbp
+        aria-label: GitHub repository
+  page-footer:
+    border: true
+    left: >-
+      &copy; 2026 **Pakistan.AI** — Raja · Sultan · Hassan ·
+      Neural Networks, CSIE NYUST
+    center:
+      - text: "Cite this"
+        href: references.qmd#cite-this-work
+      - text: "Dataset (CC BY-NC 4.0)"
+        href: references.qmd#dataset
+      - text: "Credits"
+        href: credits.qmd
+    right:
+      - icon: github
+        href: https://github.com/junaidaliop/isic2024-tbp
+        aria-label: GitHub
+
+format:
+  html:
+    theme:
+      light: [cosmo, custom.scss]
+      dark: [darkly, custom-dark.scss]
+    toc: true
+    toc-depth: 3
+    toc-expand: true
+    number-sections: false
+    code-tools: false
+    code-fold: true
+    code-copy: true
+    df-print: kable
+    smooth-scroll: true
+    anchor-sections: true
+    link-external-newwindow: true
+    link-external-icon: true
+    citations-hover: true
+    footnotes-hover: true
+    fig-cap-location: bottom
+    grid:
+      body-width: 950px
+    css: figures/site.css
+    include-in-header:
+      - file: _fonts.html
+
+bibliography: references.bib

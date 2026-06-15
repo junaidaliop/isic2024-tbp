@@ -1,0 +1,12 @@
+/*-- scss:defaults --*/
+$presentation-heading-color: #0b6e4f;
+$link-color: #0b6e4f;
+$presentation-font-size-root: 30px;
+
+/*-- scss:rules --*/
+.reveal h1, .reveal h2, .reveal h3 { color: #0b6e4f; font-weight: 800; }
+.reveal .slide-number { color: #0b6e4f; }
+.reveal section img { border: none; box-shadow: none; }
+.reveal table { font-size: 0.8em; }
+.reveal .footer { color: #117a65; font-size: 0.5em; }
+.reveal .callout.callout-important { border-left-color: #0b6e4f; }

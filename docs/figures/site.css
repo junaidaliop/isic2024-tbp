@@ -1,0 +1,8 @@
+/* Visual styling now lives in custom.scss (light) and custom-dark.scss (dark),
+   which compile through Quarto's theme pipeline. This file is kept (referenced
+   by _quarto.yml `css:`) only for any plain-CSS escape hatch and is otherwise
+   intentionally minimal so the SCSS layer stays authoritative. */
+
+/* Smooth the responsive figure/table behaviour regardless of theme. */
+.table-responsive, .cell-output-display { overflow-x: auto; }
+img { image-rendering: auto; }

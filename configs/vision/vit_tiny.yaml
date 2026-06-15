@@ -1,0 +1,32 @@
+# ViT-tiny patch16 @128px -- 3rd place reported CV 0.161 (augreg in21k->in1k).
+# pos-embeds interpolated from 224 native to 128 by timm (img_size passed through).
+vision:
+  backbone: vit_tiny
+  img_size: 128
+  epochs: 15
+  batch_size: 256
+  lr: 0.00001            # ViT-heavy -> 1e-5
+  weight_decay: 0.001
+  num_workers: 8
+
+  loss:
+    name: bce
+    label_smoothing: 0.05
+    pos_weight: null
+
+  sampler:
+    name: neg_subsample
+    neg_ratio: 7
+    pos_mult: 2
+
+  # lighter recipe for ViT (no heavy distortion / blur / CoarseDropout).
+  aug:
+    variant: light
+
+  sched:
+    name: cosine
+    warmup_frac: 0.05
+    min_lr_frac: 0.01
+
+  tta:
+    n_tta: 1

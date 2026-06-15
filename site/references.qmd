@@ -1,0 +1,95 @@
+---
+title: "References & Citations"
+subtitle: "Dataset, metric, backbones, and methods — with the license obligations"
+toc: true
+---
+
+## Dataset {#dataset}
+
+::: {.callout-important}
+## Cite both, per the CC BY-NC 4.0 license
+The SLICE-3D dataset is licensed **CC BY-NC 4.0** (non-commercial, attribution required). If you
+use it, you must cite **both** the dataset paper and the challenge release.
+:::
+
+- **SLICE-3D dataset** — Kurtansky, N. R. et al. *The SLICE-3D dataset: 400,000 skin lesion image
+  crops extracted from 3D TBP for skin cancer detection.* **Scientific Data** (2024).
+  [doi:10.1038/s41597-024-03743-w](https://doi.org/10.1038/s41597-024-03743-w) [@kurtansky2024slice3d]
+- **Challenge release** — International Skin Imaging Collaboration. *SLICE-3D 2024 Challenge
+  Dataset.* [doi:10.34970/2024-slice-3d](https://doi.org/10.34970/2024-slice-3d), **CC BY-NC 4.0**
+  [@isic2024challenge]
+- **Challenge recap** — Kurtansky, N. R. et al. *Automated triage of cancer-suspicious skin
+  lesions with 3D total-body photography.* **npj Digital Medicine** (2025). PMC12639164.
+  Establishes the intra-patient-context result we deliberately do **not** use external data to
+  beat — useful framing for the no-external-data scope [@kurtansky2025npj].
+
+## Metric
+
+- **Official ISIC-2024 scorer** — ISIC Research / Kurtansky (MSKCC). Partial AUC above **80%**
+  TPR; scores in `[0, 0.20]`.
+  [github.com/ISIC-Research/Challenge-2024-Metrics](https://github.com/ISIC-Research/Challenge-2024-Metrics)
+  [@isicmetric2024]. *Note:* the repo README states 88% (`[0, 0.12]`); the live leaderboard used
+  **80%** — we pin 80%.
+
+## Gradient-boosted decision trees
+
+- **LightGBM** — Ke, G. et al. NeurIPS (2017) [@ke2017lightgbm].
+- **CatBoost** — Prokhorenkova, L. et al. NeurIPS (2018) [@prokhorenkova2018catboost].
+- **XGBoost** — Chen, T. & Guestrin, C. KDD (2016) [@chen2016xgboost].
+
+## Image backbones (the frontier sweep)
+
+- **ConvNeXt-V2 + FCMAE** — Woo, S. et al. (2023) [@woo2023convnextv2] — our protagonist
+  (`convnextv2_nano`, MAE self-supervised init then in22k→in1k fine-tune).
+- **ViT / AugReg** — Dosovitskiy, A. et al. ICLR (2021) [@dosovitskiy2021vit]; Steiner, A. et al.
+  (2021) [@steiner2021augreg].
+- **EVA-02** — Fang, Y. et al. (2023) [@fang2023eva02].
+- **MobileNetV4** — Qin, D. et al. (2024) [@qin2024mobilenetv4].
+- **MobileNetV5 / Gemma-3n encoder** — Google / Wightman (2025) [@google2025mobilenetv5] — the
+  heavy anchor of the frontier (~300 M params).
+- **Swin Transformer V2** — Liu, Z. et al. CVPR (2022) [@liu2022swinv2].
+- **EfficientViT** — Cai, H. et al. CVPR (2023) [@cai2023efficientvit].
+- **timm (PyTorch Image Models)** — Wightman, R. (2019) [@wightman2019timm] — source of the
+  backbones and the RTX-class inference-timing benchmarks for the latency axis.
+
+## Imbalance & (partial) AUC optimization
+
+- **Focal loss** — Lin, T.-Y. et al. ICCV (2017) [@lin2017focal].
+- **Deep AUC Maximization** — Yuan, Z. et al. ICCV (2021) [@yuan2021dam].
+- **Stochastic AUC max with DNNs** — Liu, M. et al. (2019) [@liu2019stochasticauc].
+- **AUC consistency** — Gao, W. & Zhou, Z.-H. (2012) [@gao2012auc].
+
+## Self-supervised learning (the "one-up" rationale)
+
+- **MAE** — He, K. et al. CVPR (2022) [@he2022mae].
+- **DINOv2** — Oquab, M. et al. TMLR (2024) [@oquab2024dinov2].
+
+These motivate the principled future-work direction: self-supervised pretraining on the 400k+
+**unlabeled** SLICE-3D crops, as the in-constraint substitute for the external data we banned.
+
+## Related ISIC-2024 solutions (positioning)
+
+- Hasan, M. Z. & Rifat, F. Y. *Hybrid Ensemble of Segmentation-Assisted Classification and GBDT.*
+  arXiv:2506.03420 (2025) [@hasan2025hybrid] — image + GBDT + **synthetic** augmentation,
+  explicitly the approach we reject; a clean contrast for the no-synthetic-data argument.
+
+## Cite this work {#cite-this-work}
+
+Please cite the repository (`CITATION.cff` renders a "Cite this repository" button on GitHub) and
+**also** the SLICE-3D dataset above.
+
+```bibtex
+@software{pakistanai_isic2024,
+  title   = {ISIC-2024 SLICE-3D: an efficiency-frontier, single-dataset,
+             no-external-data baseline (Pakistan.AI)},
+  author  = {Raja, Muhammad Junaid Ali Asif and Sultan, Adil and Hassan, Shahzaib Ahmed},
+  year    = {2026},
+  url     = {https://github.com/junaidaliop/isic2024-tbp},
+  note    = {Neural Networks course project, CSIE, NYUST}
+}
+```
+
+## Full bibliography
+
+::: {#refs}
+:::

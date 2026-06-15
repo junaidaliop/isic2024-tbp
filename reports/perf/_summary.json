@@ -1,0 +1,136 @@
+{
+  "pauc": {
+    "tabular (gbdt)": 0.1689,
+    "best image (convnextv2_nano_r224)": 0.15945,
+    "stack (rank-avg gbdt+r224)": 0.1743,
+    "img:convnextv2_nano_r224": 0.15945,
+    "img:convnextv2_nano": 0.15311,
+    "img:convnextv2_tiny": 0.15824,
+    "img:effvit_b0": 0.13706,
+    "img:vit_tiny": 0.13654,
+    "img:mnv4_small": 0.11242,
+    "img:swinv2_tiny": 0.10422,
+    "img:eva02_small": 0.09984
+  },
+  "recon_rankavg": 0.1743,
+  "recon_weak_stack": 0.16917,
+  "perfold": {
+    "Tabular": [
+      0.18014,
+      0.15424,
+      0.17614,
+      0.17871,
+      0.15708
+    ],
+    "Best image": [
+      0.1604,
+      0.17119,
+      0.16298,
+      0.15906,
+      0.14504
+    ],
+    "Stack": [
+      0.17999,
+      0.17282,
+      0.18,
+      0.1791,
+      0.16246
+    ]
+  },
+  "means": {
+    "Tabular": 0.16926,
+    "Best image": 0.15973,
+    "Stack": 0.17487
+  },
+  "stds": {
+    "Tabular": 0.01122,
+    "Best image": 0.00847,
+    "Stack": 0.00677
+  },
+  "top20": [
+    [
+      "tbp_lv_H",
+      3.284
+    ],
+    [
+      "pdev_tbp_lv_H",
+      3.052
+    ],
+    [
+      "pdev_clin_size_long_diam_mm",
+      2.19
+    ],
+    [
+      "pxc_tbp_lv_H_tbp_lv_location",
+      1.883
+    ],
+    [
+      "clin_size_long_diam_mm",
+      1.678
+    ],
+    [
+      "prank_tbp_lv_H",
+      1.484
+    ],
+    [
+      "z_clin_size_long_diam_mm",
+      1.461
+    ],
+    [
+      "pdev_tbp_lv_Hext",
+      1.248
+    ],
+    [
+      "pxc_tbp_lv_H_anatom_site_general",
+      1.09
+    ],
+    [
+      "f_normalized_lesion_size",
+      1.075
+    ],
+    [
+      "tbp_lv_Hext",
+      1.071
+    ],
+    [
+      "pxc_tbp_lv_H_tbp_lv_location_simple",
+      1.056
+    ],
+    [
+      "pdev_tbp_lv_y",
+      0.979
+    ],
+    [
+      "age_approx",
+      0.975
+    ],
+    [
+      "pdev_f_3d_position_distance",
+      0.949
+    ],
+    [
+      "patient_n_lesions",
+      0.899
+    ],
+    [
+      "tbp_lv_perimeterMM",
+      0.876
+    ],
+    [
+      "prank_f_3d_position_distance",
+      0.865
+    ],
+    [
+      "pdev_f_color_uniformity",
+      0.85
+    ],
+    [
+      "te_tbp_lv_location",
+      0.848
+    ]
+  ],
+  "pr_frac_top20": 0.5625,
+  "pr_frac_all": 0.6458,
+  "n_lgb": 25,
+  "n_cat": 25
+}

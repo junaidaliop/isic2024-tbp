@@ -1,0 +1,131 @@
+/*-- scss:defaults --*/
+// =====================================================================
+// Pakistan.AI — DARK theme. Same green/teal accent on a deep slate base.
+// (Fonts loaded via _quarto.yml include-in-header; see custom.scss note.)
+// =====================================================================
+
+$teal-400: #2ee6c2;
+$teal-500: #1abc9c;
+$teal-600: #16a085;
+
+$primary:        $teal-500;
+$secondary:      $teal-600;
+$success:        #25c281;
+$info:           #4fb8d6;
+$link-color:     $teal-400;
+$body-bg:        #11161b;
+$body-color:     #e6edf3;
+
+$font-family-sans-serif: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+$headings-font-family:   "Newsreader", Georgia, "Times New Roman", serif;
+$font-family-monospace:  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+$font-size-root:         17px;
+$line-height-base:       1.68;
+$headings-font-weight:   600;
+$headings-line-height:   1.18;
+$headings-color:         #d7fff2;
+
+$border-radius:    0.6rem;
+$border-radius-sm: 0.4rem;
+$border-radius-lg: 0.9rem;
+
+$dark-surface: #161d24;
+$dark-line:    #243038;
+$dark-soft:    #aab8c2;
+
+/*-- scss:rules --*/
+// ---- base rhythm ----------------------------------------------------
+.lead, p.lead {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 1.28rem; line-height: 1.55; font-weight: 400;
+  color: $dark-soft; margin-bottom: 1.4rem;
+}
+h1, h2, h3, h4 { letter-spacing: -0.012em; }
+h1.title { font-weight: 700; font-size: 2.5rem; line-height: 1.12; }
+.subtitle, p.subtitle { font-family: "Inter", sans-serif; font-weight: 400; color: $dark-soft; font-size: 1.08rem; }
+h2 { border-bottom: 2px solid rgba(46,230,194,0.22); padding-bottom: 0.3rem; margin-top: 2.6rem; }
+h3 { color: $teal-400; }
+a { text-decoration: none; transition: color .15s ease; }
+a:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+// ---- navbar / footer ------------------------------------------------
+.navbar { font-weight: 600; box-shadow: 0 1px 0 rgba(0,0,0,0.4); }
+.navbar .navbar-brand { font-weight: 800; letter-spacing: 0.2px; font-family: "Inter", sans-serif; }
+.nav-footer { border-top: 1px solid $dark-line !important; font-size: 0.88rem; color: $dark-soft; }
+
+// ---- tables ---------------------------------------------------------
+table { font-variant-numeric: tabular-nums; font-size: 0.95rem; border-collapse: separate; border-spacing: 0; width: 100%; margin: 1.1rem 0 1.5rem; }
+table thead th {
+  background: linear-gradient(180deg, rgba(46,230,194,0.14), rgba(46,230,194,0.06));
+  color: #d7fff2; font-family: "Inter", sans-serif; font-weight: 700;
+  border-bottom: 2px solid rgba(46,230,194,0.40) !important; padding: 0.55rem 0.7rem;
+}
+table tbody td { padding: 0.5rem 0.7rem; border-bottom: 1px solid $dark-line; }
+table tbody tr:nth-child(even) { background: rgba(46,230,194,0.045); }
+table tbody tr:hover { background: rgba(46,230,194,0.10); }
+
+// ---- code -----------------------------------------------------------
+code:not(.sourceCode) { background: rgba(46,230,194,0.10); color: $teal-400; padding: 0.08em 0.36em; border-radius: 0.3rem; font-size: 0.88em; }
+div.sourceCode { border: 1px solid $dark-line; border-radius: $border-radius-sm; }
+
+// ---- callouts -------------------------------------------------------
+div.callout { border-radius: $border-radius !important; box-shadow: 0 1px 3px rgba(0,0,0,0.35); overflow: hidden; }
+div.callout .callout-title { font-family: "Inter", sans-serif; font-weight: 700; }
+
+// ---- figures (white card behind white-bg PNGs so plots stay legible) -
+.quarto-figure, figure { margin: 1.4rem auto; }
+.quarto-figure img, figure img, p > img {
+  max-width: 100%; height: auto; display: block; margin: 0 auto;
+  background: #ffffff; border-radius: $border-radius; padding: 7px;
+  border: 1px solid $dark-line; box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+figcaption, .figure-caption, .quarto-figure figcaption {
+  font-size: 0.86rem; color: $dark-soft; text-align: center; margin-top: 0.55rem; font-style: italic;
+}
+.mermaid, pre.mermaid { text-align: center; margin: 1.4rem 0; }
+
+// ---- HERO -----------------------------------------------------------
+.hero {
+  position: relative;
+  background:
+    radial-gradient(1200px 400px at 88% -10%, rgba(46,230,194,0.18), transparent 60%),
+    linear-gradient(135deg, #0b3b2c 0%, #06231a 92%);
+  color: #eafff7; padding: 2.7rem 2.4rem 2.4rem; border-radius: $border-radius-lg;
+  margin: 0.5rem 0 2rem; box-shadow: 0 12px 34px rgba(0,0,0,0.55); overflow: hidden;
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(46,230,194,0.08) 1px, transparent 1px);
+  background-size: 22px 22px; opacity: 0.6; pointer-events: none;
+}
+.hero > * { position: relative; z-index: 1; }
+.hero h1 { color: #eafff7; border: none; margin: 0 0 0.5rem; font-size: 2.4rem; line-height: 1.1; font-weight: 700; }
+.hero h2, .hero p { color: #d7fff2; border: none; }
+.hero .eyebrow { display: inline-block; text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.74rem; font-weight: 700; font-family: "Inter", sans-serif; color: #6ff0d4; margin-bottom: 0.8rem; }
+.hero .claim { background: rgba(46,230,194,0.10); border-left: 4px solid $teal-400; padding: 0.85rem 1.1rem; border-radius: $border-radius-sm; margin-top: 1.3rem; font-size: 1.05rem; }
+.hero .claim em { color: #c9fff0; font-style: italic; }
+
+// ---- stat cards -----------------------------------------------------
+.stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.9rem; margin: 1.6rem 0 0.4rem; }
+.stat-card {
+  background: $dark-surface; border: 1px solid $dark-line; border-radius: $border-radius;
+  padding: 1.05rem 1.1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(46,230,194,0.18); border-color: rgba(46,230,194,0.45); }
+.stat-card .stat-value { font-family: "Inter", sans-serif; font-weight: 800; font-size: 1.85rem; line-height: 1; color: $teal-400; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.stat-card .stat-value .unit { font-size: 0.95rem; font-weight: 700; color: $teal-500; margin-left: 0.12rem; }
+.stat-card .stat-label { margin-top: 0.5rem; font-size: 0.78rem; font-weight: 600; color: $dark-soft; text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-card.is-feature { background: linear-gradient(135deg, #0f5a44 0%, #0b3b2c 100%); border-color: #16a085; }
+.stat-card.is-feature .stat-value, .stat-card.is-feature .stat-value .unit { color: #eafff7; }
+.stat-card.is-feature .stat-label { color: #9af5dc; }
+
+// ---- metric chip ----------------------------------------------------
+.metric-chip {
+  display: inline-block; background: linear-gradient(135deg, $teal-500 0%, $teal-600 100%);
+  color: #06120e; padding: 0.16rem 0.62rem; border-radius: 999px; font-weight: 700;
+  font-variant-numeric: tabular-nums; box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+// ---- next-page link -------------------------------------------------
+hr + p em { color: $teal-400; font-weight: 600; font-style: normal; }

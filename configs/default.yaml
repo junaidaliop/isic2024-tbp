@@ -1,0 +1,12 @@
+# global defaults — merged first; component configs override.
+seed: 42
+n_splits: 5
+min_tpr: 0.80          # official ISIC-2024 leaderboard threshold (scores in [0, 0.20])
+paths:
+  train_meta: data/train-metadata.csv
+  test_meta:  data/test-metadata.csv
+  train_hdf5: data/train-image.hdf5
+  test_hdf5:  data/test-image.hdf5
+  folds:      data/folds.parquet
+  experiments: experiments
+  reports:    reports

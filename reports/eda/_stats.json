@@ -1,0 +1,64 @@
+{
+  "N": 401059,
+  "NPOS": 393,
+  "NNEG": 400666,
+  "PREV": 0.09799056996601498,
+  "NPAT": 1042,
+  "ncols": 55,
+  "dtypes": {
+    "float64": 35,
+    "str": 18,
+    "int64": 2
+  },
+  "median_lpp": 241.5,
+  "mean_lpp": 384.8934740882917,
+  "max_lpp": 9184,
+  "n_mal_pat": 259,
+  "mal_pat_share": 38.89801749867227,
+  "site_rate": {
+    "lower extremity": 0.0007085452498349963,
+    "upper extremity": 0.000807857476933543,
+    "posterior torso": 0.0008449410181949435,
+    "anterior torso": 0.0009342599977213171,
+    "head/neck": 0.006475178482483812
+  },
+  "site_count": {
+    "lower extremity": 103028,
+    "upper extremity": 70557,
+    "posterior torso": 121902,
+    "anterior torso": 87770,
+    "head/neck": 12046
+  },
+  "sex": {
+    "female": {
+      "count": 123996,
+      "mean": 0.0008790606148585438
+    },
+    "male": {
+      "count": 265546,
+      "mean": 0.0010318362920172023
+    }
+  },
+  "age_mal_med": 60.0,
+  "age_ben_med": 60.0,
+  "paths": {
+    "fig1_class_imbalance.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig1_class_imbalance.png",
+    "fig2_patient_structure.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig2_patient_structure.png",
+    "fig3_demographics.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig3_demographics.png",
+    "fig4_lesion_size.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig4_lesion_size.png",
+    "fig5_color_border.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig5_color_border.png",
+    "fig6_correlation.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig6_correlation.png",
+    "fig7_sample_crops.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig7_sample_crops.png",
+    "fig8_embedding_tsne.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig8_embedding_tsne.png",
+    "fig9_ugly_duckling.png": "/home/efreet/Ali/isic2024-tbp/reports/eda/fig9_ugly_duckling.png"
+  },
+  "missing": {
+    "sex": 2.8716473137368816,
+    "anatom_site_general": 1.4352003071867232,
+    "age_approx": 0.6976529637783967
+  },
+  "n_real_cols": 36,
+  "mal_in_multilesion_patients": 392,
+  "median_within_pct_size": 88.04119787065879,
+  "frac_top10pct": 45.73643410852713
+}

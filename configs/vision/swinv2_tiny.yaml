@@ -1,0 +1,46 @@
+# SwinV2-Tiny window8 @256px -- hierarchical-transformer anchor at its NATIVE
+# resolution (ms_in1k pretrain; natural-image only, no skin labels).
+# 256 is divisible by the window/patch structure, so no pos-embed surprises.
+#
+# ~28M params. Tiny undersampled epochs make 30 epochs affordable. EMA + mixup on.
+vision:
+  backbone: swinv2_tiny
+  img_size: 256
+  epochs: 30
+  batch_size: 64           # capped (host NVML mismatch asserts on large cold growths)
+  lr: 0.00005              # transformer -> gentler than the ConvNeXt 1e-4
+  weight_decay: 0.001
+  num_workers: 8
+  eval_every: 5            # throttle the costly full-fold per-epoch diagnostic eval
+
+  loss:
+    name: bce
+    label_smoothing: 0.05
+    pos_weight: null
+
+  sampler:
+    name: neg_subsample
+    neg_ratio: 7
+    pos_mult: 2
+
+  # light aug for the transformer (heavy distortion hurts ViTs at small data).
+  aug:
+    variant: light
+
+  sched:
+    name: cosine
+    warmup_frac: 0.05
+    min_lr_frac: 0.01
+
+  # decay 0.995 + step-warmup (0.999 lags / hurts in the tiny undersampled epochs).
+  ema:
+    enabled: true
+    decay: 0.995
+    warmup: true
+
+  mixup:
+    enabled: true
+    alpha: 0.2
+
+  tta:
+    n_tta: 1

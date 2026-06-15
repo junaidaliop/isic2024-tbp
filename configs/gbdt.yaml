@@ -1,0 +1,70 @@
+# ISIC-2024 tabular expert params. Source of truth for src/gbdt.py.
+#
+# Two recipes live here:
+#   lgb       — Step-1/2 single-model, full-train, pAUC early-stopping (mode=single)
+#   lgb_bag / cat_bag / bag — Step-3b/3c undersampled multi-seed bag (mode=bagged)
+
+# --- Step-1/2 single LightGBM (early-stopped on official pAUC) ---------------
+lgb:
+  objective: binary
+  # Built-in metric is DISABLED in code (overridden to "None"): early stopping is
+  # driven by the custom pAUC@80%TPR feval in src/gbdt.py, the metric we actually
+  # optimize. is_unbalance was REMOVED — it ~1000x up-weighted the 393 positives
+  # and made AUC-driven ES stop at iteration 1 (severe underfit).
+  metric: None
+  boosting_type: gbdt
+  learning_rate: 0.02
+  num_leaves: 48
+  max_depth: -1
+  min_data_in_leaf: 64
+  feature_fraction: 0.6
+  bagging_fraction: 0.8
+  bagging_freq: 1
+  lambda_l1: 0.1
+  lambda_l2: 1.0
+  verbosity: -1
+
+# --- Step-3b bag controls ----------------------------------------------------
+# Undersampling + multi-seed bagging. neg_ratio mirrors RandomUnderSampler:
+# kept negatives = n_pos / neg_ratio (0.01 -> ~100 neg per pos -> ~4k train rows
+# per fold/seed, so each booster trains fast). n_estimators is FIXED (no early
+# stopping) since the undersample makes a held-out pAUC ES signal noisy.
+bag:
+  n_estimators: 200
+  neg_ratio: 0.01
+  seeds: [12, 22, 32, 42, 52]
+  # Final OOF = (1 - cat_weight)*rank(LightGBM-bag) + cat_weight*rank(CatBoost-bag).
+  # Selected on cv.oof_pauc: CatBoost is the weaker family here, so an equal (0.5)
+  # blend dilutes; 0.2 is the swept optimum (0.16890 vs 0.16809 at 0.5).
+  cat_weight: 0.2
+
+# --- Step-3b LightGBM (greysky-lineage hyperparameters) ----------------------
+lgb_bag:
+  objective: binary
+  boosting_type: gbdt
+  learning_rate: 0.0307
+  num_leaves: 239
+  max_depth: 7
+  min_data_in_leaf: 29
+  colsample_bytree: 0.757
+  colsample_bynode: 0.501
+  bagging_fraction: 0.794
+  bagging_freq: 4
+  lambda_l1: 0.0334
+  lambda_l2: 0.00516
+  scale_pos_weight: 1.648
+  n_jobs: -1
+  verbosity: -1
+
+# --- Step-3c CatBoost expert -------------------------------------------------
+# Same folds + undersampling + seed bag. Final OOF = rank-avg(lgb_bag, cat_bag).
+cat_bag:
+  loss_function: Logloss
+  learning_rate: 0.0307
+  depth: 7
+  l2_leaf_reg: 3.0
+  scale_pos_weight: 1.648
+  random_strength: 1.0
+  bootstrap_type: Bernoulli
+  subsample: 0.794
+  thread_count: -1

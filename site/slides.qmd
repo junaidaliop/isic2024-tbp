@@ -1,0 +1,143 @@
+---
+title: "ISIC-2024 SLICE-3D — the honest frontier"
+subtitle: "Single-dataset · no external data · no synthetic positives"
+author: "Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)"
+institute: "Neural Networks · FIC Lab / CSIE, NYUST"
+date: last-modified
+format:
+  revealjs:
+    theme: [white, slides.scss]
+    slide-number: true
+    chalkboard: false
+    transition: fade
+    center-title-slide: true
+    incremental: false
+    width: 1280
+    height: 760
+    fig-align: center
+    footer: "Pakistan.AI · ISIC-2024 SLICE-3D · honest efficiency frontier"
+bibliography: references.bib
+---
+
+## The problem {.smaller}
+
+- **ISIC-2024 SLICE-3D**: detect malignant skin lesions in 3D total-body-photography crops.
+- **401,059 crops · 1,042 patients · 393 malignant / 400,666 benign** → a **1,021:1** imbalance.
+- Metric: **official pAUC above 80% TPR**, range `[0, 0.20]` (random ≈ 0.02, perfect = 0.20).
+- The whole problem is the imbalance: 393 positives is *not much* for a deep net alone.
+
+## What we deliberately ban {.smaller}
+
+- **No external data** — ISIC-2024 SLICE-3D only (no ISIC-2019/2020, no PAD-UFES, no external dermoscopy).
+- **No generative / synthetic positives** — fabricating pathology breaks label validity.
+- The winners' ~0.173 used **both**; matching it is **out of reach by construction**.
+
+. . .
+
+::: {.callout-important}
+That impossibility *is the experiment.* So we change the question.
+:::
+
+## The question we actually answer
+
+> **What is the best pAUC achievable per unit of inference cost — on SLICE-3D data alone?**
+
+- Not one private-LB number → a **quality-vs-cost Pareto frontier**.
+- Axes: **pAUC** vs **params · FLOPs · CPU latency**.
+- A model only counts if it **earns its cost**.
+
+## CV discipline — the whole game {.smaller}
+
+- Leaky CV sent teams **~200 places down** on the private split.
+- **Patient-grouped, target-stratified** folds (5, SEED 42), **frozen once** into `data/folds.parquet`.
+- **No patient straddles folds.** One metric, one implementation (`src/cv.py`), == official scorer.
+- `cv-guardian` agent holds **veto power** over splits & metric.
+
+## The pipeline {.smaller}
+
+```{mermaid}
+flowchart LR
+    A["SLICE-3D<br/>401k crops · 393 mal"] --> B["Patient-grouped<br/>5-fold (frozen)"]
+    B --> C["Tabular FE<br/>+ ugly-duckling"]
+    B --> E["Small image<br/>backbone @128/224"]
+    C --> D["Bagged GBDT<br/>0.16890"]
+    E --> F["Image OOF prob<br/>0.15945"]
+    D --> G["rank-average<br/>(param-free)"]
+    F --> G
+    G --> H["Stack<br/><b>0.17430</b>"]
+    style A fill:#0b6e4f,color:#fff
+    style H fill:#1e8449,color:#fff
+```
+
+## Where the signal lives {.smaller}
+
+- The dominant signal is the **ugly-duckling sign**: how anomalous a lesion is vs the *same patient's* moles.
+- Patient-relative features (`pdev_` / `prank_` / `pxc_`) = **~65% of GBDT gain**.
+- Top features: `tbp_lv_H` (hue, univariate AUC 0.81), `pdev_tbp_lv_H`, `pdev_clin_size`.
+
+![](figures/eda_fig9_ugly_duckling.png){width=70%}
+
+## Headline results {.smaller}
+
+| Model | OOF pAUC@80%TPR | Params | GFLOPs | CPU ms |
+|---|---:|---:|---:|---:|
+| GBDT (tabular) | 0.16890 | 0.86 M | ~0 | 0.02 |
+| Best image (nano@224) | 0.15945 | 14.98 M | 2.46 | 60.9 |
+| **Stack (rank-avg)** | **0.17430** | 15.84 M | 2.46 | 60.9 |
+| Cheap stack | 0.17117 | 23.84 M | 1.22 | 32.9 |
+
+GBDT alone banks ~97% of the best score at ~free cost. The image expert earns **+0.0054** inside the stack.
+
+## The frontier
+
+![](figures/frontier.png){width=78%}
+
+## The scored region (pAUC@80%TPR)
+
+![](figures/perf_fig1_roc_pauc.png){width=70%}
+
+The stack sits above both experts **exactly where the metric integrates**.
+
+## Per-fold stability {.smaller}
+
+| | mean ± std |
+|---|---|
+| Tabular | 0.1693 ± 0.0112 |
+| Best image | 0.1597 ± 0.0085 |
+| **Stack** | **0.1749 ± 0.0068** |
+
+Fold variance (~0.025) > model gaps — yet the **stack wins/ties every fold** and has the lowest std.
+
+## Every complex idea lost {.smaller}
+
+![](figures/perf_fig6_negative_results.png){width=72%}
+
+- Learned MoE gate **0.150** — *below tabular alone.*
+- Meta-LGBM stacker 0.171 < trivial 0.174. Image embeddings: hurt. Heavy transformers: collapse.
+
+## Why simpler won
+
+- Every learned add-on must fit parameters from the **same 393 positives** the experts already used.
+- A rank-average has **zero parameters** → cannot overfit the folds.
+- At extreme imbalance: **bias toward zero-parameter fusion + small backbones** — *also* the cheapest.
+
+## Credit where due {.smaller}
+
+- **1st — Ilya Novoselskiy** (EVA-02 + EdgeNeXt + GBDT, private 0.17264; external + ~30k synthetic — both banned here; synthetic added only **+0.0007** in their own ablation).
+- **2nd — uchiyama33**, **3rd — kyohei-123**.
+- Public lineage: **greysky** (tabular), snnclsr, motono0223, **andreasbis** (CNN-preds-as-feature), richolson.
+
+## Conclusion {.smaller}
+
+- Defensible claim: **SOTA among single-dataset, no-external-data, no-synthetic solutions, on a quality–efficiency frontier.**
+- Best constrained point: **OOF pAUC 0.17430** @ 15.8 M / 2.46 GFLOPs / 61 ms CPU.
+- Validation discipline + an explicit cost axis give the result teeth.
+- Reproducible: `SEED=42`, config-driven, `make folds → gbdt → vision → frontier → site`.
+
+## Thank you — Pakistan.AI {.smaller}
+
+- Raja, Muhammad Junaid Ali Asif — M11217073
+- Sultan, Adil — M11217078
+- Hassan, Shahzaib Ahmed — M11217081
+- Neural Networks · FIC Lab / CSIE, NYUST
+- Full report, frontier, and reproduction recipe on the companion site.

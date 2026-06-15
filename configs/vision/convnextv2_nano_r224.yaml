@@ -1,0 +1,56 @@
+# ConvNeXt-V2 nano @224px -- the @128 point lifted to the backbone's stronger
+# native-ish resolution (resolution is a frontier AXIS, so we keep BOTH points;
+# this one writes a DISTINCT OOF via `name: convnextv2_nano_r224`).
+# .fcmae = MAE self-supervised init then in22k->in1k fine-tune (natural-image
+# pretrain only; no skin labels -> the no-external-data claim survives).
+#
+# Per-epoch negative undersampling keeps each epoch tiny (~few-thousand imgs), so
+# 224px x 30 epochs is affordable. EMA + mixup added (2nd/4th place recipe).
+vision:
+  backbone: convnextv2_nano
+  name: convnextv2_nano_r224   # distinct OOF tag so it never overwrites the @128 one
+  img_size: 224
+  epochs: 30
+  batch_size: 128          # capped to dodge the host NVML driver/lib mismatch that
+                           # asserts in the CUDA allocator on large cold growths
+
+  lr: 0.0001               # AdamW; 1e-4 for CNN/ConvNeXt
+  weight_decay: 0.001
+  num_workers: 8
+  eval_every: 5            # throttle the costly full-fold per-epoch diagnostic eval
+                           # (final OOF is computed once after all epochs regardless)
+
+  loss:
+    name: bce
+    label_smoothing: 0.05
+    pos_weight: null
+
+  sampler:
+    name: neg_subsample
+    neg_ratio: 7
+    pos_mult: 2
+
+  aug:
+    variant: transV2
+
+  sched:
+    name: cosine
+    warmup_frac: 0.05
+    min_lr_frac: 0.01
+
+  # weight EMA (eval/predict with the EMA shadow). decay 0.995 + step-warmup:
+  # the undersampled epochs are only ~23 steps, so 0.999 (time-const ~1000 steps)
+  # lags the raw weights and HURTS (fold-0 ablation: 0.999 -> 0.146 vs raw 0.156),
+  # while 0.995 + warmup HELPS (0.163). Pinned to 0.995 per that ablation.
+  ema:
+    enabled: true
+    decay: 0.995
+    warmup: true
+
+  # input mixup on TRAIN batches only (soft targets flow through BCE+LS).
+  mixup:
+    enabled: true
+    alpha: 0.2
+
+  tta:
+    n_tta: 1

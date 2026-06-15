@@ -1,0 +1,37 @@
+# Exact dependency stack used to produce the reported ISIC-2024 SLICE-3D results
+# (group Pakistan.AI). Captured from the working `isic2024` conda env (Python 3.12.13)
+# after the full pipeline ran and was reproduced/leak-verified.
+#
+# torch/torchvision are CUDA 12.8 builds — install via the PyTorch cu128 index.
+# For a CPU-only grader, swap the index for https://download.pytorch.org/whl/cpu
+# and drop the +cu128 local versions.
+#
+#   conda create -y -n isic2024 python=3.12 && conda activate isic2024
+#   pip install -r requirements-lock.txt
+#   pip install -e .            # the project package (src/)
+#
+# Recorded build detail: torch 2.11.0+cu128, cuDNN 91900, CUDA available = True,
+# verified on a single NVIDIA RTX 4070 Ti SUPER (16 GB).
+
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+torch==2.11.0+cu128
+torchvision==0.26.0+cu128
+
+lightgbm==4.6.0
+catboost==1.2.10
+timm==1.0.27
+albumentations==2.0.8
+scikit-learn==1.9.0
+pandas==3.0.3
+numpy==2.4.4
+scipy==1.17.1
+h5py==3.16.0
+pyarrow==24.0.0
+matplotlib==3.11.0
+fvcore==0.1.5.post20221221
+pyyaml==6.0.3
+pillow==12.2.0
+
+# data access (Kaggle CLI 2.x uses OAuth: `kaggle auth login`)
+kaggle

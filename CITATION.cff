@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+title: "ISIC-2024 SLICE-3D: an efficiency-frontier, single-dataset, no-external-data baseline (Pakistan.AI)"
+message: "If you use this repository, please cite it and the SLICE-3D dataset."
+type: software
+authors:
+  - given-names: Muhammad Junaid Ali Asif
+    family-names: Raja
+    orcid: "https://orcid.org/0009-0008-9249-9983"
+    affiliation: "FIC Lab, CSIE, National Yunlin University of Science and Technology"
+  - given-names: Adil
+    family-names: Sultan
+    affiliation: "CSIE, National Yunlin University of Science and Technology"
+  - given-names: Shahzaib Ahmed
+    family-names: Hassan
+    affiliation: "CSIE, National Yunlin University of Science and Technology"
+repository-code: "https://github.com/junaidaliop/isic2024-tbp"
+keywords:
+  - Pakistan.AI
+  - skin cancer detection
+  - ISIC 2024
+  - SLICE-3D
+  - efficient deep learning
+  - partial AUC
+  - medical imaging
+license: MIT
+references:
+  - type: article
+    title: "The SLICE-3D dataset: 400,000 skin lesion image crops extracted from 3D TBP for skin cancer detection"
+    authors:
+      - family-names: Kurtansky
+        given-names: Nicholas R.
+    doi: "10.1038/s41597-024-03743-w"
+    year: 2024
+    journal: "Scientific Data"

@@ -1,0 +1,47 @@
+# EVA-02 small patch14 @336px -- heavier ViT anchor at its NATIVE resolution
+# (MIM in22k->in1k pretrain; natural-image only, no skin labels). No pos-embed
+# interpolation needed at 336. ~22M params.
+#
+# Tiny undersampled epochs make 25 epochs at 336 affordable. EMA on; light aug
+# and a small lr (1e-5) because EVA-02 is sensitive. Mixup left OFF here (the
+# big-ViT-at-tiny-data regime is fragile; EMA is the safer single lever).
+vision:
+  backbone: eva02_small
+  img_size: 336
+  epochs: 25
+  batch_size: 64           # capped (host NVML mismatch asserts on large cold growths)
+  lr: 0.00001              # ViT-heavy -> 1e-5
+  weight_decay: 0.001
+  num_workers: 8
+  eval_every: 5            # throttle the costly full-fold per-epoch diagnostic eval
+
+  loss:
+    name: bce
+    label_smoothing: 0.05
+    pos_weight: null
+
+  sampler:
+    name: neg_subsample
+    neg_ratio: 7
+    pos_mult: 2
+
+  aug:
+    variant: light
+
+  sched:
+    name: cosine
+    warmup_frac: 0.05
+    min_lr_frac: 0.01
+
+  # decay 0.995 + step-warmup (0.999 lags / hurts in the tiny undersampled epochs).
+  ema:
+    enabled: true
+    decay: 0.995
+    warmup: true
+
+  mixup:
+    enabled: false
+    alpha: 0.2
+
+  tta:
+    n_tta: 1

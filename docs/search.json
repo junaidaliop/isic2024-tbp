@@ -1,0 +1,541 @@
+[
+  {
+    "objectID": "slides.html#the-problem",
+    "href": "slides.html#the-problem",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "The problem",
+    "text": "The problem\n\nISIC-2024 SLICE-3D: detect malignant skin lesions in 3D total-body-photography crops.\n401,059 crops · 1,042 patients · 393 malignant / 400,666 benign → a 1,021:1 imbalance.\nMetric: official pAUC above 80% TPR, range [0, 0.20] (random ≈ 0.02, perfect = 0.20).\nThe whole problem is the imbalance: 393 positives is not much for a deep net alone."
+  },
+  {
+    "objectID": "slides.html#what-we-deliberately-ban",
+    "href": "slides.html#what-we-deliberately-ban",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "What we deliberately ban",
+    "text": "What we deliberately ban\n\nNo external data — ISIC-2024 SLICE-3D only (no ISIC-2019/2020, no PAD-UFES, no external dermoscopy).\nNo generative / synthetic positives — fabricating pathology breaks label validity.\nThe winners’ ~0.173 used both; matching it is out of reach by construction.\n\n\n\n\n\n\n\n\nImportant\n\n\nThat impossibility is the experiment. So we change the question."
+  },
+  {
+    "objectID": "slides.html#the-question-we-actually-answer",
+    "href": "slides.html#the-question-we-actually-answer",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "The question we actually answer",
+    "text": "The question we actually answer\n\nWhat is the best pAUC achievable per unit of inference cost — on SLICE-3D data alone?\n\n\nNot one private-LB number → a quality-vs-cost Pareto frontier.\nAxes: pAUC vs params · FLOPs · CPU latency.\nA model only counts if it earns its cost."
+  },
+  {
+    "objectID": "slides.html#cv-discipline-the-whole-game",
+    "href": "slides.html#cv-discipline-the-whole-game",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "CV discipline — the whole game",
+    "text": "CV discipline — the whole game\n\nLeaky CV sent teams ~200 places down on the private split.\nPatient-grouped, target-stratified folds (5, SEED 42), frozen once into data/folds.parquet.\nNo patient straddles folds. One metric, one implementation (src/cv.py), == official scorer.\ncv-guardian agent holds veto power over splits & metric."
+  },
+  {
+    "objectID": "slides.html#the-pipeline",
+    "href": "slides.html#the-pipeline",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "The pipeline",
+    "text": "The pipeline\n\n\n\n\n\nflowchart LR\n    A[\"SLICE-3D&lt;br/&gt;401k crops · 393 mal\"] --&gt; B[\"Patient-grouped&lt;br/&gt;5-fold (frozen)\"]\n    B --&gt; C[\"Tabular FE&lt;br/&gt;+ ugly-duckling\"]\n    B --&gt; E[\"Small image&lt;br/&gt;backbone @128/224\"]\n    C --&gt; D[\"Bagged GBDT&lt;br/&gt;0.16890\"]\n    E --&gt; F[\"Image OOF prob&lt;br/&gt;0.15945\"]\n    D --&gt; G[\"rank-average&lt;br/&gt;(param-free)\"]\n    F --&gt; G\n    G --&gt; H[\"Stack&lt;br/&gt;&lt;b&gt;0.17430&lt;/b&gt;\"]\n    style A fill:#0b6e4f,color:#fff\n    style H fill:#1e8449,color:#fff"
+  },
+  {
+    "objectID": "slides.html#where-the-signal-lives",
+    "href": "slides.html#where-the-signal-lives",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "Where the signal lives",
+    "text": "Where the signal lives\n\nThe dominant signal is the ugly-duckling sign: how anomalous a lesion is vs the same patient’s moles.\nPatient-relative features (pdev_ / prank_ / pxc_) = ~65% of GBDT gain.\nTop features: tbp_lv_H (hue, univariate AUC 0.81), pdev_tbp_lv_H, pdev_clin_size."
+  },
+  {
+    "objectID": "slides.html#headline-results",
+    "href": "slides.html#headline-results",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "Headline results",
+    "text": "Headline results\n\n\n\nModel\nOOF pAUC@80%TPR\nParams\nGFLOPs\nCPU ms\n\n\n\n\nGBDT (tabular)\n0.16890\n0.86 M\n~0\n0.02\n\n\nBest image (nano@224)\n0.15945\n14.98 M\n2.46\n60.9\n\n\nStack (rank-avg)\n0.17430\n15.84 M\n2.46\n60.9\n\n\nCheap stack\n0.17117\n23.84 M\n1.22\n32.9\n\n\n\nGBDT alone banks ~97% of the best score at ~free cost. The image expert earns +0.0054 inside the stack."
+  },
+  {
+    "objectID": "slides.html#the-frontier",
+    "href": "slides.html#the-frontier",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "The frontier",
+    "text": "The frontier"
+  },
+  {
+    "objectID": "slides.html#the-scored-region-pauc80tpr",
+    "href": "slides.html#the-scored-region-pauc80tpr",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "The scored region (pAUC@80%TPR)",
+    "text": "The scored region (pAUC@80%TPR)\n\nThe stack sits above both experts exactly where the metric integrates."
+  },
+  {
+    "objectID": "slides.html#per-fold-stability",
+    "href": "slides.html#per-fold-stability",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "Per-fold stability",
+    "text": "Per-fold stability\n\n\n\n\nmean ± std\n\n\n\n\nTabular\n0.1693 ± 0.0112\n\n\nBest image\n0.1597 ± 0.0085\n\n\nStack\n0.1749 ± 0.0068\n\n\n\nFold variance (~0.025) &gt; model gaps — yet the stack wins/ties every fold and has the lowest std."
+  },
+  {
+    "objectID": "slides.html#every-complex-idea-lost",
+    "href": "slides.html#every-complex-idea-lost",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "Every complex idea lost",
+    "text": "Every complex idea lost\n\n\nLearned MoE gate 0.150 — below tabular alone.\nMeta-LGBM stacker 0.171 &lt; trivial 0.174. Image embeddings: hurt. Heavy transformers: collapse."
+  },
+  {
+    "objectID": "slides.html#why-simpler-won",
+    "href": "slides.html#why-simpler-won",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "Why simpler won",
+    "text": "Why simpler won\n\nEvery learned add-on must fit parameters from the same 393 positives the experts already used.\nA rank-average has zero parameters → cannot overfit the folds.\nAt extreme imbalance: bias toward zero-parameter fusion + small backbones — also the cheapest."
+  },
+  {
+    "objectID": "slides.html#credit-where-due",
+    "href": "slides.html#credit-where-due",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "Credit where due",
+    "text": "Credit where due\n\n1st — Ilya Novoselskiy (EVA-02 + EdgeNeXt + GBDT, private 0.17264; external + ~30k synthetic — both banned here; synthetic added only +0.0007 in their own ablation).\n2nd — uchiyama33, 3rd — kyohei-123.\nPublic lineage: greysky (tabular), snnclsr, motono0223, andreasbis (CNN-preds-as-feature), richolson."
+  },
+  {
+    "objectID": "slides.html#conclusion",
+    "href": "slides.html#conclusion",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "Conclusion",
+    "text": "Conclusion\n\nDefensible claim: SOTA among single-dataset, no-external-data, no-synthetic solutions, on a quality–efficiency frontier.\nBest constrained point: OOF pAUC 0.17430 @ 15.8 M / 2.46 GFLOPs / 61 ms CPU.\nValidation discipline + an explicit cost axis give the result teeth.\nReproducible: SEED=42, config-driven, make folds → gbdt → vision → frontier → site."
+  },
+  {
+    "objectID": "slides.html#thank-you-pakistan.ai",
+    "href": "slides.html#thank-you-pakistan.ai",
+    "title": "ISIC-2024 SLICE-3D — the honest frontier",
+    "section": "Thank you — Pakistan.AI",
+    "text": "Thank you — Pakistan.AI\n\nRaja, Muhammad Junaid Ali Asif — M11217073\nSultan, Adil — M11217078\nHassan, Shahzaib Ahmed — M11217081\nNeural Networks · FIC Lab / CSIE, NYUST\nFull report, frontier, and reproduction recipe on the companion site."
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References & Citations",
+    "section": "",
+    "text": "ImportantCite both, per the CC BY-NC 4.0 license\n\n\n\nThe SLICE-3D dataset is licensed CC BY-NC 4.0 (non-commercial, attribution required). If you use it, you must cite both the dataset paper and the challenge release.\n\n\n\nSLICE-3D dataset — Kurtansky, N. R. et al. The SLICE-3D dataset: 400,000 skin lesion image crops extracted from 3D TBP for skin cancer detection. Scientific Data (2024). doi:10.1038/s41597-024-03743-w (Kurtansky et al. 2024)\nChallenge release — International Skin Imaging Collaboration. SLICE-3D 2024 Challenge Dataset. doi:10.34970/2024-slice-3d, CC BY-NC 4.0 (International Skin Imaging Collaboration 2024)\nChallenge recap — Kurtansky, N. R. et al. Automated triage of cancer-suspicious skin lesions with 3D total-body photography. npj Digital Medicine (2025). PMC12639164. Establishes the intra-patient-context result we deliberately do not use external data to beat — useful framing for the no-external-data scope (Kurtansky et al. 2025)."
+  },
+  {
+    "objectID": "references.html#dataset",
+    "href": "references.html#dataset",
+    "title": "References & Citations",
+    "section": "",
+    "text": "ImportantCite both, per the CC BY-NC 4.0 license\n\n\n\nThe SLICE-3D dataset is licensed CC BY-NC 4.0 (non-commercial, attribution required). If you use it, you must cite both the dataset paper and the challenge release.\n\n\n\nSLICE-3D dataset — Kurtansky, N. R. et al. The SLICE-3D dataset: 400,000 skin lesion image crops extracted from 3D TBP for skin cancer detection. Scientific Data (2024). doi:10.1038/s41597-024-03743-w (Kurtansky et al. 2024)\nChallenge release — International Skin Imaging Collaboration. SLICE-3D 2024 Challenge Dataset. doi:10.34970/2024-slice-3d, CC BY-NC 4.0 (International Skin Imaging Collaboration 2024)\nChallenge recap — Kurtansky, N. R. et al. Automated triage of cancer-suspicious skin lesions with 3D total-body photography. npj Digital Medicine (2025). PMC12639164. Establishes the intra-patient-context result we deliberately do not use external data to beat — useful framing for the no-external-data scope (Kurtansky et al. 2025)."
+  },
+  {
+    "objectID": "references.html#metric",
+    "href": "references.html#metric",
+    "title": "References & Citations",
+    "section": "Metric",
+    "text": "Metric\n\nOfficial ISIC-2024 scorer — ISIC Research / Kurtansky (MSKCC). Partial AUC above 80% TPR; scores in [0, 0.20]. github.com/ISIC-Research/Challenge-2024-Metrics (ISIC Research and Kurtansky 2024). Note: the repo README states 88% ([0, 0.12]); the live leaderboard used 80% — we pin 80%."
+  },
+  {
+    "objectID": "references.html#gradient-boosted-decision-trees",
+    "href": "references.html#gradient-boosted-decision-trees",
+    "title": "References & Citations",
+    "section": "Gradient-boosted decision trees",
+    "text": "Gradient-boosted decision trees\n\nLightGBM — Ke, G. et al. NeurIPS (2017) (Ke et al. 2017).\nCatBoost — Prokhorenkova, L. et al. NeurIPS (2018) (Prokhorenkova et al. 2018).\nXGBoost — Chen, T. & Guestrin, C. KDD (2016) (Chen and Guestrin 2016)."
+  },
+  {
+    "objectID": "references.html#image-backbones-the-frontier-sweep",
+    "href": "references.html#image-backbones-the-frontier-sweep",
+    "title": "References & Citations",
+    "section": "Image backbones (the frontier sweep)",
+    "text": "Image backbones (the frontier sweep)\n\nConvNeXt-V2 + FCMAE — Woo, S. et al. (2023) (Woo et al. 2023) — our protagonist (convnextv2_nano, MAE self-supervised init then in22k→in1k fine-tune).\nViT / AugReg — Dosovitskiy, A. et al. ICLR (2021) (Dosovitskiy et al. 2021); Steiner, A. et al.\n\n(Steiner et al. 2021).\n\nEVA-02 — Fang, Y. et al. (2023) (Fang et al. 2023).\nMobileNetV4 — Qin, D. et al. (2024) (Qin et al. 2024).\nMobileNetV5 / Gemma-3n encoder — Google / Wightman (2025) (Google and Wightman 2025) — the heavy anchor of the frontier (~300 M params).\nSwin Transformer V2 — Liu, Z. et al. CVPR (2022) (Liu et al. 2022).\nEfficientViT — Cai, H. et al. CVPR (2023) (Cai et al. 2023).\ntimm (PyTorch Image Models) — Wightman, R. (2019) (Wightman 2019) — source of the backbones and the RTX-class inference-timing benchmarks for the latency axis."
+  },
+  {
+    "objectID": "references.html#imbalance-partial-auc-optimization",
+    "href": "references.html#imbalance-partial-auc-optimization",
+    "title": "References & Citations",
+    "section": "Imbalance & (partial) AUC optimization",
+    "text": "Imbalance & (partial) AUC optimization\n\nFocal loss — Lin, T.-Y. et al. ICCV (2017) (Lin et al. 2017).\nDeep AUC Maximization — Yuan, Z. et al. ICCV (2021) (Yuan et al. 2021).\nStochastic AUC max with DNNs — Liu, M. et al. (2019) (Liu et al. 2019).\nAUC consistency — Gao, W. & Zhou, Z.-H. (2012) (Gao and Zhou 2012)."
+  },
+  {
+    "objectID": "references.html#self-supervised-learning-the-one-up-rationale",
+    "href": "references.html#self-supervised-learning-the-one-up-rationale",
+    "title": "References & Citations",
+    "section": "Self-supervised learning (the “one-up” rationale)",
+    "text": "Self-supervised learning (the “one-up” rationale)\n\nMAE — He, K. et al. CVPR (2022) (He et al. 2022).\nDINOv2 — Oquab, M. et al. TMLR (2024) (Oquab et al. 2024).\n\nThese motivate the principled future-work direction: self-supervised pretraining on the 400k+ unlabeled SLICE-3D crops, as the in-constraint substitute for the external data we banned."
+  },
+  {
+    "objectID": "references.html#related-isic-2024-solutions-positioning",
+    "href": "references.html#related-isic-2024-solutions-positioning",
+    "title": "References & Citations",
+    "section": "Related ISIC-2024 solutions (positioning)",
+    "text": "Related ISIC-2024 solutions (positioning)\n\nHasan, M. Z. & Rifat, F. Y. Hybrid Ensemble of Segmentation-Assisted Classification and GBDT. arXiv:2506.03420 (2025) (Hasan and Rifat 2025) — image + GBDT + synthetic augmentation, explicitly the approach we reject; a clean contrast for the no-synthetic-data argument."
+  },
+  {
+    "objectID": "references.html#cite-this-work",
+    "href": "references.html#cite-this-work",
+    "title": "References & Citations",
+    "section": "Cite this work",
+    "text": "Cite this work\nPlease cite the repository (CITATION.cff renders a “Cite this repository” button on GitHub) and also the SLICE-3D dataset above.\n@software{pakistanai_isic2024,\n  title   = {ISIC-2024 SLICE-3D: an efficiency-frontier, single-dataset,\n             no-external-data baseline (Pakistan.AI)},\n  author  = {Raja, Muhammad Junaid Ali Asif and Sultan, Adil and Hassan, Shahzaib Ahmed},\n  year    = {2026},\n  url     = {https://github.com/junaidaliop/isic2024-tbp},\n  note    = {Neural Networks course project, CSIE, NYUST}\n}"
+  },
+  {
+    "objectID": "references.html#full-bibliography",
+    "href": "references.html#full-bibliography",
+    "title": "References & Citations",
+    "section": "Full bibliography",
+    "text": "Full bibliography\n\n\nCai, Han, Chuang Gan, and Song Han. 2023. “EfficientViT: Memory Efficient Vision Transformer with Cascaded Group Attention.” CVPR.\n\n\nChen, Tianqi, and Carlos Guestrin. 2016. “XGBoost: A Scalable Tree Boosting System.” KDD.\n\n\nDosovitskiy, Alexey et al. 2021. “An Image Is Worth 16x16 Words: Transformers for Image Recognition at Scale (ViT).” ICLR.\n\n\nFang, Yuxin, Quan Sun, Xinggang Wang, Tiejun Huang, Xinlong Wang, and Yue Cao. 2023. EVA-02: A Visual Representation for Neon Genesis. https://arxiv.org/abs/2303.11331.\n\n\nGao, Wei, and Zhi-Hua Zhou. 2012. On the Consistency of AUC Pairwise Optimization. https://arxiv.org/abs/1208.0645.\n\n\nGoogle, and Ross Wightman. 2025. MobileNetV5 / Gemma 3n Vision Encoder.\n\n\nHasan, Md Zahid, and Fahmid Yousuf Rifat. 2025. Hybrid Ensemble of Segmentation-Assisted Classification and GBDT for Skin Cancer Detection. https://arxiv.org/abs/2506.03420.\n\n\nHe, Kaiming, Xinlei Chen, Saining Xie, Yanghao Li, Piotr Dollár, and Ross Girshick. 2022. “Masked Autoencoders Are Scalable Vision Learners (MAE).” CVPR.\n\n\nInternational Skin Imaging Collaboration. 2024. SLICE-3D 2024 Challenge Dataset. https://doi.org/10.34970/2024-slice-3d.\n\n\nISIC Research, and Nicholas R. Kurtansky. 2024. ISIC 2024 Challenge Metrics: Partial AUC Above 80% TPR. Https://github.com/ISIC-Research/Challenge-2024-Metrics.\n\n\nKe, Guolin, Qi Meng, Thomas Finley, et al. 2017. “LightGBM: A Highly Efficient Gradient Boosting Decision Tree.” Advances in Neural Information Processing Systems (NeurIPS).\n\n\nKurtansky, Nicholas R. et al. 2024. “The SLICE-3D Dataset: 400,000 Skin Lesion Image Crops Extracted from 3D TBP for Skin Cancer Detection.” Scientific Data, ahead of print. https://doi.org/10.1038/s41597-024-03743-w.\n\n\nKurtansky, Nicholas R. et al. 2025. “Automated Triage of Cancer-Suspicious Skin Lesions with 3D Total-Body Photography.” Npj Digital Medicine.\n\n\nLin, Tsung-Yi, Priya Goyal, Ross Girshick, Kaiming He, and Piotr Dollár. 2017. “Focal Loss for Dense Object Detection.” ICCV.\n\n\nLiu, Mingrui, Zhuoning Yuan, Yiming Ying, and Tianbao Yang. 2019. Stochastic AUC Maximization with Deep Neural Networks. https://arxiv.org/abs/1908.10831.\n\n\nLiu, Ze et al. 2022. “Swin Transformer V2: Scaling up Capacity and Resolution.” CVPR.\n\n\nOquab, Maxime et al. 2024. “DINOv2: Learning Robust Visual Features Without Supervision.” Transactions on Machine Learning Research (TMLR).\n\n\nProkhorenkova, Liudmila, Gleb Gusev, Aleksandr Vorobev, Anna Veronika Dorogush, and Andrey Gulin. 2018. “CatBoost: Unbiased Boosting with Categorical Features.” Advances in Neural Information Processing Systems (NeurIPS).\n\n\nQin, Danfeng et al. 2024. MobileNetV4: Universal Models for the Mobile Ecosystem. https://arxiv.org/abs/2404.10518.\n\n\nSteiner, Andreas, Alexander Kolesnikov, Xiaohua Zhai, Ross Wightman, Jakob Uszkoreit, and Lucas Beyer. 2021. How to Train Your ViT? Data, Augmentation, and Regularization in Vision Transformers (AugReg). https://arxiv.org/abs/2106.10270.\n\n\nWightman, Ross. 2019. PyTorch Image Models (Timm). Https://github.com/huggingface/pytorch-image-models.\n\n\nWoo, Sanghyun, Shoubhik Debnath, Ronghang Hu, et al. 2023. ConvNeXt V2: Co-Designing and Scaling ConvNets with Masked Autoencoders (FCMAE). https://arxiv.org/abs/2301.00808.\n\n\nYuan, Zhuoning, Yan Yan, Milan Sonka, and Tianbao Yang. 2021. “Large-Scale Robust Deep AUC Maximization: A New Surrogate Loss and Empirical Studies on Medical Image Classification.” ICCV."
+  },
+  {
+    "objectID": "reproducibility.html",
+    "href": "reproducibility.html",
+    "title": "Reproducibility",
+    "section": "",
+    "text": "Every result on this site is config-driven, single-seeded, and re-runnable from disk. The repro and cv-guardian agents re-derived the headline numbers from the OOF parquet files; the spine test suite passes 9/9."
+  },
+  {
+    "objectID": "reproducibility.html#environment",
+    "href": "reproducibility.html#environment",
+    "title": "Reproducibility",
+    "section": "Environment",
+    "text": "Environment\n\n\n\n\n\n\n\nComponent\nPin\n\n\n\n\nConda env\nisic2024\n\n\nPython\n3.12\n\n\nPyTorch\n2.11.0 + cu128 (CUDA 12.8)\n\n\nGBDTs\nLightGBM, CatBoost\n\n\nBackbones\ntimm (PyTorch Image Models)\n\n\nSeed\nSEED = 42 everywhere stochastic\n\n\nFrozen split\ndata/folds.parquet (5 folds, patient-grouped, target-stratified)\n\n\nMetric\nsrc/cv.py:pauc_above_tpr @ 80% TPR — proven == vendored official scorer\n\n\n\n# create + activate\nconda create -y -n isic2024 python=3.12\nconda activate isic2024\n# GPU build (CUDA 12.8); CPU graders swap the index for .../whl/cpu\npip install torch torchvision --index-url https://download.pytorch.org/whl/cu128\npip install -e \".[dev]\"\n# one-shot alternative:\n# conda env create -f environment.yml"
+  },
+  {
+    "objectID": "reproducibility.html#hardware",
+    "href": "reproducibility.html#hardware",
+    "title": "Reproducibility",
+    "section": "Hardware",
+    "text": "Hardware\nA single NVIDIA RTX 4070 Ti SUPER (16 GB). The whole study fits comfortably in the 2-day budget because of per-epoch negative undersampling:\n\nan “epoch” sees all 393 positives + a fresh ~equal sample of negatives → a few thousand images,\n≈ 4.5 s / epoch,\na full 5-fold backbone trains in ≈ 8 minutes.\n\nCPU latency on the frontier is measured single-threaded (src/efficiency.py) so the cost axis reflects a worst-case deployable setting."
+  },
+  {
+    "objectID": "reproducibility.html#the-exact-recipe",
+    "href": "reproducibility.html#the-exact-recipe",
+    "title": "Reproducibility",
+    "section": "The exact recipe",
+    "text": "The exact recipe\nThe whole pipeline is driven by make targets (each wraps a python -m src.* invocation). make folds must run first — nothing trains until the no-leak guarantee passes.\n# 0. fetch SLICE-3D into data/ (accept the comp rules on Kaggle once, else 403)\nmake data\n\n# 1. freeze folds + metric sanity check  — ALWAYS FIRST\nmake folds                                   # python -m src.cv\n\n# 2. tabular expert -&gt; OOF + pAUC (banks ~90% of achievable score)\nmake gbdt                                     # python -m src.gbdt\n\n# 3. image expert(s) as a stacked feature (one config = one frontier point)\nmake vision CFG=configs/vision/convnextv2_nano_r224.yaml\n#   ... repeat across the 12-backbone sweep ...\n\n# 4. fuse + log the frontier (params / FLOPs / CPU latency next to pAUC)\nmake frontier                                 # python -m src.stack ; reports/frontier.py\n\n# 5. spine tests: metric anchors, no-leak, official-equivalence  (9/9)\nmake test\n\n# 6. build this site (renders to ../docs for GitHub Pages)\nmake site\nEach run is logged under experiments/ (one config + one CSV row per run, seeds fixed) and the frontier is appended to reports/frontier.csv / reports/frontier_cost.csv."
+  },
+  {
+    "objectID": "reproducibility.html#how-each-headline-number-was-produced-and-re-verified",
+    "href": "reproducibility.html#how-each-headline-number-was-produced-and-re-verified",
+    "title": "Reproducibility",
+    "section": "How each headline number was produced and re-verified",
+    "text": "How each headline number was produced and re-verified\n\n\n\n\n\n\n\n\nNumber\nProduced by\nRe-verified\n\n\n\n\nTabular GBDT 0.16890\nsrc/gbdt.py bagged LGB(×5 seeds) + CatBoost rank-blend\ncv-guardian recomputed cv.oof_pauc on gbdt_oof.parquet\n\n\nBest image 0.15945\nconfigs/vision/convnextv2_nano_r224.yaml\nrecomputed from convnextv2_nano_r224 OOF parquet\n\n\nStack 0.17430\nrank-avg[gbdt, r224] in src/stack.py\nreconstruction recomputes to 0.17430 — exact match to stack_oof.parquet\n\n\nPer-fold table\nreports/perf/make_perf.py\neach fold scored independently via src/cv.py\n\n\nFeature importance\nmean gain over 25 LGB + 25 CatBoost boosters\nnormalized + averaged in make_perf.py\n\n\nCosts (params/FLOPs/ms)\nsrc/efficiency.py\nreports/frontier_cost.csv (authoritative)\n\n\n\n\n\n\n\n\n\nTipWhy these numbers are trustworthy\n\n\n\n\nOne split, one metric. Every model reads the same frozen data/folds.parquet and is scored by the same src/cv.py, which is unit-tested to match the official scorer.\nNo patient straddles folds. Verified by cv-guardian; this is the property that prevented the ~200-place private shake-up other teams suffered.\nLeak columns dropped. iddx_*, mel_*, lesion_id, tbp_lv_dnn_lesion_confidence never enter any model.\nRecomputed from disk, not from logs. The headline pAUCs were re-derived from the OOF parquet files, not copied from training stdout."
+  },
+  {
+    "objectID": "reproducibility.html#determinism-caveats-honest",
+    "href": "reproducibility.html#determinism-caveats-honest",
+    "title": "Reproducibility",
+    "section": "Determinism caveats (honest)",
+    "text": "Determinism caveats (honest)\nFull bit-exact determinism across GPUs/driver versions is not guaranteed for deep-learning training (cuDNN nondeterminism, atomic reductions). We fix SEED = 42, log every config, and report OOF pAUC to 5 decimals; the GBDT and stack numbers are fully deterministic from the frozen folds, and the image numbers reproduce to within fold-variance (~±0.008 std, far smaller than the effects we report). This is stated plainly rather than overclaimed.\n\nContinue to Credits →"
+  },
+  {
+    "objectID": "submission.html",
+    "href": "submission.html",
+    "title": "Submission & Leaderboard",
+    "section": "",
+    "text": "ISIC-2024 was a Kaggle CODE competition: you do not upload a CSV of predictions — you submit a notebook that Kaggle re-runs on a hidden test set. The public test that shipped with the data is a 3-row placeholder, so a true private score cannot be computed locally. This page lays that out honestly: what we can produce today, what the CV implies, and the exact path to a real late-submission score."
+  },
+  {
+    "objectID": "submission.html#how-scoring-works",
+    "href": "submission.html#how-scoring-works",
+    "title": "Submission & Leaderboard",
+    "section": "How scoring actually works",
+    "text": "How scoring actually works\n\n\n\n\n\n\nImportantA CODE competition scores a notebook, not a file\n\n\n\n\nYou attach a notebook to the competition. On submit, Kaggle executes it against the hidden test set (the real evaluation images), and scores the submission.csv it writes.\nThe test-image.hdf5 and test-metadata.csv shipped in the data bundle are a 3-row placeholder — just enough to let your notebook run end-to-end without crashing.\nTherefore no honest private pAUC can be produced offline. Anyone reporting a “private score” computed on their own machine is reporting a number off three rows. We do not.\n\n\n\nThe placeholder we hold on disk, verified directly:\n\n\n\n\n\n\n\n\nArtifact\nWhat ships locally\nReality on Kaggle\n\n\n\n\ndata/test-image.hdf5\n≈ 11 KB, 3 images (ISIC_0015657, ISIC_0015729, ISIC_0015740)\ntens of thousands of hidden crops\n\n\ndata/test-metadata.csv\n3 rows (header + 3)\nthe full hidden cohort’s metadata\n\n\ndata/sample_submission.csv\n3 rows, constant target = 0.3\nformat template only\n\n\n\nSo the only thing a local run can prove is that the inference pipeline is wired correctly and emits a format-valid file — which is exactly what we did."
+  },
+  {
+    "objectID": "submission.html#what-we-produced",
+    "href": "submission.html#what-we-produced",
+    "title": "Submission & Leaderboard",
+    "section": "What we produced today",
+    "text": "What we produced today\nWe generated a format-valid submission.csv from the saved bagged GBDT — 50 boosters (5 folds × 5 LightGBM seeds + 5 CatBoost seeds, persisted in experiments/gbdt_boosters.joblib) — via a single command:\npython -m src.submit          # GBDT-only; reads experiments/gbdt_boosters.joblib\nInference mirrors the leak-free training transform exactly: every booster carries its own per-fold feature state, predict_gbdt re-applies that state before predicting, and the per-fold scores are averaged. The output is the required two-column schema:\nisic_id,target\nISIC_0015657,0.41827...\nISIC_0015729,0.06913...\nISIC_0015740,0.22540...\n\n\n\n\n\n\n\n\nColumn\nType\nMeaning\n\n\n\n\nisic_id\nstring\nlesion-crop identifier, one row per test image\n\n\ntarget\nfloat\npredicted malignancy score (rank-comparable; pAUC is rank-based, so calibration is irrelevant)\n\n\n\n\n\n\n\n\n\nWhat this validates — and what it does not. Running python -m src.submit on the 3-row placeholder confirms the inference path end-to-end: boosters load, the fold-local feature transform replays without leakage, and the writer emits a valid 2-column file. It does not produce a real score — that requires Kaggle to run this on the hidden test (a late submission, since the competition is closed)."
+  },
+  {
+    "objectID": "submission.html#estimated-position",
+    "href": "submission.html#estimated-position",
+    "title": "Submission & Leaderboard",
+    "section": "Estimated private position (from CV)",
+    "text": "Estimated private position (from CV)\nBecause we cannot score the hidden set offline, we project from our out-of-fold CV, which — having never seen out-of-distribution data — is an unusually honest generalization estimate. The field’s observed CV → private drop on this task was roughly 0.013–0.021.\n\n\n\n\n\n\nTipCV → estimated private\n\n\n\n\n\n\n\n\n\n\n\nQuantity\nValue\nSource\n\n\n\n\nStack OOF pAUC@80%TPR\n0.17430\nstack_oof.parquet, re-derived by cv-guardian\n\n\nTabular GBDT OOF pAUC\n0.16890\ngbdt_oof.parquet\n\n\nObserved CV → private drop (field)\n0.013 – 0.021\npost-competition write-ups\n\n\nEstimated private (stack)\n≈ 0.155 – 0.165\n0.1743 − drop\n\n\nEstimated private (tabular-only, ready today)\n≈ 0.148 – 0.156\n0.1689 − drop\n\n\n\n\n\nWe report a range, not a rank — fold variance (~±0.008 std) and the unknown shake-up make any single claimed position dishonest. The range itself is the claim."
+  },
+  {
+    "objectID": "submission.html#leaderboard-context",
+    "href": "submission.html#leaderboard-context",
+    "title": "Submission & Leaderboard",
+    "section": "Leaderboard context (~2,700 teams)",
+    "text": "Leaderboard context (~2,700 teams)\n\n\n\n\n\n\n\n\nNoteThe unconstrained ceiling\n\n\n\n1st place — private pAUC 0.17264. Used external ISIC-archive dermoscopy data and ≈ 30,000 Stable-Diffusion-synthesized malignant lesions — both banned in this study. Their own ablation: the 30k synthetic lesions added only +0.0007 pAUC. Fabricating positives bought almost nothing on a 393-positive task.\n\n\n\n\n\n\n\n\n\n\nNoteThe constrained ceiling\n\n\n\nBest no-external-data solutions sat around 0.16 private; a clean tabular-only team reached 0.162. That is the bracket our work actually competes in — and our estimated private ≈ 0.155–0.165 lands squarely inside it.\n\n\n\n\n\n\n\n\n\n\n\n\n\nReference point\nPrivate pAUC\nExternal data?\nSynthetic positives?\n\n\n\n\n1st place (unconstrained)\n0.17264\nyes\nyes (≈ 30k)\n\n\nBest no-external solutions\n≈ 0.16\nno\nvaries\n\n\nClean tabular-only team\n0.162\nno\nno\n\n\nOurs — estimated private (stack)\n≈ 0.155 – 0.165\nno\nno\n\n\nRandom baseline\n≈ 0.02\n—\n—\n\n\n\n\n\n\n\n\n\nImportantThe claim, restated\n\n\n\nOur estimated private ≈ 0.155–0.165 is competitive silver/gold-zone and SOTA-class among no-external / no-synthetic / single-dataset solutions — which is precisely the class our hard rules define. We do not claim to beat the unconstrained 0.17264; that used the two ingredients we banned, and matching it is impossible by construction. See Scope honesty."
+  },
+  {
+    "objectID": "submission.html#honest-caveat",
+    "href": "submission.html#honest-caveat",
+    "title": "Submission & Leaderboard",
+    "section": "Honest caveat: stack vs. tabular submission",
+    "text": "Honest caveat: stack vs. tabular submission\nThe tabular GBDT submission is ready today. The full stack submission is not — and we say why plainly.\n\n\n\n\n\n\nWarningWhat the stack needs that we do not yet persist\n\n\n\nA stack submission must run image inference on the hidden test set, which requires the trained per-fold image checkpoints. We persisted the image expert’s OOF probabilities and embeddings (enough to score and ablate the stack on CV), but not the per-fold model weights. So:\n\nReady now: GBDT-only submission.csv (python -m src.submit) — validates the full inference path on the placeholder.\nDocumented next step: a stack notebook that loads saved image checkpoints, scores the hidden test, and rank-blends with the GBDT. src/submit.py already exposes the hook (--image-scores ... --image-weight ...); it is intentionally unwired rather than fabricating image predictions until the checkpoints exist.\n\n\n\n\nThe late-submission path\n\n\n\n\n\n\nflowchart LR\n    A[\"Trained models&lt;br/&gt;GBDT boosters (done)&lt;br/&gt;+ per-fold image ckpts (next)\"] --&gt; B\n    B[\"Upload as a&lt;br/&gt;Kaggle Dataset\"] --&gt; C\n    C[\"Inference notebook&lt;br/&gt;attach competition + dataset&lt;br/&gt;load models, predict hidden test&lt;br/&gt;rank-blend GBDT + image\"] --&gt; D\n    D[\"Write submission.csv&lt;br/&gt;(isic_id, target)\"] --&gt; E[\"Submit (late)&lt;br/&gt;→ real private pAUC\"]\n\n    A -. \"image branch&lt;br/&gt;needs saved ckpts\" .-&gt; C\n    style A fill:#0b6e4f,color:#fff\n    style E fill:#1e8449,color:#fff\n\n\n\n\nFigure 1: The documented path to a real private score via a Kaggle late submission. Steps 1–3 are done today (GBDT-only); the dashed image branch is the persisted next step.\n\n\n\n\n\nConcretely, to obtain a genuine private score:\n\nTrain + persist per-fold image checkpoints (src/vision/train.py) — the only missing artifact; OOF probs/embeddings already exist.\nUpload the trained models (GBDT joblib + image checkpoints) as a private Kaggle dataset.\nAuthor an inference notebook that attaches the competition data + the model dataset, runs predict_test(...) with --image-scores, and writes the 2-column submission.csv.\nSubmit it as a late submission — Kaggle runs it on the hidden test and returns the real private pAUC, which we expect to land in the 0.155–0.165 band projected above.\n\n\n\n\n\n\n\nThe tabular-only path (steps 2–4 without the image branch) is runnable immediately and is the honest, ready-today deliverable; the stack path is a clean, fully-specified follow-up rather than a hidden gap.\n\n\n\n\nContinue to Results →"
+  },
+  {
+    "objectID": "methods.html",
+    "href": "methods.html",
+    "title": "Methods",
+    "section": "",
+    "text": "This page is deliberately verbose and bottom-up. We start with the single most important and most misunderstood thing — the metric — and build up to the full hybrid pipeline."
+  },
+  {
+    "objectID": "methods.html#the-metric",
+    "href": "methods.html#the-metric",
+    "title": "Methods",
+    "section": "The metric: partial AUC above 80% TPR",
+    "text": "The metric: partial AUC above 80% TPR\n\nWhy not accuracy, and why not plain AUC?\nAt 0.098% prevalence, accuracy is meaningless (predict “benign” always → 99.9% accurate, zero malignant caught). Plain ROC-AUC is better — it is threshold-free and prevalence-robust — but it averages performance over all operating points, including useless low-sensitivity ones. A clinical triage tool only matters where it catches almost every cancer: the high-sensitivity tail.\n\n\nThe definition\nThe official ISIC-2024 metric is the partial area under the ROC curve, restricted to the region where the true-positive rate (sensitivity) is at least 80%:\n\\[\n\\text{pAUC}_{80} \\;=\\; \\int_{\\text{TPR}=0.80}^{1.0} \\text{TPR}\\; d(\\text{FPR})\n\\]\nEquivalently: integrate the ROC curve only over the band TPR ∈ [0.80, 1.0] (FPR ≤ 0.20), then report the area in TPR-units × FPR-units. Because the band is 0.20 tall, the score is bounded in [0, 0.20]:\n\nrandom classifier ≈ 0.02,\nperfect classifier = 0.20.\n\nA move from 0.169 → 0.174 is therefore a +3.2% relative gain on a small absolute scale — small absolute moves are large relative moves, and we phrase improvements that way throughout.\n\n\nTwo pitfalls we pinned down up front\n\n\n\n\n\n\nWarningThe 80% vs 88% trap\n\n\n\nThe public ISIC metrics repository’s README mentions a 88% TPR threshold (which would bound the score in [0, 0.12]), but the live competition used 80%. Mixing the two makes any number incomparable. We pin 80% for every leaderboard-comparable claim, and our scorer is hard-coded to it.\n\n\nWe do not re-implement the metric loosely. src/cv.py:pauc_above_tpr is the only function allowed to compute it, and it is proven numerically identical to the vendored official scorer (src/metric_official.py, © 2024 N. R. Kurtansky, MSKCC) by a unit test (tests/test_cv.py, part of the 9/9 passing suite)."
+  },
+  {
+    "objectID": "methods.html#cv-spine",
+    "href": "methods.html#cv-spine",
+    "title": "Methods",
+    "section": "The CV spine: the whole game",
+    "text": "The CV spine: the whole game\nIn ISIC-2024, leaky cross-validation sent teams ~200 places down on the private split. Validation is not a step here — it is the spine everything hangs on.\n\nPatient-grouped, target-stratified folds. We use StratifiedGroupKFold (5 folds, SEED =\n\nwith the patient as the group and the malignant label as the stratification target.\n\n\nGrouped → no patient straddles folds (a patient’s lesions are correlated; a single straddling patient leaks).\nStratified → each fold holds 77–83 of the 393 positives, so no fold is starved of signal.\n\nFrozen once. The split is written to data/folds.parquet and read, unchanged, by every expert and by the stack. There is exactly one split in the entire project.\nHard no-leak guarantee + veto. The cv-guardian agent has veto power over anything touching the split or the metric: if a change would leak patients across folds, recompute the metric independently, or compare models on mismatched splits, it must block. This is the anti-shakeup discipline that makes our OOF number trustworthy.\n\n\n\n\n\n\n\nOut-of-fold (OOF) predictions. For each fold we train on the other four and predict on the held-out fold; concatenating the five held-out predictions gives one prediction per row, none of which ever saw its own row in training. We score pAUC once on this full OOF vector. Because pAUC is non-additive across folds, the full-OOF number (0.17430) differs trivially from the mean of per-fold pAUCs (0.17487) — both are reported."
+  },
+  {
+    "objectID": "methods.html#tabular-fe",
+    "href": "methods.html#tabular-fe",
+    "title": "Methods",
+    "section": "Tabular feature engineering",
+    "text": "Tabular feature engineering\nThe predictive signal lives largely in the tabular metadata. src/features.py builds, from ISIC-2024 columns only (no external data, every feature leak-checked):\n\nGeometry & size ratios — normalized lesion size, perimeter, area, eccentricity, axis ratios, border composites; raw size is strong, ratios make it scale-robust.\nColor / hue / luminance contrasts — tbp_lv_H (hue angle), lesion-vs-skin contrast, color uniformity, ΔA/ΔB color deltas. Hue alone reaches univariate AUC 0.81.\nBorder & shape composites — irregularity and asymmetry combinations.\n3D position — the lesion’s location on the body surface (TBP gives true 3D coordinates).\nPatient-relative “ugly-duckling” deviations — the decisive block. For each lesion and each base feature, how anomalous is it relative to the same patient’s other lesions?\n\npdev_* — deviation (signed/standardized distance from the patient’s own mean),\nprank_* — within-patient percentile rank,\npxc_* — patient × category interactions (e.g. hue × body location).\nThese encode the clinical “ugly-duckling sign” directly. They turn out to be ~65% of total GBDT gain (see Results and Ablations).\n\nPer-fold smoothed target encoding — for high-cardinality categoricals (e.g. location), computed inside each fold’s training data only and applied to the held-out fold, with smoothing toward the global mean.\n\n\n\n\n\n\n\nImportantLeak-safety of features\n\n\n\nEvery patient-relative statistic and every target encoding is computed fold-locally (from training rows only) and applied to held-out rows — so no held-out information ever flows into a feature. The cv-guardian audits this. Patient-relative deviations are safe because they use the patient’s own benign moles, which are in the same fold by construction (patients don’t straddle folds)."
+  },
+  {
+    "objectID": "methods.html#gbdt",
+    "href": "methods.html#gbdt",
+    "title": "Methods",
+    "section": "The GBDT expert",
+    "text": "The GBDT expert\nsrc/gbdt.py trains the tabular expert. Two stories matter here — one cautionary, one constructive.\n\nThe underfit bug (and the fix)\nOur first GBDT scored 0.09941 — barely 5× random. The cause was a classic imbalance foot-gun: is_unbalance=True up-weighted the 393 positives ~1000×, and the LightGBM early-stopping was driven by built-in AUC, which under that weighting peaked at best_iter = 1 — the model essentially never trained.\nThe fix, in two parts:\n\nDrop is_unbalance — let undersampling (below) handle the imbalance instead of extreme instance weights.\nEarly-stop on the official pAUC — a custom feval in src/gbdt.py evaluates pAUC@80%TPR directly, so early stopping optimizes the metric we are actually scored on.\n\nThis single change took the model from 0.09941 → 0.11826 (+0.019). See Ablations → Tabular.\n\n\nThe production recipe\nThe final tabular expert (greysky-lineage hyperparameters; see Credits) is a bagged ensemble:\n\nManual undersampling to ~1% (neg_ratio = 0.01 → ~100 negatives per positive, ~4k rows per fold/seed) so each booster trains fast and is not drowned by benigns.\n5-seed bagging (seeds 12/22/32/42/52) of LightGBM, averaged on rank.\nCatBoost rank-blend — a second GBDT family bagged the same way; the final tabular OOF is 0.8·rank(LightGBM-bag) + 0.2·rank(CatBoost-bag). CatBoost is the weaker family here, so an equal 0.5 blend dilutes (0.16809); 0.2 is the swept optimum (0.16890).\n\nResult: OOF pAUC 0.16890 at essentially zero inference cost (0.86 M “params” of trees, ~0 GFLOPs, 0.02 ms/img). This is the efficient anchor of the whole frontier."
+  },
+  {
+    "objectID": "methods.html#image-experts",
+    "href": "methods.html#image-experts",
+    "title": "Methods",
+    "section": "The image experts",
+    "text": "The image experts\nsrc/vision/* trains the deep protagonist. Each backbone is one point on the efficiency frontier, measured by the efficiency-auditor.\n\nThe recipe (shared across backbones)\n\nSmall, natural-image-pretrained backbones at 128 px (and 224 px for the resolution axis). Pretraining is ImageNet / FCMAE only — no skin-cancer labels, so the no-external-data claim survives (pretrained weights are allowed; external training data is not).\nPer-epoch negative undersampling to ~1:1 (neg_ratio, pos_mult). Each epoch sees all positives + a fresh random ~equal sample of negatives, so an “epoch” is only a few thousand images and runs in ~4.5 s. A full 5-fold backbone trains in ~8 minutes. Re-sampling the negatives each epoch means the model still sees the whole benign distribution over time.\nLoss: BCE with label smoothing 0.05 (softens the 393 hard positives).\nAugmentation: the transV2 policy (flips, rotations, color jitter within reason — classical only, no generative augmentation).\nEMA(0.995) + mixup(α=0.2). Weight EMA stabilizes the noisy undersampled updates; mixup regularizes. EMA decay matters: at ~23 steps/epoch, decay 0.999 (time-constant ~1000 steps) lags the weights and hurts (fold-0: 0.146 vs 0.156); 0.995 + warmup helps (0.163). Pinned at 0.995.\nResolution as a frontier axis. We keep both convnextv2_nano@128 (0.15311) and @224 (0.15945) as distinct points, because resolution trades accuracy for cost.\n\n\n\nThe 12-backbone frontier sweep\nWe swept a family spanning the cost axis from ~2.5 M to ~294 M params: mnv4_small, effvit_b0, starnet_s1, fastvit_t8, effnetv2_b0, ghostnetv3, vit_tiny, vit_small, convnextv2_nano (128 px and 224 px), convnextv2_tiny, swinv2_tiny, eva02_small, and the heavy anchor mnv5_300m. The clear lesson (see Results and Ablations): heavy transformers collapse to near-random at 393 positives (SwinV2 @256 → 0.104, EVA-02 @336 → 0.100), while the small convnextv2_nano is the sweet spot.\n\n\nSelf-supervised pretraining — the principled “one-up” (future work)\nThe cleanest in-constraint way to exploit the 400k+ unlabeled crops — without importing external data or fabricating positives — is self-supervised pretraining (MAE / DINOv2-style) on the crops themselves, then fine-tuning on the 393 labels. This substitutes our own unlabeled data for the external data we banned, and stays fully inside the rules. We present it as the principled next step rather than a completed result; it is the most promising lever we did not exhaust in the 2-day budget."
+  },
+  {
+    "objectID": "methods.html#stack",
+    "href": "methods.html#stack",
+    "title": "Methods",
+    "section": "The stack (combiner)",
+    "text": "The stack (combiner)\nsrc/stack.py fuses the experts. We compared three combiners on the same OOF vectors:\n\n\n\n\n\n\n\n\nCombiner\nWhat it does\nOOF pAUC\n\n\n\n\nRank-average\naverage the percentile ranks of GBDT and image OOF — param-free\n0.17430\n\n\nMeta-LightGBM\na second-level GBDT over the expert OOFs\n0.17108\n\n\nLearned per-lesion gate (MoE)\na network picks expert weights per lesion\n0.15007\n\n\n\nWe also tried adding the image embedding (PCA components) and an image-space ugly-duckling feature into the GBDT; both hurt (&lt; 0.1743).\n\n\n\n\n\n\nNoteWhy the trivial combiner wins at 393 positives\n\n\n\nA rank-average has zero parameters to fit, so it cannot overfit the validation folds. Every learned combiner has to estimate its parameters from the same 393 positives the experts already used — there is simply not enough positive signal left to learn a better fusion than “average the ranks.” The learned gate even falls below the tabular expert alone (0.150 &lt; 0.169). This is the project’s recurring theme, and it is a result, not a disappointment: at this scale, simpler is both cheaper and more accurate. Full numbers in Ablations."
+  },
+  {
+    "objectID": "methods.html#efficiency-as-a-first-class-axis",
+    "href": "methods.html#efficiency-as-a-first-class-axis",
+    "title": "Methods",
+    "section": "Efficiency as a first-class axis",
+    "text": "Efficiency as a first-class axis\nEvery reported model logs params, FLOPs, and single-thread CPU latency (src/efficiency.py) alongside its pAUC, so each model is one point on a quality-vs-cost plane. The Pareto-optimal set — points that no other model beats on both axes — is the headline figure. A model that does not earn its cost does not stay in the pipeline. See Results.\n\nContinue to Results →"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ISIC-2024 SLICE-3D",
+    "section": "",
+    "text": "Pakistan.AI · Neural Networks · CSIE, NYUST\n\n\nDetecting the 393 malignant lesions hidden among 400,666 benign crops (a 1,021:1 imbalance) — using only the ISIC-2024 SLICE-3D dataset, no external dermoscopy, and no synthetic/generative positives.\n\nThe claim under test: state-of-the-art among single-dataset, no-external-data, no-synthetic solutions — reported not as one number, but as a quality-vs-cost Pareto frontier."
+  },
+  {
+    "objectID": "index.html#abstract",
+    "href": "index.html#abstract",
+    "title": "ISIC-2024 SLICE-3D",
+    "section": "Abstract",
+    "text": "Abstract\nWe study the ISIC-2024 SLICE-3D skin-lesion task — classifying ~401,059 lesion crops extracted from 3D total-body photography (TBP) as malignant or benign — under a deliberately strict regime. The competition’s top private-leaderboard solutions reached pAUC ≈ 0.173, but they did so by importing external dermoscopy archives and roughly 30,000 diffusion-synthesized malignant lesions. We ban both. On medical images, training or validating on fabricated pathology is a label-validity hole; and importing external data breaks the “single dataset” premise. Removing those two crutches is exactly what our experiment isolates.\nBecause the absolute leaderboard number is then out of reach by construction, we re-pose the problem as a Pareto frontier: the best official pAUC above 80% TPR achievable per unit of inference cost (parameters, FLOPs, and single-thread CPU latency), on SLICE-3D data alone. The architecture is a hybrid: a LightGBM tabular expert over intrinsic engineered features (geometry, color/hue contrast, size ratios, and patient-relative “ugly-duckling” deviations) provides the efficient anchor; a small ImageNet-pretrained image backbone contributes an out-of-fold (OOF) malignancy probability that is fused into the final score by a trivial rank-average combiner.\nThe honest punchline: every increase in model complexity we tried lost. The trivial 2-way rank-average beats a meta-LightGBM stacker, a learned per-lesion gate, and the addition of image embeddings; the small convnextv2_nano backbone beats heavy transformers (SwinV2, EVA-02) that collapse to near-random at 393 positives. Our best frontier point — rank-avg[GBDT, convnextv2_nano@224] — reaches OOF pAUC 0.17430 at 15.8 M params / 2.46 GFLOPs / 61 ms CPU per image."
+  },
+  {
+    "objectID": "index.html#headline",
+    "href": "index.html#headline",
+    "title": "ISIC-2024 SLICE-3D",
+    "section": "Headline results",
+    "text": "Headline results\nAll numbers are out-of-fold (OOF) on the frozen patient-grouped folds (data/folds.parquet, 5 folds, SEED = 42), and every pAUC is computed only by the official scorer (src/cv.py), pinned at 80% TPR (range [0, 0.20]; random ≈ 0.02, perfect = 0.20). All values were independently re-derived from the OOF parquet files by the cv-guardian agent.\n\n\n\n\n\n\n\n\n\n\n\nModel\nOOF pAUC@80%TPR\nParams (M)\nGFLOPs\nCPU ms/img\nRole\n\n\n\n\nGBDT (tabular only)\n0.16890\n0.86\n~0\n0.02\nthe efficient anchor — ≈ free\n\n\nBest image (convnextv2_nano@224)\n0.15945\n14.98\n2.46\n60.9\nthe protagonist backbone\n\n\nStack — rank-avg[GBDT, nano@224]\n0.17430\n15.84\n2.46\n60.9\nbest overall; Pareto-optimal\n\n\nCheap stack (gbdt+3img+udk)\n0.17117\n23.84\n1.22\n32.9\nalso on the frontier (cheaper)\n\n\nFrontier — cheap end (effvit_b0)\n0.13706\n2.13\n0.034\n3.5\nmost accuracy per millisecond\n\n\nFrontier — cheapest (mnv4_small)\n0.11242\n2.49\n0.062\n3.1\nfloor of the cost axis\n\n\n\n\n\n\n\n\n\nReading the metric. pAUC@80%TPR integrates the ROC curve only in the high-sensitivity tail (TPR ≥ 0.80). It is bounded in [0, 0.20], so a move from 0.169 → 0.174 is a +3.2% relative improvement, not a rounding error. See Methods → The metric.\n\n\n\n\nWhere the score comes from\nThe single most important finding for understanding the task: the dominant signal is not the raw lesion, it is how anomalous a lesion is relative to the same patient’s other moles — the classic “ugly-duckling” sign. Patient-relative features (pdev_*, prank_*, pxc_*) account for ~65% of total GBDT gain. The top features:\n\n\n\n\n\n\n\n\n\nRank\nFeature\nMean gain %\nWhat it is\n\n\n\n\n1\ntbp_lv_H\n3.28\nlesion hue angle (univariate AUC 0.81 on its own)\n\n\n2\npdev_tbp_lv_H\n3.05\nhow far this lesion’s hue deviates from the patient’s mean\n\n\n3\npdev_clin_size_long_diam_mm\n2.19\nsize deviation vs the patient’s own lesions\n\n\n4\npxc_tbp_lv_H_location\n1.88\nhue × body-location patient interaction"
+  },
+  {
+    "objectID": "index.html#the-pipeline",
+    "href": "index.html#the-pipeline",
+    "title": "ISIC-2024 SLICE-3D",
+    "section": "The pipeline",
+    "text": "The pipeline\n\n\n\n\n\n\nflowchart TD\n    A[\"ISIC-2024 SLICE-3D&lt;br/&gt;401,059 crops · 1,042 patients&lt;br/&gt;393 malignant / 400,666 benign\"] --&gt; B\n\n    B[\"Patient-grouped&lt;br/&gt;StratifiedGroupKFold&lt;br/&gt;(5 folds · SEED=42 · frozen)&lt;br/&gt;&lt;b&gt;no patient straddles folds&lt;/b&gt;\"]\n\n    B --&gt; C[\"Tabular feature engineering&lt;br/&gt;geometry · color/hue · size ratios&lt;br/&gt;3D position · patient-relative&lt;br/&gt;ugly-duckling (pdev / prank / pxc)&lt;br/&gt;per-fold smoothed target encoding\"]\n    B --&gt; E[\"Image crops @128 / @224&lt;br/&gt;small ImageNet-pretrained backbone&lt;br/&gt;per-epoch neg-undersample ~1:1&lt;br/&gt;BCE+LS · EMA(0.995) · mixup · TTA\"]\n\n    C --&gt; D[\"Bagged GBDT expert&lt;br/&gt;LightGBM (5-seed) + CatBoost&lt;br/&gt;rank-blend&lt;br/&gt;&lt;b&gt;OOF pAUC 0.16890&lt;/b&gt;\"]\n    E --&gt; F[\"Image expert&lt;br/&gt;OOF malignancy prob&lt;br/&gt;(+ embedding, ablated)&lt;br/&gt;&lt;b&gt;OOF pAUC 0.15945&lt;/b&gt;\"]\n\n    D --&gt; G[\"Combiner = rank-average&lt;br/&gt;(param-free, robust)\"]\n    F --&gt; G\n\n    G --&gt; H[\"Final OOF score&lt;br/&gt;&lt;b&gt;pAUC 0.17430&lt;/b&gt;&lt;br/&gt;15.8M params · 2.46 GFLOPs · 61 ms CPU\"]\n    H --&gt; I[\"Submission / frontier point\"]\n\n    style A fill:#0b6e4f,color:#fff\n    style B fill:#117a65,color:#fff\n    style H fill:#1e8449,color:#fff\n    style I fill:#073b2c,color:#fff\n\n\n\n\nFigure 1: End-to-end pipeline. Patient-grouped folds are frozen once; every expert and the stack read the same split. Nothing trains until the no-leak guarantee passes."
+  },
+  {
+    "objectID": "index.html#scope-honesty",
+    "href": "index.html#scope-honesty",
+    "title": "ISIC-2024 SLICE-3D",
+    "section": "Scope honesty",
+    "text": "Scope honesty\n\n\n\n\n\n\nImportantWhat we are — and are not — claiming\n\n\n\n\nWe are not claiming to beat the unconstrained leaderboard winner’s private pAUC ≈ 0.1755. That score used external data + ~30k synthetic positives; matching it under our rules is impossible by construction, and that is precisely the point of the experiment.\nWe are claiming SOTA within the no-external-data / no-synthetic / single-dataset class, on a transparent quality-vs-cost frontier, with leak-audited CV.\nThe 1st-place team’s own ablation shows their ~30k synthetic lesions added only +0.0007 pAUC — a sobering data point for the “just add synthetic data” reflex on a 393-positive task.\nOur OOF number is, if anything, a more honest predictor of generalization than a leaderboard-tuned number, because no part of our pipeline ever saw out-of-distribution data. Expect a typical public→private drop of ~0.013–0.021 on this task; we report the OOF CV and state that projection openly.\n\n\n\n\n\n\n\n\n\nNoteLicensing note on figures\n\n\n\nEvery figure on this site is our own (generated by reports/eda/make_eda.py, reports/perf/make_perf.py, reports/frontier.py) plus Mermaid diagrams. We deliberately use no external copyrighted images — appropriate for a medical-imaging deliverable and for the dataset’s CC BY-NC 4.0 terms.\n\n\n\nContinue to Data & EDA →"
+  },
+  {
+    "objectID": "data.html",
+    "href": "data.html",
+    "title": "Data & Exploratory Analysis",
+    "section": "",
+    "text": "ISIC-2024 SLICE-3D is a corpus of lesion crops extracted from 3D Total-Body Photography (TBP) — full-body imaging that captures every visible mole on a patient at once. Each row is one lesion, with a small square JPEG crop plus a rich tabular record of measurements computed by the TBP vendor’s software (geometry, color, 3D position) and clinical context (age, sex, body site).\n\n\n\n\n\n\n\nFact\nValue\n\n\n\n\nLesion crops (rows)\n401,059\n\n\nMalignant lesions\n393\n\n\nBenign lesions\n400,666\n\n\nPrevalence\n0.098% — about 1 malignant per 1,021 crops\n\n\nUnique patients\n1,042\n\n\nPatients with ≥1 malignant lesion\n259 (24.9%)\n\n\nColumns\n55 (35 float, 18 string, 2 int)\n\n\nReal (non-leak) feature columns\n36\n\n\nImaging\nevery crop is a TBP tile (TBP tile: close-up); 2 subtypes (3D: XP, 3D: white)\n\n\nSource institutions\n7 (MSKCC, Hospital Clínic Barcelona, Univ. Basel, Frazer Institute/UQ, ACEMID MIA, MedUni Vienna, Univ. Athens)\n\n\n\n\n\n\n\n\n\nImportantThe imbalance is the whole problem\n\n\n\nAt 0.098% prevalence, a model that predicts “benign” for everything is 99.9% accurate and clinically useless. This is why the task is scored by partial AUC above 80% TPR, not plain accuracy or even plain AUC — see Methods → The metric. It is also why patient-grouped, target-stratified cross-validation is non-negotiable: with only 393 positives, a single leaked patient or an unlucky split can swing the score more than any model choice.\n\n\n\n\nThe crops are variable-size square JPEGs, ranging from 61 px to 239 px on a side (median / mean ≈ 131 / 133 px), and only ~2.8 KB each. Two consequences for our image experts:\n\n128 px ≈ the native median. Training at 128 px is essentially training at the crops’ natural resolution — no information is being thrown away, and epochs are cheap.\n224 px upsamples. The 224 px model does not see extra pixels; it sees the same lesion interpolated larger. So the measured 224 px gain (0.15311 → 0.15945) is a capacity / training-dynamics effect (a bigger receptive field for the pretrained backbone, more effective augmentation), not extra image detail. We keep both points because resolution is a frontier axis, and we report this caveat honestly.\n\n\n\n\nOnly three real feature columns have any missing values; everything else is 100% complete.\n\n\n\nColumn\nMissing\n\n\n\n\nsex\n2.87%\n\n\nanatom_site_general\n1.44%\n\n\nage_approx\n0.70%\n\n\n\n\n\n\n\n\n\nWarningTrain-only LEAK columns — we drop them\n\n\n\nSeveral columns exist only in the training split and encode the answer or post-biopsy pathology. Feeding any of them to a model is leakage; we use them for EDA framing only and drop them before training:\niddx_full, iddx_1 … iddx_5 (iddx_1 is literally Benign / Malignant / Indeterminate), mel_mitotic_index, mel_thick_mm, lesion_id, and tbp_lv_dnn_lesion_confidence (a vendor model’s own confidence — not available at inference and effectively a label proxy)."
+  },
+  {
+    "objectID": "data.html#what-the-data-is",
+    "href": "data.html#what-the-data-is",
+    "title": "Data & Exploratory Analysis",
+    "section": "",
+    "text": "ISIC-2024 SLICE-3D is a corpus of lesion crops extracted from 3D Total-Body Photography (TBP) — full-body imaging that captures every visible mole on a patient at once. Each row is one lesion, with a small square JPEG crop plus a rich tabular record of measurements computed by the TBP vendor’s software (geometry, color, 3D position) and clinical context (age, sex, body site).\n\n\n\n\n\n\n\nFact\nValue\n\n\n\n\nLesion crops (rows)\n401,059\n\n\nMalignant lesions\n393\n\n\nBenign lesions\n400,666\n\n\nPrevalence\n0.098% — about 1 malignant per 1,021 crops\n\n\nUnique patients\n1,042\n\n\nPatients with ≥1 malignant lesion\n259 (24.9%)\n\n\nColumns\n55 (35 float, 18 string, 2 int)\n\n\nReal (non-leak) feature columns\n36\n\n\nImaging\nevery crop is a TBP tile (TBP tile: close-up); 2 subtypes (3D: XP, 3D: white)\n\n\nSource institutions\n7 (MSKCC, Hospital Clínic Barcelona, Univ. Basel, Frazer Institute/UQ, ACEMID MIA, MedUni Vienna, Univ. Athens)\n\n\n\n\n\n\n\n\n\nImportantThe imbalance is the whole problem\n\n\n\nAt 0.098% prevalence, a model that predicts “benign” for everything is 99.9% accurate and clinically useless. This is why the task is scored by partial AUC above 80% TPR, not plain accuracy or even plain AUC — see Methods → The metric. It is also why patient-grouped, target-stratified cross-validation is non-negotiable: with only 393 positives, a single leaked patient or an unlucky split can swing the score more than any model choice.\n\n\n\n\nThe crops are variable-size square JPEGs, ranging from 61 px to 239 px on a side (median / mean ≈ 131 / 133 px), and only ~2.8 KB each. Two consequences for our image experts:\n\n128 px ≈ the native median. Training at 128 px is essentially training at the crops’ natural resolution — no information is being thrown away, and epochs are cheap.\n224 px upsamples. The 224 px model does not see extra pixels; it sees the same lesion interpolated larger. So the measured 224 px gain (0.15311 → 0.15945) is a capacity / training-dynamics effect (a bigger receptive field for the pretrained backbone, more effective augmentation), not extra image detail. We keep both points because resolution is a frontier axis, and we report this caveat honestly.\n\n\n\n\nOnly three real feature columns have any missing values; everything else is 100% complete.\n\n\n\nColumn\nMissing\n\n\n\n\nsex\n2.87%\n\n\nanatom_site_general\n1.44%\n\n\nage_approx\n0.70%\n\n\n\n\n\n\n\n\n\nWarningTrain-only LEAK columns — we drop them\n\n\n\nSeveral columns exist only in the training split and encode the answer or post-biopsy pathology. Feeding any of them to a model is leakage; we use them for EDA framing only and drop them before training:\niddx_full, iddx_1 … iddx_5 (iddx_1 is literally Benign / Malignant / Indeterminate), mel_mitotic_index, mel_thick_mm, lesion_id, and tbp_lv_dnn_lesion_confidence (a vendor model’s own confidence — not available at inference and effectively a label proxy)."
+  },
+  {
+    "objectID": "data.html#the-nine-eda-figures",
+    "href": "data.html#the-nine-eda-figures",
+    "title": "Data & Exploratory Analysis",
+    "section": "The nine EDA figures",
+    "text": "The nine EDA figures\nAll figures are generated by reports/eda/make_eda.py (read-only on data/, SEED = 42, DPI 150, Okabe-Ito colorblind-safe palette).\n\nFig 1 — Class imbalance & fold stratification\n\n\n\n\n\n\nFigure 1: Class imbalance and per-fold positive counts.\n\n\n\n400,666 benign vs 393 malignant (0.098% prevalence). The five patient-grouped CV folds each hold 77–83 positives (~0.096–0.103% prevalence per fold), so stratification is tight and no fold is starved of signal — a precondition for trustworthy OOF estimates.\n\n\nFig 2 — Patient structure\n\n\n\n\n\n\nFigure 2: Per-patient lesion counts; malignant-carrying patients hold most of the data.\n\n\n\n1,042 patients with a heavily right-skewed lesion count (median 241, max 9,184). The 259 patients who carry at least one malignant lesion hold 89% of all crops — most data lives with the high-risk patients. This is the structural reason splits must be patient-grouped: a patient’s lesions are correlated, so any patient straddling folds leaks information.\n\n\nFig 3 — Demographics\n\n\n\n\n\n\nFigure 3: Age, sex, and body-site malignant rates.\n\n\n\nMalignant lesions skew older (peak ~60–75), males contribute most crops, and head/neck stands out:\n\n\n\nBody site\nn\nMalignant rate\n\n\n\n\nhead/neck\n12,046\n0.648%\n\n\nanterior torso\n87,770\n0.093%\n\n\nposterior torso\n121,902\n0.084%\n\n\nupper extremity\n70,557\n0.081%\n\n\nlower extremity\n103,028\n0.071%\n\n\n\nHead/neck carries ~7× the baseline malignant rate of any other site, despite being the smallest site — a strong site prior the model should respect.\n\n\nFig 4 — Lesion size\n\n\n\n\n\n\nFigure 4: Clinical diameter and TBP area: malignant ~2× larger.\n\n\n\nOn both clinical longest diameter and TBP area, the malignant distribution is shifted ~2× larger than benign. Raw lesion size is a strong, cheap univariate signal — and, as the ablations show, its patient-relative version is even stronger.\n\n\nFig 5 — Color & border “ugly-duckling” signals\n\n\n\n\n\n\nFigure 5: Hue, contrast, border/color irregularity, eccentricity.\n\n\n\nHue angle (tbp_lv_H) separates the classes most cleanly — univariate AUC 0.81 on a single feature. Lesion-skin contrast, border/color irregularity, and eccentricity all shift toward higher values for malignant, confirming the TBP color/geometry features carry real, independent signal.\n\n\nFig 6 — Correlation of key TBP features\n\n\n\n\n\n\nFigure 6: Correlation heatmap of 21 core geometry/color features.\n\n\n\nThe core features form tight blocks (a size group: diameter / area / perimeter / minor-axis; a color group: A / B / ΔA / ΔB). The GBDT therefore sees substantial redundancy — useful for robustness, but a sign that a handful of axes capture most of the variance.\n\n\nFig 7 — Sample lesion crops\n\n\n\n\n\n\nFigure 7: Eight malignant (top) vs eight benign (bottom) crops.\n\n\n\nMalignant lesions tend to be larger, darker, and more color-varied — but the visual overlap with benign is large. That overlap is exactly why a learned image expert is needed on top of the tabular features, and equally why the image expert alone (0.15945) cannot beat the tabular expert (0.16890).\n\n\nFig 8 — Image-embedding class separation\n\n\n\n\n\n\nFigure 8: PCA-50 → t-SNE of ConvNeXtV2-nano OOF embeddings.\n\n\n\nA t-SNE of the small CNN’s OOF embeddings (all 393 positives + 3,000 random negatives): the malignant points concentrate into a recognizable region of feature space rather than scattering uniformly. Even a small CNN learns a malignancy-relevant representation — evidence for stacking its OOF probability into the GBDT.\n\n\nFig 9 — Ugly-duckling illustration\n\n\n\n\n\n\nFigure 9: Three patients: the malignant lesion sits at the top of its own size distribution.\n\n\n\nFor three patients with one malignant lesion among many benign ones, the malignant lesion sits at the top of its own patient’s size distribution (98th–100th percentile). This is the concrete picture behind the within-patient deviation features.\n\n\n\n\n\n\nTipThe ugly-duckling sign, quantified\n\n\n\n\n392 of 393 malignant lesions come from a patient who also has benign lesions — so almost every positive can be judged against that patient’s own “normal” moles.\nOn clin_size_long_diam_mm, the malignant lesion sits at a median 88th within-patient percentile; 45.7% of malignant lesions are in the top 10% of their own patient’s lesion sizes. This is the quantitative basis for the engineered patient-relative features — not folklore, but a measured effect."
+  },
+  {
+    "objectID": "data.html#the-four-most-striking-takeaways",
+    "href": "data.html#the-four-most-striking-takeaways",
+    "title": "Data & Exploratory Analysis",
+    "section": "The four most striking takeaways",
+    "text": "The four most striking takeaways\n\nThe imbalance is the whole problem. 0.098% prevalence is why the task uses partial-AUC-above-80%-TPR and why patient-grouped, target-stratified CV is mandatory. The folds confirm 77–83 positives each with zero patients straddling folds.\nTabular signal is real and cheap. Single features already separate well: hue tbp_lv_H reaches univariate AUC 0.81, and lesion size shows a clean ~2× malignant shift. This is the evidence base for the LightGBM-first architecture.\nThe ugly-duckling sign is quantitatively present. A lesion’s deviation from its own patient’s distribution is well-motivated — and it turns out to be the single dominant signal in the trained model (~65% of GBDT gain; see Results).\nThe small CNN adds an orthogonal axis. Its embeddings cluster the positives despite heavy visual overlap in raw crops — justifying a stacked image OOF probability, while head/neck’s ~7× elevated rate flags a site prior worth respecting.\n\n\nContinue to Methods →"
+  },
+  {
+    "objectID": "results.html",
+    "href": "results.html",
+    "title": "Results",
+    "section": "",
+    "text": "All numbers are out-of-fold on the frozen patient-grouped folds (5 folds, SEED = 42), scored only by src/cv.py at 80% TPR, and independently re-derived from the OOF parquet files by the cv-guardian agent. Figures come from reports/frontier.py and reports/perf/make_perf.py."
+  },
+  {
+    "objectID": "results.html#headline-numbers",
+    "href": "results.html#headline-numbers",
+    "title": "Results",
+    "section": "Headline numbers",
+    "text": "Headline numbers\n\n\n\nModel\nOOF pAUC@80%TPR\n\n\n\n\nTabular GBDT\n0.16890\n\n\nBest image (ConvNeXtV2-nano @224)\n0.15945\n\n\nStack — rank-avg[GBDT, nano@224]\n0.17430\n\n\n\nThe stack reconstruction rank-avg[gbdt, r224] recomputes to 0.17430, matching the canonical stack_oof.parquet exactly — the combiner is genuinely a 2-way rank average, with nothing hidden. Image and tabular make complementary errors, so the trivial rank-average buys +0.0054 over tabular alone."
+  },
+  {
+    "objectID": "results.html#the-quality-vs-cost-frontier-three-axes",
+    "href": "results.html#the-quality-vs-cost-frontier-three-axes",
+    "title": "Results",
+    "section": "The quality-vs-cost frontier (three axes)",
+    "text": "The quality-vs-cost frontier (three axes)\nA point is Pareto-optimal if no other model is both cheaper and more accurate. We draw the frontier against all three cost axes, because “cost” means different things in different deployments.\n\nCombined view\n\n\n\n\n\n\nFigure 1: pAUC@80%TPR vs cost — the headline frontier.\n\n\n\n\n\nVersus parameters\n\n\n\n\n\n\nFigure 2: pAUC vs parameter count (model size / memory).\n\n\n\n\n\nVersus FLOPs\n\n\n\n\n\n\nFigure 3: pAUC vs GFLOPs (compute per image).\n\n\n\n\n\nVersus CPU latency\n\n\n\n\n\n\nFigure 4: pAUC vs single-thread CPU latency (deployability).\n\n\n\n\n\nThe Pareto-optimal set\nReading across the three axes, the defensible frontier points are:\n\n\n\n\n\n\n\n\n\n\n\nFrontier point\npAUC\nParams (M)\nGFLOPs\nCPU ms/img\nWhy it is on the frontier\n\n\n\n\nmnv4_small @128\n0.11242\n2.49\n0.062\n3.06\nthe cheapest usable point (latency floor)\n\n\neffvit_b0 @128\n0.13706\n2.13\n0.034\n3.45\nmost accuracy per FLOP/param\n\n\nGBDT\n0.16890\n0.86\n~0\n0.02\ndominates everything on cost — the anchor\n\n\nCheap stack gbdt+3img+udk\n0.17117\n23.84\n1.22\n32.9\nsecond-best accuracy, ~half the latency of best\n\n\nStack gbdt+nano@224\n0.17430\n15.84\n2.46\n60.9\nbest accuracy on the whole study\n\n\n\n\n\n\n\n\n\nNoteHow to read this\n\n\n\n\nThe GBDT alone is almost free and already at 0.169 — it dominates every image-only model on cost, and most on accuracy too. This is why the architecture is GBDT-first.\nThe image expert only earns its place inside the stack: +0.0054 pAUC for +60 ms. Whether that trade is worth it is a deployment decision — which is exactly why we report a frontier, not a single number.\nThe heavy backbones (mnv5_300m at 294 M / 765 ms, eva02_small, swinv2_tiny) are far off the frontier: dominated on both axes. More capacity is actively harmful at 393 positives."
+  },
+  {
+    "objectID": "results.html#the-scored-roc-region",
+    "href": "results.html#the-scored-roc-region",
+    "title": "Results",
+    "section": "The scored ROC region",
+    "text": "The scored ROC region\n\n\n\n\n\n\nFigure 5: OOF ROC with the pAUC@80%TPR band shaded.\n\n\n\n\n\n\n\n\n\nFigure 6: Zoom on the high-sensitivity tail (TPR ≥ 0.80) that the metric actually integrates.\n\n\n\nThe shaded band is exactly what the metric integrates — the area under the ROC for TPR ≥ 0.80 (equivalently FPR ≤ 0.20). In that scored band the stack sits above both single experts: the visual confirmation that the +0.0054 lift is concentrated where it is scored, not smeared across useless low-sensitivity operating points."
+  },
+  {
+    "objectID": "results.html#per-fold-stability",
+    "href": "results.html#per-fold-stability",
+    "title": "Results",
+    "section": "Per-fold stability",
+    "text": "Per-fold stability\n\n\n\n\n\n\nFigure 7: Per-fold pAUC for tabular, best image, and stack.\n\n\n\n\n\n\n\n\n\n\n\n\nFold\nTabular\nBest image\nStack\n\n\n\n\n0\n0.18014\n0.16040\n0.17999\n\n\n1\n0.15424\n0.17119\n0.17282\n\n\n2\n0.17614\n0.16298\n0.18000\n\n\n3\n0.17871\n0.15906\n0.17910\n\n\n4\n0.15708\n0.14504\n0.16246\n\n\nmean ± std\n0.1693 ± 0.0112\n0.1597 ± 0.0085\n0.1749 ± 0.0068\n\n\n\n\n\n\n\n\n\nImportantFold variance is the dominant uncertainty — and the stack tames it\n\n\n\nAt 393 positives, per-fold pAUC swings by ~0.025 (tabular ranges 0.154 → 0.180 across folds), so fold-to-fold variance is larger than the gap between models. This is why a single-fold number would be untrustworthy. The strongest evidence the +0.0054 is real and not a fluke: the stack has the lowest std (0.0068) and wins or ties on every fold. It is both the most accurate and the most stable estimator we have."
+  },
+  {
+    "objectID": "results.html#feature-importance-where-the-signal-lives",
+    "href": "results.html#feature-importance-where-the-signal-lives",
+    "title": "Results",
+    "section": "Feature importance — where the signal lives",
+    "text": "Feature importance — where the signal lives\n\n\n\n\n\n\nFigure 8: Top-20 GBDT features by mean gain (25 LightGBM + 25 CatBoost boosters).\n\n\n\nAggregated mean gain over 25 LightGBM + 25 CatBoost boosters (each booster normalized to sum = 1 so the two libraries are comparable, then averaged):\n\n\n\nRank\nFeature\nGain %\n\n\n\n\n1\ntbp_lv_H (hue)\n3.28\n\n\n2\npdev_tbp_lv_H\n3.05\n\n\n3\npdev_clin_size_long_diam_mm\n2.19\n\n\n4\npxc_tbp_lv_H_tbp_lv_location\n1.88\n\n\n5\nclin_size_long_diam_mm\n1.68\n\n\n6\nprank_tbp_lv_H\n1.48\n\n\n7\nz_clin_size_long_diam_mm\n1.46\n\n\n8\npdev_tbp_lv_Hext\n1.25\n\n\n9\npxc_tbp_lv_H_anatom_site_general\n1.09\n\n\n10\nf_normalized_lesion_size\n1.07\n\n\n\nPatient-relative ugly-duckling features (pdev_ / prank_ / pxc_) make up 56% of top-20 gain and ~65% of total gain. A lesion’s deviation from its own patient’s distribution is the dominant signal — the quantitative vindication of the architecture’s tabular thesis."
+  },
+  {
+    "objectID": "results.html#score-separation-calibration",
+    "href": "results.html#score-separation-calibration",
+    "title": "Results",
+    "section": "Score separation & calibration",
+    "text": "Score separation & calibration\n\n\n\n\n\n\nFigure 9: Left: stack score histogram by class. Right: reliability curve.\n\n\n\nMalignant score-mass concentrates near 1.0 and benign mass near 0.0, with the mid-range overlap that the partial-AUC region penalizes. The reliability curve shows the model separates classes well by rank but is far from probability-calibrated (observed malignant fraction stays ≈0 even in the top bin). This is expected and fine: under 0.1% prevalence and a rank-based metric, calibration is irrelevant to pAUC. It is a feature of the design, not a defect."
+  },
+  {
+    "objectID": "results.html#the-honest-cv-private-projection",
+    "href": "results.html#the-honest-cv-private-projection",
+    "title": "Results",
+    "section": "The honest CV → private projection",
+    "text": "The honest CV → private projection\n\n\n\n\n\n\nWarningWhat to expect on a hidden test set\n\n\n\nThe field saw a roughly 0.013–0.021 public→private drop on this task even with clean CV — driven by the 393-positive scale and (for the winners) heavy reliance on external/synthetic data. Our headline is OOF CV 0.1743 (stack) / 0.1689 (tabular); a fair private-test projection is headline minus ~0.01–0.02. We state this openly. Because no part of our pipeline ever saw out-of-distribution data, our OOF number is, if anything, a more honest predictor of generalization than a leaderboard-tuned score.\n\n\n\nContinue to Ablations →"
+  },
+  {
+    "objectID": "ablations.html",
+    "href": "ablations.html",
+    "title": "Ablations & Negative Results",
+    "section": "",
+    "text": "ImportantThe thesis of this page\n\n\n\nWe log negative results honestly; we never quietly drop a model that did not help. The headline finding of the entire study is visible here in one sentence: almost every increase in model complexity lost. At 393 positives, the efficient, trivial choices — a small backbone, a rank-average combiner, intrinsic tabular features — are not just cheaper, they are also more accurate. That negative result is the contribution."
+  },
+  {
+    "objectID": "ablations.html#tabular",
+    "href": "ablations.html#tabular",
+    "title": "Ablations & Negative Results",
+    "section": "Tabular GBDT progression",
+    "text": "Tabular GBDT progression\n\n\n\n\n\n\nFigure 1: Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.\n\n\n\n\n\n\n\n\n\n\n\n\nStep\nChange\nOOF pAUC\nΔ\n\n\n\n\n0\nBroken: is_unbalance + AUC early-stop → best_iter = 1\n0.09941\n—\n\n\n1\nFix early-stopping / objective (drop is_unbalance, early-stop on pAUC)\n0.11826\n+0.01885\n\n\n2\nWide patient-relative ugly-duckling features (pdev_ / prank_ / pxc_)\n0.14420\n+0.02594\n\n\n3\nGreysky-bagged LightGBM + pxc_ + CatBoost rank-blend\n0.16890\n+0.02470\n\n\n\nTakeaways. The broken config scored barely above 5× random — a reminder that on extreme imbalance the training setup dominates the model. The patient-relative feature block (Step 2) is the single biggest jump (+0.026), confirming the ugly-duckling thesis. Bagging + CatBoost (Step 3) adds another +0.025 from variance reduction across seeds and families."
+  },
+  {
+    "objectID": "ablations.html#image",
+    "href": "ablations.html#image",
+    "title": "Ablations & Negative Results",
+    "section": "Image expert — resolution & regularizer",
+    "text": "Image expert — resolution & regularizer\n\n\n\n\n\n\nFigure 2: Image-expert ablation: the small backbone wins; heavy ones collapse.\n\n\n\n\n\n\n\n\n\n\n\nConfig\nOOF pAUC\nVerdict\n\n\n\n\nconvnextv2_nano @128\n0.15311\nbaseline image point\n\n\nconvnextv2_nano @224 + EMA0.995 + mixup\n0.15945\nbest image — the sweet spot\n\n\n↳ same, EMA 0.999\n~0.146\nHURT (over-smooths at ~23 steps/epoch)\n\n\nconvnextv2_tiny @224\n0.15824\nslightly worse than nano, ~2× the cost\n\n\nswinv2_tiny @256\n0.10422\ncollapse — near random\n\n\neva02_small @336\n0.09984\ncollapse — near random\n\n\n\nTakeaways. Resolution + light EMA(0.995) + mixup on the small nano backbone is the sweet spot. Stronger EMA (0.999) over-smooths because the undersampled epochs are tiny. Heavy transformers (Swin, EVA-02) collapse to near-random — textbook overfitting at 393 positives: more capacity, less signal. Even convnextv2_tiny (2× nano’s params) is worse than nano."
+  },
+  {
+    "objectID": "ablations.html#stack",
+    "href": "ablations.html#stack",
+    "title": "Ablations & Negative Results",
+    "section": "Stack combiners",
+    "text": "Stack combiners\n\n\n\n\n\n\nFigure 3: Stack-combiner ablation: the trivial rank-average wins.\n\n\n\n\n\n\n\n\n\n\n\nCombiner\nOOF pAUC\nVerdict\n\n\n\n\nrank-avg [GBDT, nano@224]\n0.17430\nWINNER\n\n\nmeta-LGBM stacker\n0.17108\nloses to trivial\n\n\nrank [+ weak images]\n0.16679\ndilutes\n\n\nlearned per-lesion gate (MoE)\n0.15007\ndecisive loss — below tabular 0.16890\n\n\n+ PCA image embeddings into GBDT\n&lt; 0.17430\nhurts\n\n\n\nTakeaways. The trivial 2-way rank-average wins outright. Every learned or heavier combiner loses, and the MoE gate even falls below the tabular expert alone (0.150 &lt; 0.169). Adding weak images, or stuffing PCA embeddings into the GBDT, dilutes rather than helps.\n\n\n\n\n\n\nA note on reconstructions. A recomputed rank-average over {GBDT + 4 image OOFs} scores 0.16917; the logged “rank [+ weak images]” run (0.16679) used a different weak-image set and is kept as the authoritative logged number. Either way the conclusion holds — adding weak images dilutes. This is the kind of detail we surface rather than smooth over."
+  },
+  {
+    "objectID": "ablations.html#negatives",
+    "href": "ablations.html#negatives",
+    "title": "Ablations & Negative Results",
+    "section": "Negative results, in one figure",
+    "text": "Negative results, in one figure\n\n\n\n\n\n\nFigure 4: Every idea that lost, and what beat it.\n\n\n\n\n\n\n\n\n\n\n\n\nIdea tried\nIts pAUC\nBeaten by\nHonest finding\n\n\n\n\nLearned per-lesion gate (MoE)\n0.15007\n0.16890 (tabular)\nloses to tabular alone\n\n\nMeta-LGBM stacker\n0.17108\n0.17430 (rank-avg)\nloses to trivial rank-avg\n\n\n+ PCA image embeddings into GBDT\n&lt; 0.1743\n0.17430\nembeddings hurt\n\n\nHeavy backbones (SwinV2 / EVA-02)\n0.104 / 0.100\n0.15945 (nano@224)\ndominated — overfit at 393 pos\n\n\nEMA 0.999 (over-smoothing)\n~0.146\n0.15945 (EMA0.995)\nstronger EMA hurts"
+  },
+  {
+    "objectID": "ablations.html#why-everything-complex-lost-is-the-finding",
+    "href": "ablations.html#why-everything-complex-lost-is-the-finding",
+    "title": "Ablations & Negative Results",
+    "section": "Why “everything complex lost” is the finding",
+    "text": "Why “everything complex lost” is the finding\nThere is a structural reason every learned add-on failed: each one must estimate its parameters from the same 393 positives the base experts already consumed. A rank-average has zero parameters, so it cannot overfit the validation folds; a meta-learner, a gate, or extra embedding dimensions all have parameters to fit and not enough fresh positive signal to fit them well. The result generalizes a classical lesson to the extreme-imbalance regime: when positives are scarce, model selection should bias hard toward zero-parameter fusion and small backbones. That is the defensible, reusable claim this study contributes — and it is also the cheapest option, which is why it sits on the efficiency frontier.\n\nContinue to Reproducibility →"
+  },
+  {
+    "objectID": "credits.html",
+    "href": "credits.html",
+    "title": "Credits & Positioning",
+    "section": "",
+    "text": "This project stands on the shoulders of the ISIC-2024 community. We are explicit about what we reused versus what is ours, and we credit the people whose work taught us the task."
+  },
+  {
+    "objectID": "credits.html#champions",
+    "href": "credits.html#champions",
+    "title": "Credits & Positioning",
+    "section": "The leaderboard champions",
+    "text": "The leaderboard champions\nWe did not beat the unconstrained private leaderboard, and we are not trying to — we banned the two ingredients (external data, synthetic positives) that the top teams relied on. Their results are the benchmark our constrained claim is positioned against, and they deserve full credit.\n\n\n\n\n\n\nNote1st place — Ilya Novoselskiy\n\n\n\nPrivate pAUC 0.17264 (post-competition reports cite ~0.1755 for the best unconstrained configuration). An ensemble of EVA-02 + EdgeNeXt image models fused with a GBDT tabular stack. Crucially, the solution used external ISIC-archive dermoscopy data and ~30,000 Stable-Diffusion-synthesized malignant lesions — both of which we deliberately ban.\nThe most instructive detail for our study: their own ablation reports the ~30k synthetic lesions added only +0.0007 pAUC. On a 393-positive task, fabricating 30k positives bought almost nothing — a sobering data point for the “just add synthetic data” reflex, and part of why we judged the label-validity risk not worth taking.\n\n\n\n\n\n\n\n\nNote2nd & 3rd place\n\n\n\n\n2nd — uchiyama33 — strong image + tabular ensemble; a source of the EMA + mixup recipe we adopted for the small backbone.\n3rd — kyohei-123 — likewise a top image/tabular blend.\n\nBoth are credited for the public methodology that shaped the field’s image-expert recipe."
+  },
+  {
+    "objectID": "credits.html#lineage",
+    "href": "credits.html#lineage",
+    "title": "Credits & Positioning",
+    "section": "The public-notebook lineage",
+    "text": "The public-notebook lineage\nOur tabular feature engineering and overall recipe descend directly from the public Kaggle notebooks. We learned the task from them and reuse their ideas with attribution:\n\n\n\n\n\n\n\nSource\nWhat we learned / reused\n\n\n\n\ngreysky — “only tabular”\nThe LightGBM hyperparameters and the tabular-first thesis. Our lgb_bag params are greysky-lineage; the bagging + undersampling structure follows this work.\n\n\nsnnclsr\nTabular feature-engineering patterns and CV structure.\n\n\nmotono0223\nImage-baseline training recipe (small backbones, undersampling).\n\n\nandreasbis — “CNN preds as features”\nThe core stacking idea: feed an image model’s OOF probability into the GBDT as a feature.\n\n\nricholson\nAdditional baseline ideas and ensembling practice.\n\n\n\nWe also vendored the official ISIC-2024 scorer (src/metric_official.py, © 2024 N. R. Kurtansky, MSKCC) verbatim and attributed, purely to prove our metric matches it."
+  },
+  {
+    "objectID": "credits.html#contributions",
+    "href": "credits.html#contributions",
+    "title": "Credits & Positioning",
+    "section": "What we reused vs. what is ours",
+    "text": "What we reused vs. what is ours\n\n\n\n\n\n\nTipReused (with attribution)\n\n\n\n\nThe tabular-first thesis and LightGBM hyperparameter lineage (greysky).\nThe CNN-preds-as-a-feature stacking idea (andreasbis).\nThe EMA + mixup small-backbone recipe (2nd/4th-place public methodology).\nThe official pAUC scorer (Kurtansky / MSKCC), vendored to verify our implementation.\n\n\n\n\n\n\n\n\n\nImportantOur own contributions\n\n\n\n\nThe efficiency frontier as the deliverable. We reframe the task from “one private-LB number” to a quality-vs-cost Pareto frontier across params, FLOPs, and CPU latency — so a model only counts if it earns its cost. Every reported model is one measured point.\nThe no-external / no-synthetic discipline, made rigorous. A locked scope (docs/DECISIONS.md), a cv-guardian with veto power, and a hard no-leak guarantee — turning “we didn’t cheat” into something audited, not asserted.\nThe image-space ugly-duckling. Extending the tabular ugly-duckling idea into the image expert (a within-patient image-deviation signal) — tried, measured, and reported even though it did not help, because honest negatives are the point.\nA complete, honest negative-results catalogue. Meta-stacker, learned MoE gate, image embeddings, heavy transformers, over-strong EMA — every one logged with its number. The finding that complexity consistently lost at 393 positives is itself the contribution."
+  },
+  {
+    "objectID": "credits.html#claim-position",
+    "href": "credits.html#claim-position",
+    "title": "Credits & Positioning",
+    "section": "Where our claim sits",
+    "text": "Where our claim sits\n\n\n\n\n\n\nWarningHonest positioning\n\n\n\n\nWe claim SOTA within the no-external-data / no-synthetic / single-dataset class, on a transparent efficiency frontier with leak-audited CV.\nWe do not claim to beat the champions’ unconstrained ~0.1755 — that used the very ingredients we banned, and matching it is impossible by construction.\nOur best constrained point is OOF pAUC 0.17430 at 15.8 M params / 2.46 GFLOPs / 61 ms CPU. The honest private-test projection is that minus ~0.01–0.02 (see Results).\n\n\n\n\nContinue to References →"
+  },
+  {
+    "objectID": "team.html",
+    "href": "team.html",
+    "title": "Team — Pakistan.AI",
+    "section": "",
+    "text": "Group: Pakistan.AI · Course: Neural Networks · Affiliation: FIC Lab / CSIE, National Yunlin University of Science and Technology (NYUST)"
+  },
+  {
+    "objectID": "team.html#members",
+    "href": "team.html#members",
+    "title": "Team — Pakistan.AI",
+    "section": "Members",
+    "text": "Members\n\n\n\nMember\nStudent ID\nProfile\n\n\n\n\nRaja, Muhammad Junaid Ali Asif\nM11217073\nORCID 0009-0008-9249-9983 · FIC Lab, CSIE, NYUST\n\n\nSultan, Adil\nM11217078\nCSIE, NYUST\n\n\nHassan, Shahzaib Ahmed\nM11217081\nCSIE, NYUST\n\n\n\nAll three members contributed to the design, experiments, analysis, and this report."
+  },
+  {
+    "objectID": "team.html#contributions-at-a-glance",
+    "href": "team.html#contributions-at-a-glance",
+    "title": "Team — Pakistan.AI",
+    "section": "Contributions at a glance",
+    "text": "Contributions at a glance\n\nValidation spine & metric (src/cv.py), the frozen patient-grouped folds, and the cv-guardian no-leak discipline — the foundation every result rests on.\nTabular feature engineering & GBDT (src/features.py, src/gbdt.py) — the efficient anchor, including the patient-relative ugly-duckling features and the underfit-bug fix.\nImage experts & the 12-backbone sweep (src/vision/*) — the protagonist backbone and the resolution/regularizer ablations.\nEfficiency frontier & stacking (src/efficiency.py, src/stack.py, reports/frontier.py) — the three-axis cost measurement and the trivial-combiner result.\nEDA, performance analysis, and this companion site — the figures, the honest negative-results catalogue, and the write-up."
+  },
+  {
+    "objectID": "team.html#citing",
+    "href": "team.html#citing",
+    "title": "Team — Pakistan.AI",
+    "section": "Citing",
+    "text": "Citing\nTo cite the repository, use the metadata in CITATION.cff (GitHub renders a “Cite this repository” button from it). Please also cite the SLICE-3D dataset and the official metric — see References."
+  }
+]

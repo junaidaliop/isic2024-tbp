@@ -1,0 +1,40 @@
+---
+title: "Team — Pakistan.AI"
+subtitle: "Neural Networks course project · CSIE, NYUST"
+toc: false
+---
+
+::: {.callout-note appearance="simple" icon=false}
+**Group:** Pakistan.AI  ·  **Course:** Neural Networks  ·
+**Affiliation:** FIC Lab / CSIE, National Yunlin University of Science and Technology (NYUST)
+:::
+
+## Members
+
+| Member | Student ID | Profile |
+|--------|-----------|---------|
+| **Raja, Muhammad Junaid Ali Asif** | **M11217073** | [ORCID 0009-0008-9249-9983](https://orcid.org/0009-0008-9249-9983) · FIC Lab, CSIE, NYUST |
+| **Sultan, Adil** | **M11217078** | CSIE, NYUST |
+| **Hassan, Shahzaib Ahmed** | **M11217081** | CSIE, NYUST |
+
+All three members contributed to the design, experiments, analysis, and this report.
+
+## Contributions at a glance
+
+- **Validation spine & metric** (`src/cv.py`), the frozen patient-grouped folds, and the
+  `cv-guardian` no-leak discipline — the foundation every result rests on.
+- **Tabular feature engineering & GBDT** (`src/features.py`, `src/gbdt.py`) — the efficient
+  anchor, including the patient-relative ugly-duckling features and the underfit-bug fix.
+- **Image experts & the 12-backbone sweep** (`src/vision/*`) — the protagonist backbone and the
+  resolution/regularizer ablations.
+- **Efficiency frontier & stacking** (`src/efficiency.py`, `src/stack.py`,
+  `reports/frontier.py`) — the three-axis cost measurement and the trivial-combiner result.
+- **EDA, performance analysis, and this companion site** — the figures, the honest
+  negative-results catalogue, and the write-up.
+
+## Citing
+
+To cite the repository, use the metadata in
+[`CITATION.cff`](https://github.com/junaidaliop/isic2024-tbp/blob/main/CITATION.cff) (GitHub
+renders a "Cite this repository" button from it). Please **also** cite the SLICE-3D dataset and
+the official metric — see [References](references.qmd).

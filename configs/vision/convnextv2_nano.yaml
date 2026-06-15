@@ -1,0 +1,41 @@
+# ConvNeXt-V2 nano @128px -- 3rd-place primary encoder, proven ISIC-2024 recipe.
+# .fcmae = MAE self-supervised init then in22k->in1k fine-tune (natural-image
+# pretrain only; no skin labels -> the no-external-data claim survives).
+vision:
+  backbone: convnextv2_nano
+  img_size: 128            # our efficiency target
+  epochs: 15
+  batch_size: 256
+  lr: 0.0001              # AdamW; 1e-4 for CNN/ConvNeXt (use 1e-5 for ViT/eva02)
+  weight_decay: 0.001
+  num_workers: 8
+
+  # THE proven loss: plain BCE + label smoothing (beats focal once the sampler
+  # balances the batch). targets softened y -> y*(1-eps) + eps/2.
+  loss:
+    name: bce
+    label_smoothing: 0.05
+    pos_weight: null       # null -> 1.0 for "bce" (sampler already balances)
+
+  # THE proven imbalance handling: per-epoch negative subsampling.
+  # each epoch = all positives (xpos_mult) + fresh n_pos*neg_ratio negatives,
+  # reshuffled. tiny fast epochs (~few thousand imgs), full fold kept for val.
+  sampler:
+    name: neg_subsample
+    neg_ratio: 7           # negatives per RAW positive (4th place swept 3..50)
+    pos_mult: 2            # upsample positives x2 (3rd place)
+
+  # proven "transV2" albumentations recipe (full, for CNNs).
+  # use variant: light for ViT backbones.
+  aug:
+    variant: transV2       # transV2 | light | minimal
+
+  # cosine LR with short warmup over the whole run.
+  sched:
+    name: cosine
+    warmup_frac: 0.05
+    min_lr_frac: 0.01
+
+  # inference TTA: n_tta=1 keeps the OOF deterministic; >1 mean-pools flip/rot90.
+  tta:
+    n_tta: 1

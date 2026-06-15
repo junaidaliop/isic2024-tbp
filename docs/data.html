@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data &amp; Exploratory Analysis – ISIC-2024 SLICE-3D · Pakistan.AI</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./figures/frontier.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-63e2e98e5f0a71a9a4e33a4ce566497c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-7ac5b58ceed8f18393cd7c30f5cc2c92.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-63e2e98e5f0a71a9a4e33a4ce566497c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-94a5af6db028d44dccee30e9e8a2dd97.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-77e377f5a9e1ca95ea7c5e0563654da7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-94a5af6db028d44dccee30e9e8a2dd97.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&amp;family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+
+
+<link rel="stylesheet" href="figures/site.css">
+<meta property="og:title" content="Data &amp; Exploratory Analysis – ISIC-2024 SLICE-3D · Pakistan.AI">
+<meta property="og:description" content="The SLICE-3D dataset, the imbalance, and what the nine EDA figures reveal">
+<meta property="og:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/eda_fig1_class_imbalance.png">
+<meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
+<meta property="og:image:height" content="670">
+<meta property="og:image:width" content="2005">
+<meta name="twitter:title" content="Data &amp; Exploratory Analysis – ISIC-2024 SLICE-3D · Pakistan.AI">
+<meta name="twitter:description" content="The SLICE-3D dataset, the imbalance, and what the nine EDA figures reveal">
+<meta name="twitter:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/eda_fig1_class_imbalance.png">
+<meta name="twitter:image-height" content="670">
+<meta name="twitter:image-width" content="2005">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">ISIC-2024 SLICE-3D · Pakistan.AI</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Overview</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./data.html" aria-current="page"> 
+<span class="menu-text">Data &amp; EDA</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./methods.html"> 
+<span class="menu-text">Methods</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./results.html"> 
+<span class="menu-text">Results</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./submission.html"> 
+<span class="menu-text">Submission</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./ablations.html"> 
+<span class="menu-text">Ablations</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./reproducibility.html"> 
+<span class="menu-text">Reproduce</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./credits.html"> 
+<span class="menu-text">Credits</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./references.html"> 
+<span class="menu-text">References</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./team.html"> 
+<span class="menu-text">Team</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./slides.html"> <i class="bi bi-easel" role="img">
+</i> 
+<span class="menu-text">Slides</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./ISIC2024-report.pdf"> <i class="bi bi-file-pdf" role="img">
+</i> 
+<span class="menu-text">PDF</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/junaidaliop/isic2024-tbp"> <i class="bi bi-github" role="img" aria-label="GitHub repository">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-the-data-is" id="toc-what-the-data-is" class="nav-link active" data-scroll-target="#what-the-data-is">What the data is</a>
+  <ul class="collapse">
+  <li><a href="#image-details-and-why-we-train-at-128-224-px" id="toc-image-details-and-why-we-train-at-128-224-px" class="nav-link" data-scroll-target="#image-details-and-why-we-train-at-128-224-px">Image details (and why we train at 128 / 224 px)</a></li>
+  <li><a href="#missingness" id="toc-missingness" class="nav-link" data-scroll-target="#missingness">Missingness</a></li>
+  </ul></li>
+  <li><a href="#the-nine-eda-figures" id="toc-the-nine-eda-figures" class="nav-link" data-scroll-target="#the-nine-eda-figures">The nine EDA figures</a>
+  <ul class="collapse">
+  <li><a href="#fig-1-class-imbalance-fold-stratification" id="toc-fig-1-class-imbalance-fold-stratification" class="nav-link" data-scroll-target="#fig-1-class-imbalance-fold-stratification">Fig 1 — Class imbalance &amp; fold stratification</a></li>
+  <li><a href="#fig-2-patient-structure" id="toc-fig-2-patient-structure" class="nav-link" data-scroll-target="#fig-2-patient-structure">Fig 2 — Patient structure</a></li>
+  <li><a href="#fig-3-demographics" id="toc-fig-3-demographics" class="nav-link" data-scroll-target="#fig-3-demographics">Fig 3 — Demographics</a></li>
+  <li><a href="#fig-4-lesion-size" id="toc-fig-4-lesion-size" class="nav-link" data-scroll-target="#fig-4-lesion-size">Fig 4 — Lesion size</a></li>
+  <li><a href="#fig-5-color-border-ugly-duckling-signals" id="toc-fig-5-color-border-ugly-duckling-signals" class="nav-link" data-scroll-target="#fig-5-color-border-ugly-duckling-signals">Fig 5 — Color &amp; border “ugly-duckling” signals</a></li>
+  <li><a href="#fig-6-correlation-of-key-tbp-features" id="toc-fig-6-correlation-of-key-tbp-features" class="nav-link" data-scroll-target="#fig-6-correlation-of-key-tbp-features">Fig 6 — Correlation of key TBP features</a></li>
+  <li><a href="#fig-7-sample-lesion-crops" id="toc-fig-7-sample-lesion-crops" class="nav-link" data-scroll-target="#fig-7-sample-lesion-crops">Fig 7 — Sample lesion crops</a></li>
+  <li><a href="#fig-8-image-embedding-class-separation" id="toc-fig-8-image-embedding-class-separation" class="nav-link" data-scroll-target="#fig-8-image-embedding-class-separation">Fig 8 — Image-embedding class separation</a></li>
+  <li><a href="#fig-9-ugly-duckling-illustration" id="toc-fig-9-ugly-duckling-illustration" class="nav-link" data-scroll-target="#fig-9-ugly-duckling-illustration">Fig 9 — Ugly-duckling illustration</a></li>
+  </ul></li>
+  <li><a href="#the-four-most-striking-takeaways" id="toc-the-four-most-striking-takeaways" class="nav-link" data-scroll-target="#the-four-most-striking-takeaways">The four most striking takeaways</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data &amp; Exploratory Analysis</h1>
+<p class="subtitle lead">The SLICE-3D dataset, the imbalance, and what the nine EDA figures reveal</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="what-the-data-is" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-data-is">What the data is</h2>
+<p>ISIC-2024 <strong>SLICE-3D</strong> is a corpus of lesion crops extracted from <strong>3D Total-Body Photography (TBP)</strong> — full-body imaging that captures every visible mole on a patient at once. Each row is one lesion, with a small square JPEG crop plus a rich tabular record of measurements computed by the TBP vendor’s software (geometry, color, 3D position) and clinical context (age, sex, body site).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fact</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Lesion crops (rows)</td>
+<td><strong>401,059</strong></td>
+</tr>
+<tr class="even">
+<td>Malignant lesions</td>
+<td><strong>393</strong></td>
+</tr>
+<tr class="odd">
+<td>Benign lesions</td>
+<td><strong>400,666</strong></td>
+</tr>
+<tr class="even">
+<td>Prevalence</td>
+<td><strong>0.098%</strong> — about <strong>1 malignant per 1,021 crops</strong></td>
+</tr>
+<tr class="odd">
+<td>Unique patients</td>
+<td><strong>1,042</strong></td>
+</tr>
+<tr class="even">
+<td>Patients with ≥1 malignant lesion</td>
+<td><strong>259</strong> (24.9%)</td>
+</tr>
+<tr class="odd">
+<td>Columns</td>
+<td>55 (35 float, 18 string, 2 int)</td>
+</tr>
+<tr class="even">
+<td>Real (non-leak) feature columns</td>
+<td><strong>36</strong></td>
+</tr>
+<tr class="odd">
+<td>Imaging</td>
+<td>every crop is a TBP tile (<code>TBP tile: close-up</code>); 2 subtypes (<code>3D: XP</code>, <code>3D: white</code>)</td>
+</tr>
+<tr class="even">
+<td>Source institutions</td>
+<td>7 (MSKCC, Hospital Clínic Barcelona, Univ. Basel, Frazer Institute/UQ, ACEMID MIA, MedUni Vienna, Univ. Athens)</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>The imbalance is the whole problem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>At <strong>0.098% prevalence</strong>, a model that predicts “benign” for everything is 99.9% accurate and clinically useless. This is why the task is scored by <strong>partial AUC above 80% TPR</strong>, not plain accuracy or even plain AUC — see <a href="./methods.html#the-metric">Methods → The metric</a>. It is also why <strong>patient-grouped, target-stratified</strong> cross-validation is non-negotiable: with only 393 positives, a single leaked patient or an unlucky split can swing the score more than any model choice.</p>
+</div>
+</div>
+<section id="image-details-and-why-we-train-at-128-224-px" class="level3">
+<h3 class="anchored" data-anchor-id="image-details-and-why-we-train-at-128-224-px">Image details (and why we train at 128 / 224 px)</h3>
+<p>The crops are <strong>variable-size square JPEGs</strong>, ranging from <strong>61 px to 239 px</strong> on a side (median / mean ≈ <strong>131 / 133 px</strong>), and only <strong>~2.8 KB each</strong>. Two consequences for our image experts:</p>
+<ul>
+<li><strong>128 px ≈ the native median.</strong> Training at 128 px is essentially training at the crops’ natural resolution — no information is being thrown away, and epochs are cheap.</li>
+<li><strong>224 px <em>upsamples</em>.</strong> The 224 px model does <strong>not</strong> see extra pixels; it sees the same lesion interpolated larger. So the measured 224 px gain (0.15311 → 0.15945) is a <strong>capacity / training-dynamics</strong> effect (a bigger receptive field for the pretrained backbone, more effective augmentation), <strong>not</strong> extra image detail. We keep both points because <em>resolution is a frontier axis</em>, and we report this caveat honestly.</li>
+</ul>
+</section>
+<section id="missingness" class="level3">
+<h3 class="anchored" data-anchor-id="missingness">Missingness</h3>
+<p>Only three real feature columns have any missing values; everything else is 100% complete.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Column</th>
+<th style="text-align: right;">Missing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sex</code></td>
+<td style="text-align: right;">2.87%</td>
+</tr>
+<tr class="even">
+<td><code>anatom_site_general</code></td>
+<td style="text-align: right;">1.44%</td>
+</tr>
+<tr class="odd">
+<td><code>age_approx</code></td>
+<td style="text-align: right;">0.70%</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Train-only LEAK columns — we drop them
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Several columns exist only in the training split and encode the <strong>answer</strong> or <strong>post-biopsy pathology</strong>. Feeding any of them to a model is leakage; we use them for EDA framing only and drop them before training:</p>
+<p><code>iddx_full</code>, <code>iddx_1</code> … <code>iddx_5</code> (<code>iddx_1</code> is literally <em>Benign / Malignant / Indeterminate</em>), <code>mel_mitotic_index</code>, <code>mel_thick_mm</code>, <code>lesion_id</code>, and <code>tbp_lv_dnn_lesion_confidence</code> (a vendor model’s own confidence — not available at inference and effectively a label proxy).</p>
+</div>
+</div>
+</section>
+</section>
+<section id="the-nine-eda-figures" class="level2">
+<h2 class="anchored" data-anchor-id="the-nine-eda-figures">The nine EDA figures</h2>
+<p>All figures are generated by <code>reports/eda/make_eda.py</code> (read-only on <code>data/</code>, SEED = 42, DPI 150, Okabe-Ito colorblind-safe palette).</p>
+<section id="fig-1-class-imbalance-fold-stratification" class="level3">
+<h3 class="anchored" data-anchor-id="fig-1-class-imbalance-fold-stratification">Fig 1 — Class imbalance &amp; fold stratification</h3>
+<div id="fig-eda1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig1_class_imbalance.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Class imbalance and per-fold positive counts.
+</figcaption>
+</figure>
+</div>
+<p>400,666 benign vs 393 malignant (0.098% prevalence). The five patient-grouped CV folds each hold <strong>77–83 positives</strong> (~0.096–0.103% prevalence per fold), so stratification is tight and <strong>no fold is starved of signal</strong> — a precondition for trustworthy OOF estimates.</p>
+</section>
+<section id="fig-2-patient-structure" class="level3">
+<h3 class="anchored" data-anchor-id="fig-2-patient-structure">Fig 2 — Patient structure</h3>
+<div id="fig-eda2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig2_patient_structure.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Per-patient lesion counts; malignant-carrying patients hold most of the data.
+</figcaption>
+</figure>
+</div>
+<p>1,042 patients with a heavily right-skewed lesion count (<strong>median 241, max 9,184</strong>). The 259 patients who carry at least one malignant lesion hold <strong>89% of all crops</strong> — most data lives with the high-risk patients. This is the structural reason splits <strong>must</strong> be patient-grouped: a patient’s lesions are correlated, so any patient straddling folds leaks information.</p>
+</section>
+<section id="fig-3-demographics" class="level3">
+<h3 class="anchored" data-anchor-id="fig-3-demographics">Fig 3 — Demographics</h3>
+<div id="fig-eda3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig3_demographics.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Age, sex, and body-site malignant rates.
+</figcaption>
+</figure>
+</div>
+<p>Malignant lesions skew older (peak ~60–75), males contribute most crops, and <strong>head/neck stands out</strong>:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Body site</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">Malignant rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>head/neck</strong></td>
+<td style="text-align: right;">12,046</td>
+<td style="text-align: right;"><strong>0.648%</strong></td>
+</tr>
+<tr class="even">
+<td>anterior torso</td>
+<td style="text-align: right;">87,770</td>
+<td style="text-align: right;">0.093%</td>
+</tr>
+<tr class="odd">
+<td>posterior torso</td>
+<td style="text-align: right;">121,902</td>
+<td style="text-align: right;">0.084%</td>
+</tr>
+<tr class="even">
+<td>upper extremity</td>
+<td style="text-align: right;">70,557</td>
+<td style="text-align: right;">0.081%</td>
+</tr>
+<tr class="odd">
+<td>lower extremity</td>
+<td style="text-align: right;">103,028</td>
+<td style="text-align: right;">0.071%</td>
+</tr>
+</tbody>
+</table>
+<p>Head/neck carries <strong>~7× the baseline malignant rate</strong> of any other site, despite being the smallest site — a strong site prior the model should respect.</p>
+</section>
+<section id="fig-4-lesion-size" class="level3">
+<h3 class="anchored" data-anchor-id="fig-4-lesion-size">Fig 4 — Lesion size</h3>
+<div id="fig-eda4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig4_lesion_size.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Clinical diameter and TBP area: malignant ~2× larger.
+</figcaption>
+</figure>
+</div>
+<p>On both clinical longest diameter and TBP area, the malignant distribution is shifted <strong>~2× larger</strong> than benign. Raw lesion size is a strong, cheap univariate signal — and, as the ablations show, its <em>patient-relative</em> version is even stronger.</p>
+</section>
+<section id="fig-5-color-border-ugly-duckling-signals" class="level3">
+<h3 class="anchored" data-anchor-id="fig-5-color-border-ugly-duckling-signals">Fig 5 — Color &amp; border “ugly-duckling” signals</h3>
+<div id="fig-eda5" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig5_color_border.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Hue, contrast, border/color irregularity, eccentricity.
+</figcaption>
+</figure>
+</div>
+<p>Hue angle (<code>tbp_lv_H</code>) separates the classes most cleanly — <strong>univariate AUC 0.81 on a single feature</strong>. Lesion-skin contrast, border/color irregularity, and eccentricity all shift toward higher values for malignant, confirming the TBP color/geometry features carry real, independent signal.</p>
+</section>
+<section id="fig-6-correlation-of-key-tbp-features" class="level3">
+<h3 class="anchored" data-anchor-id="fig-6-correlation-of-key-tbp-features">Fig 6 — Correlation of key TBP features</h3>
+<div id="fig-eda6" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig6_correlation.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Correlation heatmap of 21 core geometry/color features.
+</figcaption>
+</figure>
+</div>
+<p>The core features form tight blocks (a <strong>size group</strong>: diameter / area / perimeter / minor-axis; a <strong>color group</strong>: A / B / ΔA / ΔB). The GBDT therefore sees substantial redundancy — useful for robustness, but a sign that a handful of axes capture most of the variance.</p>
+</section>
+<section id="fig-7-sample-lesion-crops" class="level3">
+<h3 class="anchored" data-anchor-id="fig-7-sample-lesion-crops">Fig 7 — Sample lesion crops</h3>
+<div id="fig-eda7" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig7_sample_crops.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Eight malignant (top) vs eight benign (bottom) crops.
+</figcaption>
+</figure>
+</div>
+<p>Malignant lesions tend to be larger, darker, and more color-varied — but the <strong>visual overlap with benign is large</strong>. That overlap is exactly why a learned image expert is needed on top of the tabular features, and equally why the image expert alone (0.15945) cannot beat the tabular expert (0.16890).</p>
+</section>
+<section id="fig-8-image-embedding-class-separation" class="level3">
+<h3 class="anchored" data-anchor-id="fig-8-image-embedding-class-separation">Fig 8 — Image-embedding class separation</h3>
+<div id="fig-eda8" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig8_embedding_tsne.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: PCA-50 → t-SNE of ConvNeXtV2-nano OOF embeddings.
+</figcaption>
+</figure>
+</div>
+<p>A t-SNE of the small CNN’s OOF embeddings (all 393 positives + 3,000 random negatives): the malignant points <strong>concentrate into a recognizable region</strong> of feature space rather than scattering uniformly. Even a small CNN learns a malignancy-relevant representation — evidence for stacking its OOF probability into the GBDT.</p>
+</section>
+<section id="fig-9-ugly-duckling-illustration" class="level3">
+<h3 class="anchored" data-anchor-id="fig-9-ugly-duckling-illustration">Fig 9 — Ugly-duckling illustration</h3>
+<div id="fig-eda9" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig9_ugly_duckling.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Three patients: the malignant lesion sits at the top of its own size distribution.
+</figcaption>
+</figure>
+</div>
+<p>For three patients with one malignant lesion among many benign ones, the malignant lesion sits at the <strong>top of its own patient’s size distribution</strong> (98th–100th percentile). This is the concrete picture behind the within-patient deviation features.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>The ugly-duckling sign, quantified
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>392 of 393</strong> malignant lesions come from a patient who <em>also</em> has benign lesions — so almost every positive can be judged against that patient’s own “normal” moles.</li>
+<li>On <code>clin_size_long_diam_mm</code>, the malignant lesion sits at a <strong>median 88th within-patient percentile</strong>; <strong>45.7%</strong> of malignant lesions are in the <strong>top 10%</strong> of their own patient’s lesion sizes. This is the quantitative basis for the engineered patient-relative features — not folklore, but a measured effect.</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="the-four-most-striking-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="the-four-most-striking-takeaways">The four most striking takeaways</h2>
+<ol type="1">
+<li><strong>The imbalance is the whole problem.</strong> 0.098% prevalence is why the task uses partial-AUC-above-80%-TPR and why patient-grouped, target-stratified CV is mandatory. The folds confirm 77–83 positives each with zero patients straddling folds.</li>
+<li><strong>Tabular signal is real and cheap.</strong> Single features already separate well: hue <code>tbp_lv_H</code> reaches univariate AUC 0.81, and lesion size shows a clean ~2× malignant shift. This is the evidence base for the LightGBM-first architecture.</li>
+<li><strong>The ugly-duckling sign is quantitatively present.</strong> A lesion’s deviation from its own patient’s distribution is well-motivated — and it turns out to be the single dominant signal in the trained model (~65% of GBDT gain; see <a href="./results.html">Results</a>).</li>
+<li><strong>The small CNN adds an orthogonal axis.</strong> Its embeddings cluster the positives despite heavy visual overlap in raw crops — justifying a stacked image OOF probability, while head/neck’s ~7× elevated rate flags a site prior worth respecting.</li>
+</ol>
+<hr>
+<p><em>Continue to <a href="./methods.html">Methods →</a></em></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/junaidaliop\.github\.io\/isic2024-tbp\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 <strong>Pakistan.AI</strong> — Raja · Sultan · Hassan · Neural Networks, CSIE NYUST</p>
+</div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="./references.html#cite-this-work">
+<p>Cite this</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="./references.html#dataset">
+<p>Dataset (CC BY-NC 4.0)</p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="./credits.html">
+<p>Credits</p>
+</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/junaidaliop/isic2024-tbp">
+      <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
