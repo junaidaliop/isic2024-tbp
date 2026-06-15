@@ -23,8 +23,8 @@ pAUC@80%TPR per unit of inference cost, on ISIC-2024 data alone.
 | model | pAUC@80%TPR | params (M) | GFLOPs | CPU ms* |
 |---|---|---|---|---|
 | LightGBM + CatBoost (tabular, bagged) | **0.1689** | — | ~0 | ~0 |
-| best image expert (ConvNeXt-V2-nano @224) | 0.1595 | 15.0 | 2.46 | 61 |
-| **stack** — rank-avg(tabular, image) | **0.1743** | 15.8 | 2.46 | 61 |
+| best image expert (ConvNeXt-V2-nano @224) | 0.1582 | 15.0 | 2.46 | 61 |
+| **stack** — rank-avg(tabular, image) | **0.1738** | 15.8 | 2.46 | 61 |
 | cheapest image (EfficientViT-b0 @128) | 0.1371 | 2.1 | 0.034 | 3.5 |
 
 \* median single-image latency, 1 thread. Patient-grouped 5-fold CV; every number is
@@ -63,7 +63,7 @@ make folds      # freeze patient-grouped folds + metric sanity — ALWAYS first
 make test       # spine tests: metric anchors, no-leak, official-equivalence
 make gbdt       # bagged tabular model -> OOF + pAUC  (0.1689)
 make vision CFG=configs/vision/convnextv2_nano_r224.yaml   # an image expert -> OOF + embeddings
-python experiments/run_stack.py    # combine -> stack OOF (0.1743) + frontier row
+python experiments/run_stack.py    # combine -> stack OOF (0.1738) + frontier row
 make frontier   # Pareto figures (pAUC vs params / GFLOPs / CPU ms)
 make site       # render the companion website -> docs/
 ```

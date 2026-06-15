@@ -32,7 +32,7 @@ Because the absolute number is then out of reach by construction, we re-pose the
 **quality-vs-cost Pareto frontier**: the best official partial-AUC above 80% TPR achievable per
 unit of inference cost (parameters, FLOPs, single-thread CPU latency). A hybrid pipeline — a
 LightGBM tabular expert over intrinsic engineered features plus a small ImageNet-pretrained image
-backbone, fused by a trivial rank-average — reaches **out-of-fold pAUC 0.17430** at 15.8 M
+backbone, fused by a trivial rank-average — reaches **out-of-fold pAUC 0.17376** at 15.8 M
 params / 2.46 GFLOPs / 61 ms CPU. The recurring finding: **every increase in model complexity we
 tried lost.** At 393 positives, the small backbone, the zero-parameter combiner, and intrinsic
 tabular features are both cheaper and more accurate.
@@ -102,8 +102,8 @@ from the OOF parquets by the `cv-guardian`.
 | Model | OOF pAUC@80%TPR | Params (M) | GFLOPs | CPU ms/img |
 |---|---|---|---|---|
 | GBDT (tabular only) | 0.16890 | 0.86 | ~0 | 0.02 |
-| Best image (convnextv2_nano@224) | 0.15945 | 14.98 | 2.46 | 60.9 |
-| **Stack rank-avg[GBDT, nano@224]** | **0.17430** | 15.84 | 2.46 | 60.9 |
+| Best image (convnextv2_nano@224) | 0.15821 | 14.98 | 2.46 | 60.9 |
+| **Stack rank-avg[GBDT, nano@224]** | **0.17376** | 15.84 | 2.46 | 60.9 |
 | Cheap stack (gbdt+3img+udk) | 0.17117 | 23.84 | 1.22 | 32.9 |
 | effvit_b0 (cheap frontier) | 0.13706 | 2.13 | 0.034 | 3.5 |
 | mnv4_small (latency floor) | 0.11242 | 2.49 | 0.062 | 3.1 |
@@ -112,7 +112,7 @@ from the OOF parquets by the `cv-guardian`.
 
 ![OOF ROC with the scored pAUC@80%TPR band shaded.](figures/perf_fig1_roc_pauc.png){width=80%}
 
-Per-fold: tabular 0.1693 ± 0.0112, image 0.1597 ± 0.0085, **stack 0.1749 ± 0.0068** — the stack
+Per-fold: tabular 0.1693 ± 0.0112, image 0.1591 ± 0.0091, **stack 0.1747 ± 0.0073** — the stack
 is both the most accurate and the most stable (wins/ties on every fold). Patient-relative
 features account for ~65% of total GBDT gain. A fair private-test projection is the OOF headline
 minus ~0.01–0.02.
@@ -122,8 +122,8 @@ minus ~0.01–0.02.
 | Track | Progression / finding | pAUC |
 |---|---|---|
 | Tabular | broken → fixed → +ugly-duckling → bagged+CatBoost | 0.099 → 0.118 → 0.144 → **0.169** |
-| Image | nano@128 → nano@224; heavy backbones collapse | 0.153 → **0.159**; Swin/EVA 0.104/0.100 |
-| Stack | rank-avg **wins** vs meta-LGBM vs gate vs +embeddings | **0.1743** vs 0.171 vs 0.150 vs <0.174 |
+| Image | nano@128 → nano@224; heavy backbones collapse | 0.153 → **0.158**; Swin/EVA 0.104/0.100 |
+| Stack | rank-avg **wins** vs meta-LGBM vs gate vs +embeddings | **0.1738** vs 0.171 vs 0.150 vs <0.174 |
 
 ![Negative-results summary: every complexity increase lost.](figures/perf_fig6_negative_results.png){width=90%}
 

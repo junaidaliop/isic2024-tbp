@@ -221,10 +221,10 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
     B --&gt; C["Tabular FE&lt;br/&gt;+ ugly-duckling"]
     B --&gt; E["Small image&lt;br/&gt;backbone @128/224"]
     C --&gt; D["Bagged GBDT&lt;br/&gt;0.16890"]
-    E --&gt; F["Image OOF prob&lt;br/&gt;0.15945"]
+    E --&gt; F["Image OOF prob&lt;br/&gt;0.15821"]
     D --&gt; G["rank-average&lt;br/&gt;(param-free)"]
     F --&gt; G
-    G --&gt; H["Stack&lt;br/&gt;&lt;b&gt;0.17430&lt;/b&gt;"]
+    G --&gt; H["Stack&lt;br/&gt;&lt;b&gt;0.17376&lt;/b&gt;"]
     style A fill:#0b6e4f,color:#fff
     style H fill:#1e8449,color:#fff
 </pre>
@@ -265,14 +265,14 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 </tr>
 <tr class="even">
 <td>Best image (nano@224)</td>
-<td style="text-align: right;">0.15945</td>
+<td style="text-align: right;">0.15821</td>
 <td style="text-align: right;">14.98 M</td>
 <td style="text-align: right;">2.46</td>
 <td style="text-align: right;">60.9</td>
 </tr>
 <tr class="odd">
 <td><strong>Stack (rank-avg)</strong></td>
-<td style="text-align: right;"><strong>0.17430</strong></td>
+<td style="text-align: right;"><strong>0.17376</strong></td>
 <td style="text-align: right;">15.84 M</td>
 <td style="text-align: right;">2.46</td>
 <td style="text-align: right;">60.9</td>
@@ -286,7 +286,7 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 </tr>
 </tbody>
 </table>
-<p>GBDT alone banks ~97% of the best score at ~free cost. The image expert earns <strong>+0.0054</strong> inside the stack.</p>
+<p>GBDT alone banks ~97% of the best score at ~free cost. The image expert earns <strong>+0.0049</strong> inside the stack.</p>
 </section>
 <section id="the-frontier" class="slide level2">
 <h2>The frontier</h2>
@@ -313,11 +313,11 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 </tr>
 <tr class="even">
 <td>Best image</td>
-<td>0.1597 ± 0.0085</td>
+<td>0.1591 ± 0.0091</td>
 </tr>
 <tr class="odd">
 <td><strong>Stack</strong></td>
-<td><strong>0.1749 ± 0.0068</strong></td>
+<td><strong>0.1747 ± 0.0073</strong></td>
 </tr>
 </tbody>
 </table>
@@ -351,7 +351,7 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 <h2>Conclusion</h2>
 <ul>
 <li>Defensible claim: <strong>SOTA among single-dataset, no-external-data, no-synthetic solutions, on a quality–efficiency frontier.</strong></li>
-<li>Best constrained point: <strong>OOF pAUC 0.17430</strong> @ 15.8 M / 2.46 GFLOPs / 61 ms CPU.</li>
+<li>Best constrained point: <strong>OOF pAUC 0.17376</strong> @ 15.8 M / 2.46 GFLOPs / 61 ms CPU.</li>
 <li>Validation discipline + an explicit cost axis give the result teeth.</li>
 <li>Reproducible: <code>SEED=42</code>, config-driven, <code>make folds → gbdt → vision → frontier → site</code>.</li>
 </ul>

@@ -13,13 +13,13 @@ by the `cv-guardian` agent. Figures come from `reports/frontier.py` and `reports
 | Model | OOF pAUC@80%TPR |
 |---|---:|
 | Tabular GBDT | **0.16890** |
-| Best image (ConvNeXtV2-nano &#64;224) | 0.15945 |
-| **Stack — rank-avg[GBDT, nano@224]** | **[0.17430]{.metric-chip}** |
+| Best image (ConvNeXtV2-nano &#64;224) | 0.15821 |
+| **Stack — rank-avg[GBDT, nano@224]** | **[0.17376]{.metric-chip}** |
 
-The stack reconstruction `rank-avg[gbdt, r224]` recomputes to **0.17430**, matching the canonical
+The stack reconstruction `rank-avg[gbdt, r224]` recomputes to **0.17376**, matching the canonical
 `stack_oof.parquet` exactly — the combiner is genuinely a 2-way rank average, with nothing
 hidden. Image and tabular make **complementary errors**, so the trivial rank-average buys
-**+0.0054** over tabular alone.
+**+0.0049** over tabular alone.
 
 ## The quality-vs-cost frontier (three axes)
 
@@ -53,13 +53,13 @@ Reading across the three axes, the defensible frontier points are:
 | `effvit_b0` &#64;128 | 0.13706 | **2.13** | **0.034** | 3.45 | most accuracy per FLOP/param |
 | **GBDT** | 0.16890 | 0.86 | ~0 | **0.02** | dominates everything on cost — the anchor |
 | Cheap stack `gbdt+3img+udk` | 0.17117 | 23.84 | 1.22 | 32.9 | second-best accuracy, ~half the latency of best |
-| **Stack `gbdt+nano@224`** | **0.17430** | 15.84 | 2.46 | 60.9 | **best accuracy** on the whole study |
+| **Stack `gbdt+nano@224`** | **0.17376** | 15.84 | 2.46 | 60.9 | **best accuracy** on the whole study |
 
 ::: {.callout-note}
 ## How to read this
 - The **GBDT alone** is almost free and already at 0.169 — it dominates every image-only model
   on cost, and most on accuracy too. This is why the architecture is GBDT-first.
-- The image expert only earns its place **inside the stack**: `+0.0054` pAUC for `+60 ms`. Whether
+- The image expert only earns its place **inside the stack**: `+0.0049` pAUC for `+60 ms`. Whether
   that trade is worth it is a deployment decision — which is exactly why we report a frontier,
   not a single number.
 - The heavy backbones (`mnv5_300m` at 294 M / 765 ms, `eva02_small`, `swinv2_tiny`) are **far off
@@ -74,7 +74,7 @@ Reading across the three axes, the defensible frontier points are:
 
 The shaded band is **exactly what the metric integrates** — the area under the ROC for TPR ≥
 0.80 (equivalently FPR ≤ 0.20). In that scored band the **stack sits above both single experts**:
-the visual confirmation that the +0.0054 lift is concentrated where it is scored, not smeared
+the visual confirmation that the +0.0049 lift is concentrated where it is scored, not smeared
 across useless low-sensitivity operating points.
 
 ## Per-fold stability
@@ -83,19 +83,19 @@ across useless low-sensitivity operating points.
 
 | Fold | Tabular | Best image | Stack |
 |---|---:|---:|---:|
-| 0 | 0.18014 | 0.16040 | 0.17999 |
-| 1 | 0.15424 | 0.17119 | 0.17282 |
-| 2 | 0.17614 | 0.16298 | 0.18000 |
-| 3 | 0.17871 | 0.15906 | 0.17910 |
-| 4 | 0.15708 | 0.14504 | 0.16246 |
-| **mean ± std** | **0.1693 ± 0.0112** | **0.1597 ± 0.0085** | **0.1749 ± 0.0068** |
+| 0 | 0.18014 | 0.16087 | 0.18061 |
+| 1 | 0.15424 | 0.16947 | 0.17246 |
+| 2 | 0.17614 | 0.16499 | 0.18003 |
+| 3 | 0.17871 | 0.15733 | 0.17898 |
+| 4 | 0.15708 | 0.14277 | 0.16139 |
+| **mean ± std** | **0.1693 ± 0.0112** | **0.1591 ± 0.0091** | **0.1747 ± 0.0073** |
 
 ::: {.callout-important}
 ## Fold variance is the dominant uncertainty — and the stack tames it
 At 393 positives, per-fold pAUC swings by ~0.025 (tabular ranges 0.154 → 0.180 across folds), so
 **fold-to-fold variance is larger than the gap between models.** This is why a single-fold number
-would be untrustworthy. The strongest evidence the +0.0054 is real and not a fluke: the **stack
-has the lowest std (0.0068) and wins or ties on *every* fold**. It is both the most accurate and
+would be untrustworthy. The strongest evidence the +0.0049 is real and not a fluke: the **stack
+has the lowest std (0.0073) and wins or ties on *every* fold**. It is both the most accurate and
 the most stable estimator we have.
 :::
 
@@ -139,7 +139,7 @@ metric, calibration is irrelevant to pAUC. It is a feature of the design, not a 
 ## What to expect on a hidden test set
 The field saw a roughly **0.013–0.021 public→private drop** on this task even with clean CV —
 driven by the 393-positive scale and (for the winners) heavy reliance on external/synthetic data.
-Our headline is **OOF CV 0.1743 (stack) / 0.1689 (tabular)**; a fair private-test projection is
+Our headline is **OOF CV 0.1738 (stack) / 0.1689 (tabular)**; a fair private-test projection is
 **headline minus ~0.01–0.02**. We state this openly. Because **no part of our pipeline ever saw
 out-of-distribution data**, our OOF number is, if anything, a *more* honest predictor of
 generalization than a leaderboard-tuned score.

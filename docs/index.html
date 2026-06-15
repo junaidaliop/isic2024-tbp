@@ -413,7 +413,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <div class="stat-cards">
 <div class="stat-card is-feature">
-<p><span class="stat-value">0.1743</span> <span class="stat-label">Stack OOF pAUC@80%TPR</span></p>
+<p><span class="stat-value">0.1738</span> <span class="stat-label">Stack OOF pAUC@80%TPR</span></p>
 </div>
 <div class="stat-card">
 <p><span class="stat-value">0.1689</span> <span class="stat-label">Tabular GBDT OOF pAUC</span></p>
@@ -455,7 +455,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
 <p>We study the <strong>ISIC-2024 SLICE-3D</strong> skin-lesion task — classifying ~401,059 lesion crops extracted from 3D total-body photography (TBP) as malignant or benign — under a deliberately strict regime. The competition’s top private-leaderboard solutions reached pAUC ≈ 0.173, but they did so by importing <strong>external</strong> dermoscopy archives <strong>and</strong> roughly <strong>30,000 diffusion-synthesized malignant lesions</strong>. We ban both. On medical images, training or validating on fabricated pathology is a label-validity hole; and importing external data breaks the “single dataset” premise. Removing those two crutches is exactly what our experiment isolates.</p>
 <p>Because the absolute leaderboard number is then <strong>out of reach by construction</strong>, we re-pose the problem as a <strong>Pareto frontier</strong>: the best official <strong>pAUC above 80% TPR</strong> achievable per unit of inference cost (parameters, FLOPs, and single-thread CPU latency), on SLICE-3D data alone. The architecture is a <strong>hybrid</strong>: a LightGBM tabular expert over intrinsic engineered features (geometry, color/hue contrast, size ratios, and patient-relative “ugly-duckling” deviations) provides the efficient anchor; a <strong>small</strong> ImageNet-pretrained image backbone contributes an out-of-fold (OOF) malignancy probability that is fused into the final score by a <strong>trivial rank-average</strong> combiner.</p>
-<p>The honest punchline: <strong>every increase in model complexity we tried lost.</strong> The trivial 2-way rank-average beats a meta-LightGBM stacker, a learned per-lesion gate, and the addition of image embeddings; the small <code>convnextv2_nano</code> backbone beats heavy transformers (SwinV2, EVA-02) that collapse to near-random at 393 positives. Our best frontier point — <code>rank-avg[GBDT, convnextv2_nano@224]</code> — reaches <strong>OOF pAUC 0.17430</strong> at <strong>15.8 M params / 2.46 GFLOPs / 61 ms CPU per image</strong>.</p>
+<p>The honest punchline: <strong>every increase in model complexity we tried lost.</strong> The trivial 2-way rank-average beats a meta-LightGBM stacker, a learned per-lesion gate, and the addition of image embeddings; the small <code>convnextv2_nano</code> backbone beats heavy transformers (SwinV2, EVA-02) that collapse to near-random at 393 positives. Our best frontier point — <code>rank-avg[GBDT, convnextv2_nano@224]</code> — reaches <strong>OOF pAUC 0.17376</strong> at <strong>15.8 M params / 2.46 GFLOPs / 61 ms CPU per image</strong>.</p>
 </section>
 <section id="headline" class="level2">
 <h2 class="anchored" data-anchor-id="headline">Headline results</h2>
@@ -490,7 +490,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td>Best image (<code>convnextv2_nano@224</code>)</td>
-<td style="text-align: right;">0.15945</td>
+<td style="text-align: right;">0.15821</td>
 <td style="text-align: right;">14.98</td>
 <td style="text-align: right;">2.46</td>
 <td style="text-align: right;">60.9</td>
@@ -498,7 +498,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><strong>Stack — <code>rank-avg[GBDT, nano@224]</code></strong></td>
-<td style="text-align: right;"><strong><span class="metric-chip">0.17430</span></strong></td>
+<td style="text-align: right;"><strong><span class="metric-chip">0.17376</span></strong></td>
 <td style="text-align: right;">15.84</td>
 <td style="text-align: right;">2.46</td>
 <td style="text-align: right;">60.9</td>
@@ -536,7 +536,7 @@ ul.task-list li input[type="checkbox"] {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>Reading the metric.</strong> pAUC@80%TPR integrates the ROC curve only in the high-sensitivity tail (TPR ≥ 0.80). It is bounded in <code>[0, 0.20]</code>, so a move from 0.169 → 0.174 is a <strong>+3.2% relative</strong> improvement, not a rounding error. See <a href="./methods.html#the-metric">Methods → The metric</a>.</p>
+<p><strong>Reading the metric.</strong> pAUC@80%TPR integrates the ROC curve only in the high-sensitivity tail (TPR ≥ 0.80). It is bounded in <code>[0, 0.20]</code>, so a move from 0.169 → 0.174 is a <strong>+2.9% relative</strong> improvement, not a rounding error. See <a href="./methods.html#the-metric">Methods → The metric</a>.</p>
 </div>
 </div>
 </div>
@@ -604,12 +604,12 @@ ul.task-list li input[type="checkbox"] {
     B --&gt; E["Image crops @128 / @224&lt;br/&gt;small ImageNet-pretrained backbone&lt;br/&gt;per-epoch neg-undersample ~1:1&lt;br/&gt;BCE+LS · EMA(0.995) · mixup · TTA"]
 
     C --&gt; D["Bagged GBDT expert&lt;br/&gt;LightGBM (5-seed) + CatBoost&lt;br/&gt;rank-blend&lt;br/&gt;&lt;b&gt;OOF pAUC 0.16890&lt;/b&gt;"]
-    E --&gt; F["Image expert&lt;br/&gt;OOF malignancy prob&lt;br/&gt;(+ embedding, ablated)&lt;br/&gt;&lt;b&gt;OOF pAUC 0.15945&lt;/b&gt;"]
+    E --&gt; F["Image expert&lt;br/&gt;OOF malignancy prob&lt;br/&gt;(+ embedding, ablated)&lt;br/&gt;&lt;b&gt;OOF pAUC 0.15821&lt;/b&gt;"]
 
     D --&gt; G["Combiner = rank-average&lt;br/&gt;(param-free, robust)"]
     F --&gt; G
 
-    G --&gt; H["Final OOF score&lt;br/&gt;&lt;b&gt;pAUC 0.17430&lt;/b&gt;&lt;br/&gt;15.8M params · 2.46 GFLOPs · 61 ms CPU"]
+    G --&gt; H["Final OOF score&lt;br/&gt;&lt;b&gt;pAUC 0.17376&lt;/b&gt;&lt;br/&gt;15.8M params · 2.46 GFLOPs · 61 ms CPU"]
     H --&gt; I["Submission / frontier point"]
 
     style A fill:#0b6e4f,color:#fff

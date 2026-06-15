@@ -61,10 +61,10 @@ flowchart LR
     B --> C["Tabular FE<br/>+ ugly-duckling"]
     B --> E["Small image<br/>backbone @128/224"]
     C --> D["Bagged GBDT<br/>0.16890"]
-    E --> F["Image OOF prob<br/>0.15945"]
+    E --> F["Image OOF prob<br/>0.15821"]
     D --> G["rank-average<br/>(param-free)"]
     F --> G
-    G --> H["Stack<br/><b>0.17430</b>"]
+    G --> H["Stack<br/><b>0.17376</b>"]
     style A fill:#0b6e4f,color:#fff
     style H fill:#1e8449,color:#fff
 ```
@@ -82,11 +82,11 @@ flowchart LR
 | Model | OOF pAUC@80%TPR | Params | GFLOPs | CPU ms |
 |---|---:|---:|---:|---:|
 | GBDT (tabular) | 0.16890 | 0.86 M | ~0 | 0.02 |
-| Best image (nano@224) | 0.15945 | 14.98 M | 2.46 | 60.9 |
-| **Stack (rank-avg)** | **0.17430** | 15.84 M | 2.46 | 60.9 |
+| Best image (nano@224) | 0.15821 | 14.98 M | 2.46 | 60.9 |
+| **Stack (rank-avg)** | **0.17376** | 15.84 M | 2.46 | 60.9 |
 | Cheap stack | 0.17117 | 23.84 M | 1.22 | 32.9 |
 
-GBDT alone banks ~97% of the best score at ~free cost. The image expert earns **+0.0054** inside the stack.
+GBDT alone banks ~97% of the best score at ~free cost. The image expert earns **+0.0049** inside the stack.
 
 ## The frontier
 
@@ -103,8 +103,8 @@ The stack sits above both experts **exactly where the metric integrates**.
 | | mean ± std |
 |---|---|
 | Tabular | 0.1693 ± 0.0112 |
-| Best image | 0.1597 ± 0.0085 |
-| **Stack** | **0.1749 ± 0.0068** |
+| Best image | 0.1591 ± 0.0091 |
+| **Stack** | **0.1747 ± 0.0073** |
 
 Fold variance (~0.025) > model gaps — yet the **stack wins/ties every fold** and has the lowest std.
 
@@ -130,7 +130,7 @@ Fold variance (~0.025) > model gaps — yet the **stack wins/ties every fold** a
 ## Conclusion {.smaller}
 
 - Defensible claim: **SOTA among single-dataset, no-external-data, no-synthetic solutions, on a quality–efficiency frontier.**
-- Best constrained point: **OOF pAUC 0.17430** @ 15.8 M / 2.46 GFLOPs / 61 ms CPU.
+- Best constrained point: **OOF pAUC 0.17376** @ 15.8 M / 2.46 GFLOPs / 61 ms CPU.
 - Validation discipline + an explicit cost axis give the result teeth.
 - Reproducible: `SEED=42`, config-driven, `make folds → gbdt → vision → frontier → site`.
 

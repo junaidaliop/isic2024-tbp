@@ -44,7 +44,7 @@ experts:
 - **128 px ≈ the native median.** Training at 128 px is essentially training at the crops'
   natural resolution — no information is being thrown away, and epochs are cheap.
 - **224 px *upsamples*.** The 224 px model does **not** see extra pixels; it sees the same lesion
-  interpolated larger. So the measured 224 px gain (0.15311 → 0.15945) is a **capacity /
+  interpolated larger. So the measured 224 px gain (0.15311 → 0.15821) is a **capacity /
   training-dynamics** effect (a bigger receptive field for the pretrained backbone, more
   effective augmentation), **not** extra image detail. We keep both points because *resolution
   is a frontier axis*, and we report this caveat honestly.
@@ -141,7 +141,7 @@ for robustness, but a sign that a handful of axes capture most of the variance.
 
 Malignant lesions tend to be larger, darker, and more color-varied — but the **visual overlap
 with benign is large**. That overlap is exactly why a learned image expert is needed on top of
-the tabular features, and equally why the image expert alone (0.15945) cannot beat the tabular
+the tabular features, and equally why the image expert alone (0.15821) cannot beat the tabular
 expert (0.16890).
 
 ### Fig 8 — Image-embedding class separation

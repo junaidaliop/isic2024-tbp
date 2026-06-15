@@ -472,7 +472,7 @@ ul.task-list li input[type="checkbox"] {
 <p>The crops are <strong>variable-size square JPEGs</strong>, ranging from <strong>61 px to 239 px</strong> on a side (median / mean ≈ <strong>131 / 133 px</strong>), and only <strong>~2.8 KB each</strong>. Two consequences for our image experts:</p>
 <ul>
 <li><strong>128 px ≈ the native median.</strong> Training at 128 px is essentially training at the crops’ natural resolution — no information is being thrown away, and epochs are cheap.</li>
-<li><strong>224 px <em>upsamples</em>.</strong> The 224 px model does <strong>not</strong> see extra pixels; it sees the same lesion interpolated larger. So the measured 224 px gain (0.15311 → 0.15945) is a <strong>capacity / training-dynamics</strong> effect (a bigger receptive field for the pretrained backbone, more effective augmentation), <strong>not</strong> extra image detail. We keep both points because <em>resolution is a frontier axis</em>, and we report this caveat honestly.</li>
+<li><strong>224 px <em>upsamples</em>.</strong> The 224 px model does <strong>not</strong> see extra pixels; it sees the same lesion interpolated larger. So the measured 224 px gain (0.15311 → 0.15821) is a <strong>capacity / training-dynamics</strong> effect (a bigger receptive field for the pretrained backbone, more effective augmentation), <strong>not</strong> extra image detail. We keep both points because <em>resolution is a frontier axis</em>, and we report this caveat honestly.</li>
 </ul>
 </section>
 <section id="missingness" class="level3">
@@ -652,7 +652,7 @@ Figure&nbsp;7: Eight malignant (top) vs eight benign (bottom) crops.
 </figcaption>
 </figure>
 </div>
-<p>Malignant lesions tend to be larger, darker, and more color-varied — but the <strong>visual overlap with benign is large</strong>. That overlap is exactly why a learned image expert is needed on top of the tabular features, and equally why the image expert alone (0.15945) cannot beat the tabular expert (0.16890).</p>
+<p>Malignant lesions tend to be larger, darker, and more color-varied — but the <strong>visual overlap with benign is large</strong>. That overlap is exactly why a learned image expert is needed on top of the tabular features, and equally why the image expert alone (0.15821) cannot beat the tabular expert (0.16890).</p>
 </section>
 <section id="fig-8-image-embedding-class-separation" class="level3">
 <h3 class="anchored" data-anchor-id="fig-8-image-embedding-class-separation">Fig 8 — Image-embedding class separation</h3>

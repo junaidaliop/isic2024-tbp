@@ -80,10 +80,10 @@ field's observed **CV → private drop** on this task was roughly **0.013–0.02
 ## CV → estimated private
 | Quantity | Value | Source |
 |---|---:|---|
-| Stack OOF pAUC@80%TPR | **0.17430** | `stack_oof.parquet`, re-derived by `cv-guardian` |
+| Stack OOF pAUC@80%TPR | **0.17376** | `stack_oof.parquet`, re-derived by `cv-guardian` |
 | Tabular GBDT OOF pAUC | **0.16890** | `gbdt_oof.parquet` |
 | Observed CV → private drop (field) | **0.013 – 0.021** | post-competition write-ups |
-| **Estimated private (stack)** | **≈ 0.155 – 0.165** | 0.1743 − drop |
+| **Estimated private (stack)** | **≈ 0.155 – 0.165** | 0.1738 − drop |
 | Estimated private (tabular-only, ready today) | **≈ 0.148 – 0.156** | 0.1689 − drop |
 :::
 

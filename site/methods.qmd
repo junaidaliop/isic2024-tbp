@@ -33,7 +33,7 @@ in **`[0, 0.20]`**:
 - **random** classifier ≈ **0.02**,
 - **perfect** classifier = **0.20**.
 
-A move from 0.169 → 0.174 is therefore a **+3.2% relative** gain on a small absolute scale —
+A move from 0.169 → 0.174 is therefore a **+2.9% relative** gain on a small absolute scale —
 small absolute moves are large relative moves, and we phrase improvements that way throughout.
 
 ### Two pitfalls we pinned down up front
@@ -72,7 +72,7 @@ Validation is not a step here — it is the spine everything hangs on.
 **Out-of-fold (OOF) predictions.** For each fold we train on the other four and predict on the
 held-out fold; concatenating the five held-out predictions gives one prediction per row, none of
 which ever saw its own row in training. We score pAUC **once** on this full OOF vector. Because
-pAUC is non-additive across folds, the full-OOF number (0.17430) differs trivially from the mean
+pAUC is non-additive across folds, the full-OOF number (0.17376) differs trivially from the mean
 of per-fold pAUCs (0.17487) — both are reported.
 :::
 
@@ -167,7 +167,7 @@ frontier, measured by the `efficiency-auditor`.
   steps) *lags* the weights and **hurts** (fold-0: 0.146 vs 0.156); **0.995 + warmup helps**
   (0.163). Pinned at 0.995.
 - **Resolution as a frontier axis.** We keep both `convnextv2_nano@128` (0.15311) and `@224`
-  (0.15945) as distinct points, because resolution trades accuracy for cost.
+  (0.15821) as distinct points, because resolution trades accuracy for cost.
 
 ### The 12-backbone frontier sweep
 
@@ -194,12 +194,12 @@ did not exhaust in the 2-day budget.
 
 | Combiner | What it does | OOF pAUC |
 |---|---|---:|
-| **Rank-average** | average the percentile ranks of GBDT and image OOF — **param-free** | **0.17430** |
+| **Rank-average** | average the percentile ranks of GBDT and image OOF — **param-free** | **0.17376** |
 | Meta-LightGBM | a second-level GBDT over the expert OOFs | 0.17108 |
 | Learned per-lesion gate (MoE) | a network picks expert weights per lesion | 0.15007 |
 
 We also tried adding the **image embedding** (PCA components) and an **image-space ugly-duckling**
-feature into the GBDT; both **hurt** (< 0.1743).
+feature into the GBDT; both **hurt** (< 0.1738).
 
 ::: {.callout-note}
 ## Why the trivial combiner wins at 393 positives

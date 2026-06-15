@@ -36,7 +36,7 @@ CatBoost (Step 3) adds another +0.025 from variance reduction across seeds and f
 | Config | OOF pAUC | Verdict |
 |---|---:|---|
 | `convnextv2_nano` &#64;128 | 0.15311 | baseline image point |
-| **`convnextv2_nano` &#64;224 + EMA0.995 + mixup** | **0.15945** | best image — the sweet spot |
+| **`convnextv2_nano` &#64;224 + EMA0.995 + mixup** | **0.15821** | best image — the sweet spot |
 | ↳ same, EMA **0.999** | ~0.146 | **HURT** (over-smooths at ~23 steps/epoch) |
 | `convnextv2_tiny` &#64;224 | 0.15824 | slightly *worse* than nano, ~2× the cost |
 | `swinv2_tiny` &#64;256 | 0.10422 | **collapse** — near random |
@@ -53,11 +53,11 @@ more capacity, less signal. Even `convnextv2_tiny` (2× nano's params) is *worse
 
 | Combiner | OOF pAUC | Verdict |
 |---|---:|---|
-| **rank-avg [GBDT, nano@224]** | **0.17430** | **WINNER** |
+| **rank-avg [GBDT, nano@224]** | **0.17376** | **WINNER** |
 | meta-LGBM stacker | 0.17108 | loses to trivial |
 | rank [+ weak images] | 0.16679 | dilutes |
 | learned per-lesion gate (MoE) | 0.15007 | **decisive loss** — below tabular 0.16890 |
-| + PCA image embeddings into GBDT | < 0.17430 | **hurts** |
+| + PCA image embeddings into GBDT | < 0.17376 | **hurts** |
 
 **Takeaways.** The **trivial 2-way rank-average wins outright.** Every learned or heavier
 combiner loses, and the **MoE gate even falls *below the tabular expert alone*** (0.150 <
@@ -77,10 +77,10 @@ dilutes. This is the kind of detail we surface rather than smooth over.
 | Idea tried | Its pAUC | Beaten by | Honest finding |
 |---|---:|---|---|
 | Learned per-lesion gate (MoE) | 0.15007 | 0.16890 (tabular) | **loses to tabular alone** |
-| Meta-LGBM stacker | 0.17108 | 0.17430 (rank-avg) | loses to trivial rank-avg |
-| + PCA image embeddings into GBDT | < 0.1743 | 0.17430 | embeddings **hurt** |
-| Heavy backbones (SwinV2 / EVA-02) | 0.104 / 0.100 | 0.15945 (nano@224) | dominated — overfit at 393 pos |
-| EMA 0.999 (over-smoothing) | ~0.146 | 0.15945 (EMA0.995) | stronger EMA hurts |
+| Meta-LGBM stacker | 0.17108 | 0.17376 (rank-avg) | loses to trivial rank-avg |
+| + PCA image embeddings into GBDT | < 0.1738 | 0.17376 | embeddings **hurt** |
+| Heavy backbones (SwinV2 / EVA-02) | 0.104 / 0.100 | 0.15821 (nano@224) | dominated — overfit at 393 pos |
+| EMA 0.999 (over-smoothing) | ~0.146 | 0.15821 (EMA0.995) | stronger EMA hurts |
 
 ## Why "everything complex lost" is the finding
 

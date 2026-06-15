@@ -410,15 +410,15 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td>Best image (ConvNeXtV2-nano @224)</td>
-<td style="text-align: right;">0.15945</td>
+<td style="text-align: right;">0.15821</td>
 </tr>
 <tr class="odd">
 <td><strong>Stack — rank-avg[GBDT, nano@224]</strong></td>
-<td style="text-align: right;"><strong><span class="metric-chip">0.17430</span></strong></td>
+<td style="text-align: right;"><strong><span class="metric-chip">0.17376</span></strong></td>
 </tr>
 </tbody>
 </table>
-<p>The stack reconstruction <code>rank-avg[gbdt, r224]</code> recomputes to <strong>0.17430</strong>, matching the canonical <code>stack_oof.parquet</code> exactly — the combiner is genuinely a 2-way rank average, with nothing hidden. Image and tabular make <strong>complementary errors</strong>, so the trivial rank-average buys <strong>+0.0054</strong> over tabular alone.</p>
+<p>The stack reconstruction <code>rank-avg[gbdt, r224]</code> recomputes to <strong>0.17376</strong>, matching the canonical <code>stack_oof.parquet</code> exactly — the combiner is genuinely a 2-way rank average, with nothing hidden. Image and tabular make <strong>complementary errors</strong>, so the trivial rank-average buys <strong>+0.0049</strong> over tabular alone.</p>
 </section>
 <section id="the-quality-vs-cost-frontier-three-axes" class="level2">
 <h2 class="anchored" data-anchor-id="the-quality-vs-cost-frontier-three-axes">The quality-vs-cost frontier (three axes)</h2>
@@ -532,7 +532,7 @@ Figure&nbsp;4: pAUC vs single-thread CPU latency (deployability).
 </tr>
 <tr class="odd">
 <td><strong>Stack <code>gbdt+nano@224</code></strong></td>
-<td style="text-align: right;"><strong>0.17430</strong></td>
+<td style="text-align: right;"><strong>0.17376</strong></td>
 <td style="text-align: right;">15.84</td>
 <td style="text-align: right;">2.46</td>
 <td style="text-align: right;">60.9</td>
@@ -552,7 +552,7 @@ Figure&nbsp;4: pAUC vs single-thread CPU latency (deployability).
 <div class="callout-body-container callout-body">
 <ul>
 <li>The <strong>GBDT alone</strong> is almost free and already at 0.169 — it dominates every image-only model on cost, and most on accuracy too. This is why the architecture is GBDT-first.</li>
-<li>The image expert only earns its place <strong>inside the stack</strong>: <code>+0.0054</code> pAUC for <code>+60 ms</code>. Whether that trade is worth it is a deployment decision — which is exactly why we report a frontier, not a single number.</li>
+<li>The image expert only earns its place <strong>inside the stack</strong>: <code>+0.0049</code> pAUC for <code>+60 ms</code>. Whether that trade is worth it is a deployment decision — which is exactly why we report a frontier, not a single number.</li>
 <li>The heavy backbones (<code>mnv5_300m</code> at 294 M / 765 ms, <code>eva02_small</code>, <code>swinv2_tiny</code>) are <strong>far off the frontier</strong>: dominated on both axes. More capacity is actively harmful at 393 positives.</li>
 </ul>
 </div>
@@ -581,7 +581,7 @@ Figure&nbsp;6: Zoom on the high-sensitivity tail (TPR ≥ 0.80) that the metric 
 </figcaption>
 </figure>
 </div>
-<p>The shaded band is <strong>exactly what the metric integrates</strong> — the area under the ROC for TPR ≥ 0.80 (equivalently FPR ≤ 0.20). In that scored band the <strong>stack sits above both single experts</strong>: the visual confirmation that the +0.0054 lift is concentrated where it is scored, not smeared across useless low-sensitivity operating points.</p>
+<p>The shaded band is <strong>exactly what the metric integrates</strong> — the area under the ROC for TPR ≥ 0.80 (equivalently FPR ≤ 0.20). In that scored band the <strong>stack sits above both single experts</strong>: the visual confirmation that the +0.0049 lift is concentrated where it is scored, not smeared across useless low-sensitivity operating points.</p>
 </section>
 <section id="per-fold-stability" class="level2">
 <h2 class="anchored" data-anchor-id="per-fold-stability">Per-fold stability</h2>
@@ -614,38 +614,38 @@ Figure&nbsp;7: Per-fold pAUC for tabular, best image, and stack.
 <tr class="odd">
 <td>0</td>
 <td style="text-align: right;">0.18014</td>
-<td style="text-align: right;">0.16040</td>
-<td style="text-align: right;">0.17999</td>
+<td style="text-align: right;">0.16087</td>
+<td style="text-align: right;">0.18061</td>
 </tr>
 <tr class="even">
 <td>1</td>
 <td style="text-align: right;">0.15424</td>
-<td style="text-align: right;">0.17119</td>
-<td style="text-align: right;">0.17282</td>
+<td style="text-align: right;">0.16947</td>
+<td style="text-align: right;">0.17246</td>
 </tr>
 <tr class="odd">
 <td>2</td>
 <td style="text-align: right;">0.17614</td>
-<td style="text-align: right;">0.16298</td>
-<td style="text-align: right;">0.18000</td>
+<td style="text-align: right;">0.16499</td>
+<td style="text-align: right;">0.18003</td>
 </tr>
 <tr class="even">
 <td>3</td>
 <td style="text-align: right;">0.17871</td>
-<td style="text-align: right;">0.15906</td>
-<td style="text-align: right;">0.17910</td>
+<td style="text-align: right;">0.15733</td>
+<td style="text-align: right;">0.17898</td>
 </tr>
 <tr class="odd">
 <td>4</td>
 <td style="text-align: right;">0.15708</td>
-<td style="text-align: right;">0.14504</td>
-<td style="text-align: right;">0.16246</td>
+<td style="text-align: right;">0.14277</td>
+<td style="text-align: right;">0.16139</td>
 </tr>
 <tr class="even">
 <td><strong>mean ± std</strong></td>
 <td style="text-align: right;"><strong>0.1693 ± 0.0112</strong></td>
-<td style="text-align: right;"><strong>0.1597 ± 0.0085</strong></td>
-<td style="text-align: right;"><strong>0.1749 ± 0.0068</strong></td>
+<td style="text-align: right;"><strong>0.1591 ± 0.0091</strong></td>
+<td style="text-align: right;"><strong>0.1747 ± 0.0073</strong></td>
 </tr>
 </tbody>
 </table>
@@ -659,7 +659,7 @@ Figure&nbsp;7: Per-fold pAUC for tabular, best image, and stack.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>At 393 positives, per-fold pAUC swings by ~0.025 (tabular ranges 0.154 → 0.180 across folds), so <strong>fold-to-fold variance is larger than the gap between models.</strong> This is why a single-fold number would be untrustworthy. The strongest evidence the +0.0054 is real and not a fluke: the <strong>stack has the lowest std (0.0068) and wins or ties on <em>every</em> fold</strong>. It is both the most accurate and the most stable estimator we have.</p>
+<p>At 393 positives, per-fold pAUC swings by ~0.025 (tabular ranges 0.154 → 0.180 across folds), so <strong>fold-to-fold variance is larger than the gap between models.</strong> This is why a single-fold number would be untrustworthy. The strongest evidence the +0.0049 is real and not a fluke: the <strong>stack has the lowest std (0.0073) and wins or ties on <em>every</em> fold</strong>. It is both the most accurate and the most stable estimator we have.</p>
 </div>
 </div>
 </section>
@@ -765,7 +765,7 @@ Figure&nbsp;9: Left: stack score histogram by class. Right: reliability curve.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The field saw a roughly <strong>0.013–0.021 public→private drop</strong> on this task even with clean CV — driven by the 393-positive scale and (for the winners) heavy reliance on external/synthetic data. Our headline is <strong>OOF CV 0.1743 (stack) / 0.1689 (tabular)</strong>; a fair private-test projection is <strong>headline minus ~0.01–0.02</strong>. We state this openly. Because <strong>no part of our pipeline ever saw out-of-distribution data</strong>, our OOF number is, if anything, a <em>more</em> honest predictor of generalization than a leaderboard-tuned score.</p>
+<p>The field saw a roughly <strong>0.013–0.021 public→private drop</strong> on this task even with clean CV — driven by the 393-positive scale and (for the winners) heavy reliance on external/synthetic data. Our headline is <strong>OOF CV 0.1738 (stack) / 0.1689 (tabular)</strong>; a fair private-test projection is <strong>headline minus ~0.01–0.02</strong>. We state this openly. Because <strong>no part of our pipeline ever saw out-of-distribution data</strong>, our OOF number is, if anything, a <em>more</em> honest predictor of generalization than a leaderboard-tuned score.</p>
 </div>
 </div>
 <hr>

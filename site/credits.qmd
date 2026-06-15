@@ -86,7 +86,7 @@ Kurtansky, MSKCC) verbatim and attributed, purely to *prove* our metric matches 
   transparent efficiency frontier with leak-audited CV.
 - We **do not** claim to beat the champions' unconstrained ~0.1755 — that used the very
   ingredients we banned, and matching it is impossible by construction.
-- Our best constrained point is **OOF pAUC 0.17430** at 15.8 M params / 2.46 GFLOPs / 61 ms CPU.
+- Our best constrained point is **OOF pAUC 0.17376** at 15.8 M params / 2.46 GFLOPs / 61 ms CPU.
   The honest private-test projection is **that minus ~0.01–0.02** (see [Results](results.qmd)).
 :::
 

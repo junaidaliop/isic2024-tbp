@@ -81,8 +81,8 @@ frontier is appended to `reports/frontier.csv` / `reports/frontier_cost.csv`.
 | Number | Produced by | Re-verified |
 |---|---|---|
 | Tabular GBDT **0.16890** | `src/gbdt.py` bagged LGB(×5 seeds) + CatBoost rank-blend | `cv-guardian` recomputed `cv.oof_pauc` on `gbdt_oof.parquet` |
-| Best image **0.15945** | `configs/vision/convnextv2_nano_r224.yaml` | recomputed from `convnextv2_nano_r224` OOF parquet |
-| **Stack 0.17430** | `rank-avg[gbdt, r224]` in `src/stack.py` | reconstruction recomputes to 0.17430 — exact match to `stack_oof.parquet` |
+| Best image **0.15821** | `configs/vision/convnextv2_nano_r224.yaml` | recomputed from `convnextv2_nano_r224` OOF parquet |
+| **Stack 0.17376** | `rank-avg[gbdt, r224]` in `src/stack.py` | reconstruction recomputes to 0.17376 — exact match to `stack_oof.parquet` |
 | Per-fold table | `reports/perf/make_perf.py` | each fold scored independently via `src/cv.py` |
 | Feature importance | mean gain over 25 LGB + 25 CatBoost boosters | normalized + averaged in `make_perf.py` |
 | Costs (params/FLOPs/ms) | `src/efficiency.py` | `reports/frontier_cost.csv` (authoritative) |

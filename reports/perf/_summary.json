@@ -1,9 +1,9 @@
 {
   "pauc": {
     "tabular (gbdt)": 0.1689,
-    "best image (convnextv2_nano_r224)": 0.15945,
-    "stack (rank-avg gbdt+r224)": 0.1743,
-    "img:convnextv2_nano_r224": 0.15945,
+    "best image (convnextv2_nano_r224)": 0.15821,
+    "stack (rank-avg gbdt+r224)": 0.17376,
+    "img:convnextv2_nano_r224": 0.15821,
     "img:convnextv2_nano": 0.15311,
     "img:convnextv2_tiny": 0.15824,
     "img:effvit_b0": 0.13706,
@@ -12,8 +12,8 @@
     "img:swinv2_tiny": 0.10422,
     "img:eva02_small": 0.09984
   },
-  "recon_rankavg": 0.1743,
-  "recon_weak_stack": 0.16917,
+  "recon_rankavg": 0.17376,
+  "recon_weak_stack": 0.1691,
   "perfold": {
     "Tabular": [
       0.18014,
@@ -23,29 +23,29 @@
       0.15708
     ],
     "Best image": [
-      0.1604,
-      0.17119,
-      0.16298,
-      0.15906,
-      0.14504
+      0.16087,
+      0.16947,
+      0.16499,
+      0.15733,
+      0.14277
     ],
     "Stack": [
-      0.17999,
-      0.17282,
-      0.18,
-      0.1791,
-      0.16246
+      0.18061,
+      0.17246,
+      0.18003,
+      0.17898,
+      0.16139
     ]
   },
   "means": {
     "Tabular": 0.16926,
-    "Best image": 0.15973,
-    "Stack": 0.17487
+    "Best image": 0.15908,
+    "Stack": 0.17469
   },
   "stds": {
     "Tabular": 0.01122,
-    "Best image": 0.00847,
-    "Stack": 0.00677
+    "Best image": 0.00911,
+    "Stack": 0.00727
   },
   "top20": [
     [

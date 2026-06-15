@@ -486,7 +486,7 @@ Figure&nbsp;2: Image-expert ablation: the small backbone wins; heavy ones collap
 </tr>
 <tr class="even">
 <td><strong><code>convnextv2_nano</code> @224 + EMA0.995 + mixup</strong></td>
-<td style="text-align: right;"><strong>0.15945</strong></td>
+<td style="text-align: right;"><strong>0.15821</strong></td>
 <td>best image — the sweet spot</td>
 </tr>
 <tr class="odd">
@@ -541,7 +541,7 @@ Figure&nbsp;3: Stack-combiner ablation: the trivial rank-average wins.
 <tbody>
 <tr class="odd">
 <td><strong>rank-avg [GBDT, nano@224]</strong></td>
-<td style="text-align: right;"><strong>0.17430</strong></td>
+<td style="text-align: right;"><strong>0.17376</strong></td>
 <td><strong>WINNER</strong></td>
 </tr>
 <tr class="even">
@@ -561,7 +561,7 @@ Figure&nbsp;3: Stack-combiner ablation: the trivial rank-average wins.
 </tr>
 <tr class="odd">
 <td>+ PCA image embeddings into GBDT</td>
-<td style="text-align: right;">&lt; 0.17430</td>
+<td style="text-align: right;">&lt; 0.17376</td>
 <td><strong>hurts</strong></td>
 </tr>
 </tbody>
@@ -615,25 +615,25 @@ Figure&nbsp;4: Every idea that lost, and what beat it.
 <tr class="even">
 <td>Meta-LGBM stacker</td>
 <td style="text-align: right;">0.17108</td>
-<td>0.17430 (rank-avg)</td>
+<td>0.17376 (rank-avg)</td>
 <td>loses to trivial rank-avg</td>
 </tr>
 <tr class="odd">
 <td>+ PCA image embeddings into GBDT</td>
-<td style="text-align: right;">&lt; 0.1743</td>
-<td>0.17430</td>
+<td style="text-align: right;">&lt; 0.1738</td>
+<td>0.17376</td>
 <td>embeddings <strong>hurt</strong></td>
 </tr>
 <tr class="even">
 <td>Heavy backbones (SwinV2 / EVA-02)</td>
 <td style="text-align: right;">0.104 / 0.100</td>
-<td>0.15945 (nano@224)</td>
+<td>0.15821 (nano@224)</td>
 <td>dominated — overfit at 393 pos</td>
 </tr>
 <tr class="odd">
 <td>EMA 0.999 (over-smoothing)</td>
 <td style="text-align: right;">~0.146</td>
-<td>0.15945 (EMA0.995)</td>
+<td>0.15821 (EMA0.995)</td>
 <td>stronger EMA hurts</td>
 </tr>
 </tbody>

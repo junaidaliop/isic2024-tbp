@@ -30,7 +30,7 @@ no-synthetic solutions — reported not as one number, but as a **quality-vs-cos
 
 ::: {.stat-cards}
 ::: {.stat-card .is-feature}
-[0.1743]{.stat-value}
+[0.1738]{.stat-value}
 [Stack OOF pAUC@80%TPR]{.stat-label}
 :::
 ::: {.stat-card}
@@ -92,7 +92,7 @@ The honest punchline: **every increase in model complexity we tried lost.** The 
 2-way rank-average beats a meta-LightGBM stacker, a learned per-lesion gate, and the addition
 of image embeddings; the small `convnextv2_nano` backbone beats heavy transformers
 (SwinV2, EVA-02) that collapse to near-random at 393 positives. Our best frontier point —
-`rank-avg[GBDT, convnextv2_nano@224]` — reaches **OOF pAUC 0.17430** at **15.8 M params /
+`rank-avg[GBDT, convnextv2_nano@224]` — reaches **OOF pAUC 0.17376** at **15.8 M params /
 2.46 GFLOPs / 61 ms CPU per image**.
 
 ## Headline results {#headline}
@@ -106,15 +106,15 @@ perfect = 0.20). All values were independently re-derived from the OOF parquet f
 | Model | OOF pAUC@80%TPR | Params (M) | GFLOPs | CPU ms/img | Role |
 |---|---:|---:|---:|---:|---|
 | **GBDT (tabular only)** | **0.16890** | 0.86 | ~0 | 0.02 | the efficient anchor — ≈ free |
-| Best image (`convnextv2_nano@224`) | 0.15945 | 14.98 | 2.46 | 60.9 | the protagonist backbone |
-| **Stack — `rank-avg[GBDT, nano@224]`** | **[0.17430]{.metric-chip}** | 15.84 | 2.46 | 60.9 | best overall; **Pareto-optimal** |
+| Best image (`convnextv2_nano@224`) | 0.15821 | 14.98 | 2.46 | 60.9 | the protagonist backbone |
+| **Stack — `rank-avg[GBDT, nano@224]`** | **[0.17376]{.metric-chip}** | 15.84 | 2.46 | 60.9 | best overall; **Pareto-optimal** |
 | Cheap stack (`gbdt+3img+udk`) | 0.17117 | 23.84 | 1.22 | 32.9 | also on the frontier (cheaper) |
 | Frontier — cheap end (`effvit_b0`) | 0.13706 | 2.13 | 0.034 | 3.5 | most accuracy per millisecond |
 | Frontier — cheapest (`mnv4_small`) | 0.11242 | 2.49 | 0.062 | 3.1 | floor of the cost axis |
 
 ::: {.callout-tip appearance="simple"}
 **Reading the metric.** pAUC@80%TPR integrates the ROC curve only in the high-sensitivity tail
-(TPR ≥ 0.80). It is bounded in `[0, 0.20]`, so a move from 0.169 → 0.174 is a **+3.2% relative**
+(TPR ≥ 0.80). It is bounded in `[0, 0.20]`, so a move from 0.169 → 0.174 is a **+2.9% relative**
 improvement, not a rounding error. See [Methods → The metric](methods.qmd#the-metric).
 :::
 
@@ -146,12 +146,12 @@ flowchart TD
     B --> E["Image crops @128 / @224<br/>small ImageNet-pretrained backbone<br/>per-epoch neg-undersample ~1:1<br/>BCE+LS · EMA(0.995) · mixup · TTA"]
 
     C --> D["Bagged GBDT expert<br/>LightGBM (5-seed) + CatBoost<br/>rank-blend<br/><b>OOF pAUC 0.16890</b>"]
-    E --> F["Image expert<br/>OOF malignancy prob<br/>(+ embedding, ablated)<br/><b>OOF pAUC 0.15945</b>"]
+    E --> F["Image expert<br/>OOF malignancy prob<br/>(+ embedding, ablated)<br/><b>OOF pAUC 0.15821</b>"]
 
     D --> G["Combiner = rank-average<br/>(param-free, robust)"]
     F --> G
 
-    G --> H["Final OOF score<br/><b>pAUC 0.17430</b><br/>15.8M params · 2.46 GFLOPs · 61 ms CPU"]
+    G --> H["Final OOF score<br/><b>pAUC 0.17376</b><br/>15.8M params · 2.46 GFLOPs · 61 ms CPU"]
     H --> I["Submission / frontier point"]
 
     style A fill:#0b6e4f,color:#fff
