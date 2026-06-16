@@ -161,13 +161,22 @@ measured by the `efficiency-auditor`.
 - **Small natural-image-pretrained backbones** at 128 px (and 224 px for the resolution axis).
   Pretraining is ImageNet / FCMAE only — no skin-cancer labels, so the no-external-*data* claim
   holds (pretrained weights are allowed; external training data is not).
-- **Per-epoch negative undersampling to ~1:1** (`neg_ratio`, `pos_mult`). Each epoch sees all
+- **Optimiser / schedule.** AdamW, learning rate 1e-4, weight decay 1e-3; cosine schedule with
+  5% warmup and a 1% floor; 30 epochs; batch size 128.
+- **Per-epoch negative undersampling to ~1:1** (`neg_ratio=7`, `pos_mult=2`). Each epoch sees all
   positives plus a fresh random ~equal sample of negatives, so an epoch is a few thousand images
   (~4.5 s); a full 5-fold backbone trains in ~8 minutes. Re-sampling negatives each epoch exposes
   the whole benign distribution over time.
 - **Loss:** BCE with label smoothing 0.05.
-- **Augmentation:** the `transV2` policy (flips, rotations, color jitter) — classical only, no
-  generative augmentation.
+- **Augmentation (`transV2`, classical only — no generative augmentation).** Albumentations:
+  random transpose and vertical/horizontal flips; random brightness/contrast; one of
+  {motion, median, Gaussian blur, Gaussian noise}; one of {optical, grid, elastic distortion};
+  CLAHE; hue/saturation/value jitter; shift–scale–rotate (±15°); and a single CoarseDropout hole
+  (~0.375× the image side); then resize and ImageNet normalisation. A gentler `light` variant
+  (flips + mild brightness/contrast + shift–scale–rotate, no heavy distortion/blur/dropout) is
+  used for ViT backbones; evaluation applies resize + normalisation only (no augmentation).
+- **Test-time augmentation.** Optional flip/rot90 averaging (`n_tta`); the reported runs use
+  `n_tta=1`.
 - **EMA(0.995) + mixup(α=0.2).** Weight EMA stabilizes the noisy undersampled updates; mixup
   regularizes. EMA decay is consequential: at ~23 steps/epoch, decay 0.999 (time-constant ~1000
   steps) lags the weights and reduces the score (fold-0: 0.146 vs 0.156); 0.995 with warmup is
