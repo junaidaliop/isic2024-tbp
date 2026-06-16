@@ -35,6 +35,33 @@ the image branch adds a real but modest +0.005 over tabular alone; and the **tri
 rank-average combiner beats** the meta-learner and a learned gate at 393 positives (the
 negative results are reported, not hidden).
 
+![Quality–cost Pareto frontier: OOF pAUC@80%TPR vs parameters, GFLOPs, and single-thread CPU latency.](docs/figures/frontier.png)
+
+## Method
+
+Two experts and a trivial combiner, all sharing one frozen validation split.
+
+- **Metric & validation.** The official score is partial AUC above 80% TPR (pAUC@80, range
+  `[0, 0.20]`; random ≈ 0.02, perfect = 0.20), computed only by `src/cv.py`. Folds are
+  patient-grouped, target-stratified 5-fold (SEED 42) so no patient straddles folds;
+  out-of-fold (OOF) predictions are scored once on the full vector.
+- **Tabular expert** (`src/features.py`, `src/gbdt.py`). From ISIC-2024 metadata only: lesion
+  geometry and size ratios, L\*/A\*/B\* colour and lesion-vs-skin contrast, border/shape
+  composites, 3D body position, and patient-relative *ugly-duckling* deviations
+  (`pdev_`/`prank_`/`pxc_`) with fold-local target encoding. A bagged LightGBM + CatBoost
+  ensemble (manual undersampling, pAUC early-stopping) reaches OOF **0.1689**; the
+  patient-relative block alone is ~65% of the gain.
+- **Image expert** (`src/vision/`). Small ImageNet-pretrained backbones (ConvNeXt-V2-nano is the
+  optimum) at 128–224 px. Recipe: AdamW (1e-4, weight decay 1e-3), cosine schedule, 30 epochs,
+  batch 128; per-epoch negative undersampling (~1:1); BCE + label smoothing 0.05; classical
+  `transV2` augmentation (flips/transpose, brightness/contrast, blur/noise, optical/grid/elastic
+  distortion, CLAHE, hue–saturation, shift–scale–rotate, coarse-dropout — **no generative
+  augmentation**); weight EMA (0.995) and mixup (α = 0.2). Each backbone emits an OOF malignancy
+  probability and an embedding. Best image OOF: **0.1582**.
+- **Combiner** (`src/stack.py`). A parameter-free rank-average of the two OOF probabilities →
+  **0.1738**. At 393 positives this beats a meta-LightGBM stacker, a learned per-lesion gate, and
+  PCA-embedding injection — all reported as negative results.
+
 ## Design
 
 - **Validation is the whole game.** `src/cv.py` is the single source of truth for the official

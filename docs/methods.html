@@ -396,7 +396,6 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#recipe-shared-across-backbones" id="toc-recipe-shared-across-backbones" class="nav-link" data-scroll-target="#recipe-shared-across-backbones">Recipe (shared across backbones)</a></li>
   <li><a href="#the-12-backbone-frontier-sweep" id="toc-the-12-backbone-frontier-sweep" class="nav-link" data-scroll-target="#the-12-backbone-frontier-sweep">The 12-backbone frontier sweep</a></li>
-  <li><a href="#self-supervised-pretraining-future-work" id="toc-self-supervised-pretraining-future-work" class="nav-link" data-scroll-target="#self-supervised-pretraining-future-work">Self-supervised pretraining (future work)</a></li>
   </ul></li>
   <li><a href="#stack" id="toc-stack" class="nav-link" data-scroll-target="#stack">The stack (combiner)</a></li>
   <li><a href="#efficiency-as-a-first-class-axis" id="toc-efficiency-as-a-first-class-axis" class="nav-link" data-scroll-target="#efficiency-as-a-first-class-axis">Efficiency as a first-class axis</a></li>
@@ -565,10 +564,6 @@ These encode the clinical ugly-duckling sign directly and account for ~65% of to
 <section id="the-12-backbone-frontier-sweep" class="level3">
 <h3 class="anchored" data-anchor-id="the-12-backbone-frontier-sweep">The 12-backbone frontier sweep</h3>
 <p>The sweep spans the cost axis from ~2.5 M to ~294 M params: <code>mnv4_small</code>, <code>effvit_b0</code>, <code>starnet_s1</code>, <code>fastvit_t8</code>, <code>effnetv2_b0</code>, <code>ghostnetv3</code>, <code>vit_tiny</code>, <code>vit_small</code>, <code>convnextv2_nano</code> (128 px and 224 px), <code>convnextv2_tiny</code>, <code>swinv2_tiny</code>, <code>eva02_small</code>, and the heavy anchor <code>mnv5_300m</code>. Heavy transformers collapse to near-random at 393 positives (SwinV2@256 → 0.104, EVA-02@336 → 0.100); the small <code>convnextv2_nano</code> is the optimum (see <a href="./results.html">Results</a>, <a href="./ablations.html">Ablations</a>).</p>
-</section>
-<section id="self-supervised-pretraining-future-work" class="level3">
-<h3 class="anchored" data-anchor-id="self-supervised-pretraining-future-work">Self-supervised pretraining (future work)</h3>
-<p>The in-constraint way to exploit the 400k+ unlabeled crops without external data or fabricated positives is self-supervised pretraining (MAE / DINOv2-style) on the crops themselves, then fine-tuning on the 393 labels. This substitutes the project’s own unlabeled data for the banned external data and remains inside the rules. It is presented as the next step, not a completed result; it is the most promising lever not exhausted in the 2-day budget.</p>
 </section>
 </section>
 <section id="stack" class="level2">

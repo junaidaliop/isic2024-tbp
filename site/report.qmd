@@ -91,9 +91,6 @@ frontier; heavy transformers collapse at 393 positives.
 robust — beats a meta-LightGBM stacker, a learned per-lesion gate, and the addition of image
 embeddings.
 
-A principled future direction is **self-supervised pretraining** (MAE / DINOv2) on the 400k+
-unlabeled crops, as the in-constraint substitute for the banned external data.
-
 # Results
 
 All numbers are out-of-fold, scored only by `src/cv.py` at 80% TPR, and independently re-derived

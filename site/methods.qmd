@@ -193,14 +193,6 @@ The sweep spans the cost axis from ~2.5 M to ~294 M params:
 near-random at 393 positives (SwinV2&#64;256 → 0.104, EVA-02&#64;336 → 0.100); the small
 `convnextv2_nano` is the optimum (see [Results](results.qmd), [Ablations](ablations.qmd)).
 
-### Self-supervised pretraining (future work)
-
-The in-constraint way to exploit the 400k+ unlabeled crops without external data or fabricated
-positives is self-supervised pretraining (MAE / DINOv2-style) on the crops themselves, then
-fine-tuning on the 393 labels. This substitutes the project's own unlabeled data for the banned
-external data and remains inside the rules. It is presented as the next step, not a completed
-result; it is the most promising lever not exhausted in the 2-day budget.
-
 ## The stack (combiner) {#stack}
 
 `src/stack.py` fuses the experts. Three combiners were compared on the same OOF vectors:

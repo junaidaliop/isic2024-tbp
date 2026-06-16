@@ -40,7 +40,7 @@ use it, you must cite **both** the dataset paper and the challenge release.
 ## Image backbones (the frontier sweep)
 
 - **ConvNeXt-V2 + FCMAE** — Woo, S. et al. (2023) [@woo2023convnextv2] — the primary backbone
-  (`convnextv2_nano`, MAE self-supervised init then in22k→in1k fine-tune).
+  (`convnextv2_nano`, FCMAE then ImageNet-22k→1k fine-tune; ImageNet weights only).
 - **ViT / AugReg** — Dosovitskiy, A. et al. ICLR (2021) [@dosovitskiy2021vit]; Steiner, A. et al.
   (2021) [@steiner2021augreg].
 - **EVA-02** — Fang, Y. et al. (2023) [@fang2023eva02].
@@ -58,14 +58,6 @@ use it, you must cite **both** the dataset paper and the challenge release.
 - **Deep AUC Maximization** — Yuan, Z. et al. ICCV (2021) [@yuan2021dam].
 - **Stochastic AUC max with DNNs** — Liu, M. et al. (2019) [@liu2019stochasticauc].
 - **AUC consistency** — Gao, W. & Zhou, Z.-H. (2012) [@gao2012auc].
-
-## Self-supervised learning (the "one-up" rationale)
-
-- **MAE** — He, K. et al. CVPR (2022) [@he2022mae].
-- **DINOv2** — Oquab, M. et al. TMLR (2024) [@oquab2024dinov2].
-
-These motivate the future-work direction: self-supervised pretraining on the 400k+ unlabeled
-SLICE-3D crops, as the in-constraint substitute for the banned external data.
 
 ## Related ISIC-2024 solutions (positioning)
 

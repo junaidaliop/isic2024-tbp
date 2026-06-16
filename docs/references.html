@@ -406,7 +406,6 @@ div.csl-indent {
   <li><a href="#gradient-boosted-decision-trees" id="toc-gradient-boosted-decision-trees" class="nav-link" data-scroll-target="#gradient-boosted-decision-trees">Gradient-boosted decision trees</a></li>
   <li><a href="#image-backbones-the-frontier-sweep" id="toc-image-backbones-the-frontier-sweep" class="nav-link" data-scroll-target="#image-backbones-the-frontier-sweep">Image backbones (the frontier sweep)</a></li>
   <li><a href="#imbalance-partial-auc-optimization" id="toc-imbalance-partial-auc-optimization" class="nav-link" data-scroll-target="#imbalance-partial-auc-optimization">Imbalance &amp; (partial) AUC optimization</a></li>
-  <li><a href="#self-supervised-learning-the-one-up-rationale" id="toc-self-supervised-learning-the-one-up-rationale" class="nav-link" data-scroll-target="#self-supervised-learning-the-one-up-rationale">Self-supervised learning (the “one-up” rationale)</a></li>
   <li><a href="#related-isic-2024-solutions-positioning" id="toc-related-isic-2024-solutions-positioning" class="nav-link" data-scroll-target="#related-isic-2024-solutions-positioning">Related ISIC-2024 solutions (positioning)</a></li>
   <li><a href="#cite-this-work" id="toc-cite-this-work" class="nav-link" data-scroll-target="#cite-this-work">Cite this work</a></li>
   <li><a href="#full-bibliography" id="toc-full-bibliography" class="nav-link" data-scroll-target="#full-bibliography">Full bibliography</a></li>
@@ -475,7 +474,7 @@ div.csl-indent {
 <section id="image-backbones-the-frontier-sweep" class="level2">
 <h2 class="anchored" data-anchor-id="image-backbones-the-frontier-sweep">Image backbones (the frontier sweep)</h2>
 <ul>
-<li><strong>ConvNeXt-V2 + FCMAE</strong> — Woo, S. et al.&nbsp;(2023) <span class="citation" data-cites="woo2023convnextv2">(<a href="#ref-woo2023convnextv2" role="doc-biblioref">Woo et al. 2023</a>)</span> — the primary backbone (<code>convnextv2_nano</code>, MAE self-supervised init then in22k→in1k fine-tune).</li>
+<li><strong>ConvNeXt-V2 + FCMAE</strong> — Woo, S. et al.&nbsp;(2023) <span class="citation" data-cites="woo2023convnextv2">(<a href="#ref-woo2023convnextv2" role="doc-biblioref">Woo et al. 2023</a>)</span> — the primary backbone (<code>convnextv2_nano</code>, FCMAE then ImageNet-22k→1k fine-tune; ImageNet weights only).</li>
 <li><strong>ViT / AugReg</strong> — Dosovitskiy, A. et al.&nbsp;ICLR (2021) <span class="citation" data-cites="dosovitskiy2021vit">(<a href="#ref-dosovitskiy2021vit" role="doc-biblioref"><span class="nocase">Dosovitskiy et al.</span> 2021</a>)</span>; Steiner, A. et al.
 <ol start="2021" type="1">
 <li><span class="citation" data-cites="steiner2021augreg">(<a href="#ref-steiner2021augreg" role="doc-biblioref">Steiner et al. 2021</a>)</span>.</li>
@@ -496,14 +495,6 @@ div.csl-indent {
 <li><strong>Stochastic AUC max with DNNs</strong> — Liu, M. et al.&nbsp;(2019) <span class="citation" data-cites="liu2019stochasticauc">(<a href="#ref-liu2019stochasticauc" role="doc-biblioref">Liu et al. 2019</a>)</span>.</li>
 <li><strong>AUC consistency</strong> — Gao, W. &amp; Zhou, Z.-H. (2012) <span class="citation" data-cites="gao2012auc">(<a href="#ref-gao2012auc" role="doc-biblioref">Gao and Zhou 2012</a>)</span>.</li>
 </ul>
-</section>
-<section id="self-supervised-learning-the-one-up-rationale" class="level2">
-<h2 class="anchored" data-anchor-id="self-supervised-learning-the-one-up-rationale">Self-supervised learning (the “one-up” rationale)</h2>
-<ul>
-<li><strong>MAE</strong> — He, K. et al.&nbsp;CVPR (2022) <span class="citation" data-cites="he2022mae">(<a href="#ref-he2022mae" role="doc-biblioref">He et al. 2022</a>)</span>.</li>
-<li><strong>DINOv2</strong> — Oquab, M. et al.&nbsp;TMLR (2024) <span class="citation" data-cites="oquab2024dinov2">(<a href="#ref-oquab2024dinov2" role="doc-biblioref"><span class="nocase">Oquab et al.</span> 2024</a>)</span>.</li>
-</ul>
-<p>These motivate the future-work direction: self-supervised pretraining on the 400k+ unlabeled SLICE-3D crops, as the in-constraint substitute for the banned external data.</p>
 </section>
 <section id="related-isic-2024-solutions-positioning" class="level2">
 <h2 class="anchored" data-anchor-id="related-isic-2024-solutions-positioning">Related ISIC-2024 solutions (positioning)</h2>
@@ -547,9 +538,6 @@ Google, and Ross Wightman. 2025. <em><span>MobileNetV5</span> / <span>Gemma 3n</
 <div id="ref-hasan2025hybrid" class="csl-entry" role="listitem">
 Hasan, Md Zahid, and Fahmid Yousuf Rifat. 2025. <em>Hybrid Ensemble of Segmentation-Assisted Classification and <span>GBDT</span> for Skin Cancer Detection</em>. <a href="https://arxiv.org/abs/2506.03420">https://arxiv.org/abs/2506.03420</a>.
 </div>
-<div id="ref-he2022mae" class="csl-entry" role="listitem">
-He, Kaiming, Xinlei Chen, Saining Xie, Yanghao Li, Piotr Dollár, and Ross Girshick. 2022. <span>“Masked Autoencoders Are Scalable Vision Learners (<span>MAE</span>).”</span> <em>CVPR</em>.
-</div>
 <div id="ref-isic2024challenge" class="csl-entry" role="listitem">
 International Skin Imaging Collaboration. 2024. <em><span>SLICE-3D</span> 2024 Challenge Dataset</em>. <a href="https://doi.org/10.34970/2024-slice-3d">https://doi.org/10.34970/2024-slice-3d</a>.
 </div>
@@ -573,9 +561,6 @@ Liu, Mingrui, Zhuoning Yuan, Yiming Ying, and Tianbao Yang. 2019. <em>Stochastic
 </div>
 <div id="ref-liu2022swinv2" class="csl-entry" role="listitem">
 <span class="nocase">Liu, Ze et al.</span> 2022. <span>“<span>Swin Transformer V2</span>: Scaling up Capacity and Resolution.”</span> <em>CVPR</em>.
-</div>
-<div id="ref-oquab2024dinov2" class="csl-entry" role="listitem">
-<span class="nocase">Oquab, Maxime et al.</span> 2024. <span>“<span>DINOv2</span>: Learning Robust Visual Features Without Supervision.”</span> <em>Transactions on Machine Learning Research (TMLR)</em>.
 </div>
 <div id="ref-prokhorenkova2018catboost" class="csl-entry" role="listitem">
 Prokhorenkova, Liudmila, Gleb Gusev, Aleksandr Vorobev, Anna Veronika Dorogush, and Andrey Gulin. 2018. <span>“<span>CatBoost</span>: Unbiased Boosting with Categorical Features.”</span> <em>Advances in Neural Information Processing Systems (NeurIPS)</em>.
