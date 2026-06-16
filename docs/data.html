@@ -493,7 +493,7 @@ Figure&nbsp;1: Five malignant (top) and five benign (bottom) crops, annotated wi
 <p>The crops are variable-size square JPEGs, <strong>61–239 px</strong> on a side (median/mean ≈ <strong>131/133 px</strong>), ~2.8 KB each. Two consequences for the image experts:</p>
 <ul>
 <li><strong>128 px ≈ native median.</strong> Training at 128 px is near the crops’ natural resolution; epochs are cheap and no detail is discarded.</li>
-<li><strong>224 px upsamples.</strong> The 224 px model receives the same lesion interpolated larger, not extra pixels. The measured 224 px gain (0.15311 → 0.15821) is therefore a capacity / training-dynamics effect — larger receptive field, more effective augmentation — not added image detail. Resolution is treated as a frontier axis, so both points are retained.</li>
+<li><strong>224 px upsamples.</strong> The 224 px model receives the same lesion interpolated larger, not extra pixels. The measured 224 px gain (0.15311 → 0.15821) is therefore a capacity / training-dynamics effect (larger receptive field, more effective augmentation), not added image detail. Resolution is treated as a frontier axis, so both points are retained.</li>
 </ul>
 </section>
 <section id="missingness" class="level3">
@@ -566,7 +566,7 @@ Figure&nbsp;3: Per-patient lesion counts; malignant-carrying patients hold most 
 </figcaption>
 </figure>
 </div>
-<p>1,042 patients with a heavily right-skewed lesion count (<strong>median 241, max 9,184</strong>). The 259 patients carrying at least one malignant lesion hold <strong>89% of all crops</strong>. Because a patient’s lesions are correlated, splits must be patient-grouped: any patient straddling folds leaks information.</p>
+<p>1,042 patients with a heavily right-skewed lesion count (<strong>median 241, max 9,184</strong>). The 259 patients carrying at least one malignant lesion hold <strong>39% of all crops</strong>. Because a patient’s lesions are correlated, splits must be patient-grouped: any patient straddling folds leaks information.</p>
 </section>
 <section id="fig-3-demographics" class="level3">
 <h3 class="anchored" data-anchor-id="fig-3-demographics">Fig 3 — Demographics</h3>

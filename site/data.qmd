@@ -63,7 +63,7 @@ The crops are variable-size square JPEGs, **61–239 px** on a side (median/mean
   are cheap and no detail is discarded.
 - **224 px upsamples.** The 224 px model receives the same lesion interpolated larger, not extra
   pixels. The measured 224 px gain (0.15311 → 0.15821) is therefore a capacity / training-dynamics
-  effect — larger receptive field, more effective augmentation — not added image detail.
+  effect (larger receptive field, more effective augmentation), not added image detail.
   Resolution is treated as a frontier axis, so both points are retained.
 
 ### Missingness
@@ -104,7 +104,7 @@ fold is starved of signal, a precondition for trustworthy OOF estimates.
 ![Per-patient lesion counts; malignant-carrying patients hold most of the data.](figures/eda_fig2_patient_structure.svg){#fig-eda2}
 
 1,042 patients with a heavily right-skewed lesion count (**median 241, max 9,184**). The 259
-patients carrying at least one malignant lesion hold **89% of all crops**. Because a patient's
+patients carrying at least one malignant lesion hold **39% of all crops**. Because a patient's
 lesions are correlated, splits must be patient-grouped: any patient straddling folds leaks
 information.
 

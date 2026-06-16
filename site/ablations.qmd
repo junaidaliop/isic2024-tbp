@@ -8,7 +8,7 @@ toc: true
 ## Summary
 Negative results are logged; no model that failed to help is dropped silently. Across the study,
 nearly every increase in model complexity reduced the score. At 393 positives, the efficient,
-trivial choices — a small backbone, a rank-average combiner, intrinsic tabular features — are both
+trivial choices (a small backbone, a rank-average combiner, intrinsic tabular features) are both
 cheaper and more accurate. That negative result is the contribution.
 :::
 

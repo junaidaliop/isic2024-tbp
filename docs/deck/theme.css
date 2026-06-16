@@ -22,19 +22,38 @@
   --accent-soft:   #EFE9FB;   /* callout / recall-box fill                        */
   --accent-line:   #D6C8F2;   /* hairline borders, underline rule, table head     */
 
-  /* Fixed across every deck */
-  --ink:        #1A1A2E;   /* slide titles + bold keywords (emphasis tier 1) */
-  --body:       #26263A;   /* body copy */
-  --muted:      #6C6C80;   /* captions, footnotes, footer */
-  --critical:   #E8392B;   /* tier-3: the ONE key claim / warning per slide  */
-  --annot-2:    #2563EB;   /* second diagram-annotation colour ONLY          */
+  /* Fixed across every deck — near-monochrome ink on white, NO washed gray. */
+  --ink:        #14241B;   /* slide titles + bold keywords (emphasis tier 1) — green-tinted near-black */
+  --body:       #1F2A24;   /* body copy — de-blued */
+  --muted:      #3C4A43;   /* captions, footnotes, footer — green-slate, not gray */
+  --critical:   #C0392B;   /* tier-3: the ONE key claim / warning per slide  */
+  --annot-2:    #1F6F8B;   /* second diagram-annotation colour ONLY (teal, CB-safe vs green) */
   --paper:      #FFFFFF;
-  --panel:      #F6F7F9;   /* alternate panel / code background */
-  --rule:       #E4E6EC;  /* neutral hairline */
+  --panel:      #F2F6F3;   /* alternate panel / code background — green-tinted */
+  --rule:       #D7E0DB;  /* faint green hairline */
 
   --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
   --font-body:    'Inter', 'Segoe UI', system-ui, sans-serif;
   --font-mono:    'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+
+  /* ---- TYPE SCALE — minor third (x1.2), 24px body floor. size+weight hierarchy only. ---- */
+  --fs-title-hero:   72px;  /* .t-title (title slide)            — Bricolage 800 */
+  --fs-thanks:       72px;  /* .slide--closing .thanks           — Bricolage 800 */
+  --fs-sec:          52px;  /* .slide--section .sec-title        — Bricolage 800 */
+  --fs-title:        42px;  /* .slide-title (content head/claim) — Bricolage 700 */
+  --fs-stat:         48px;  /* .stat .num                       — Bricolage 800 */
+  --fs-lead:         27px;  /* .lead-text / .t-occasion         — Inter 500 */
+  --fs-body:         24px;  /* p, .bullets > li  (BODY FLOOR)   — Inter 400 */
+  --fs-sub:          21px;  /* sub-bullets, .small, .t-instr    — Inter 400/500 */
+  --fs-card:         20px;  /* .card-title, .recall p           — Inter/Bricolage 600 */
+  --fs-table:        19px;  /* table.t, default acad            — Inter 400 */
+  --fs-table-tight:  17px;  /* table.acad.tight                 — raised from 13.5px */
+  --fs-cap:          17px;  /* .figcaption                      — Inter 600, raised from 15px */
+  --fs-kicker:       15px;  /* .kicker, .runbar .ctx, foot      — Bricolage 600 */
+  --fs-foot:         13px;  /* .slide-foot, .refnote, .acad-note floor */
+  /* Weights, explicit (only loaded weights used) */
+  --w-disp-hero: 800; --w-disp-strong: 700; --w-disp-med: 600;
+  --w-body-bold: 700; --w-body-semi: 600;  --w-body-med: 500; --w-body-reg: 400;
 
   --slide-w: 1280px;
   --slide-h: 720px;
@@ -67,8 +86,8 @@ body { font-family: var(--font-body); color: var(--body); -webkit-print-color-ad
 /* ---------- SLIDE HEADER ---------- */
 .kicker {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: var(--w-disp-med);
+  font-size: var(--fs-kicker);
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--accent);
@@ -76,9 +95,9 @@ body { font-family: var(--font-body); color: var(--body); -webkit-print-color-ad
 }
 .slide-title {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 43px;
-  line-height: 1.15;
+  font-weight: var(--w-disp-strong);
+  font-size: var(--fs-title);
+  line-height: 1.12;
   color: var(--ink);
   padding-bottom: 0;
   margin-bottom: 22px;
@@ -98,8 +117,8 @@ body { font-family: var(--font-body); color: var(--body); -webkit-print-color-ad
   border-bottom: 1px solid rgba(20,20,20,.08);
   padding-bottom: 12px; margin-bottom: 20px;
 }
-.runbar .mark { font-family: var(--font-display); font-weight: 800; color: var(--accent); font-size: 20px; letter-spacing: .02em; }
-.runbar .ctx  { font-size: 15px; color: var(--muted); }
+.runbar .mark { font-family: var(--font-display); font-weight: var(--w-disp-hero); color: var(--accent); font-size: 20px; letter-spacing: .02em; }
+.runbar .ctx  { font-size: var(--fs-kicker); color: var(--muted); }
 
 /* ---------- SLIDE BODY ---------- */
 .slide-body { flex: 1 1 auto; min-height: 0; }
@@ -107,14 +126,14 @@ body { font-family: var(--font-body); color: var(--body); -webkit-print-color-ad
    so whitespace splits evenly instead of pooling at the bottom */
 .slide-body.vcenter { display: flex; flex-direction: column; justify-content: center; }
 
-p { font-size: 24px; line-height: 1.5; color: var(--body); margin-bottom: 12px; }
-.lead-text { font-size: 26px; line-height: 1.45; }
-.small { font-size: 19px; }
+p { font-size: var(--fs-body); line-height: 1.5; color: var(--body); margin-bottom: 12px; }
+.lead-text { font-size: var(--fs-lead); line-height: 1.45; }
+.small { font-size: var(--fs-sub); }
 
 ul, ol { list-style: none; }
 .bullets > li {
   position: relative;
-  font-size: 24px; line-height: 1.45;
+  font-size: var(--fs-body); line-height: 1.45;
   padding-left: 28px; margin-bottom: 14px;
   color: var(--body);
 }
@@ -124,7 +143,7 @@ ul, ol { list-style: none; }
   background: var(--accent);
 }
 .bullets ul > li {            /* sub-bullets */
-  position: relative; font-size: 20px; line-height: 1.4;
+  position: relative; font-size: var(--fs-sub); line-height: 1.4;
   padding-left: 24px; margin: 8px 0 0 0; color: var(--muted);
 }
 .bullets ul > li::before {
@@ -133,14 +152,23 @@ ul, ol { list-style: none; }
   background: transparent; border: 2px solid var(--accent-line);
 }
 
-/* ---------- EMPHASIS SYSTEM (3 tiers — use sparingly) ---------- */
-/* Tier 1: key term. Tier 2: structural/accent. Tier 3: the one critical claim. */
-.kw       { font-weight: 700; color: var(--ink); }                 /* tier 1 */
-.hl       { font-weight: 600; color: var(--accent-ink); }          /* tier 2 */
-.hl-soft  { background: var(--accent-line); color: var(--ink); font-weight: 600;
-            padding: .07em .24em; border-radius: 6px;
+/* === EMPHASIS SYSTEM — type-only, 3 tiers + numeric. Use sparingly. ===
+   Per-slide budget: <=3 .kw, <=2 .hl, 0-1 .hl-soft, 0-1 .crit. */
+/* Tier 1 — key TERM. Weight + ink, no colour shift. Default emphasis. */
+.kw       { font-weight: var(--w-body-bold); color: var(--ink); }
+/* Tier 2 — structural / accented term. Accent-ink so it stays legible on white. */
+.hl       { font-weight: var(--w-body-semi); color: var(--accent-ink); }
+/* Soft chip — ONE per slide max, single load-bearing phrase. Green tint, not gray. */
+.hl-soft  { background: var(--accent-soft); color: var(--accent-ink); font-weight: var(--w-body-semi);
+            padding: .06em .26em; border-radius: 5px;
             -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.crit     { font-weight: 700; color: var(--critical); }            /* tier 3 — max ONE phrase/slide */
+/* Tier 3 — the ONE critical claim/warning per slide. Never more than one phrase. */
+.crit     { font-weight: var(--w-body-bold); color: var(--critical); }
+/* NUMERIC highlight — foreground a metric in running prose, captions, table cells.
+   Tabular-nums for alignment; accent-ink; display face for weight contrast vs Inter body.
+   Use for pAUC / params / FLOPs / latency numbers inside sentences. */
+.num-hl   { font-family: var(--font-display); font-weight: var(--w-disp-strong);
+            color: var(--accent-ink); font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 
 /* ---------- LAYOUT HELPERS ---------- */
 .cols { display: grid; gap: 32px; height: 100%; }
@@ -152,6 +180,36 @@ ul, ol { list-style: none; }
 .v-center { justify-content: center; }
 .divider-v { border-left: 2px solid var(--rule); }
 
+/* === IMAGE+TEXT SLIDE CONTRACT (shared, all decks inherit) ===
+   Both columns share ONE vertical-centering rule so their midlines align.
+   The grid row is full-height; every column centres its own content. */
+.cols-7-5, .cols-5-7 { align-items: stretch; }
+.cols-7-5 > .col,
+.cols-5-7 > .col {
+  display: flex; flex-direction: column; justify-content: center;  /* shared midline */
+  min-height: 0;                                                    /* allow figure to fit */
+}
+/* FIGURE COLUMN — fills its box, vertically centred, NOT max-height-capped by literals. */
+.col.figcol, .col.figfill, .col.fig-cap-row { justify-content: center; min-height: 0; }
+.col.figcol .figure,
+.col.figfill .figure,
+.col.fig-cap-row .figure {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; align-items: center; justify-content: center; width: 100%;
+}
+.col.figcol .figure img, .col.figcol .figure svg,
+.col.figfill .figure img, .col.figfill .figure svg,
+.col.fig-cap-row .figure img, .col.fig-cap-row .figure svg {
+  max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;
+}
+.col.figcol .figcaption,
+.col.figfill .figcaption,
+.col.fig-cap-row .figcaption { flex: 0 0 auto; margin-top: 10px; }   /* caption never steals figure space */
+/* two stacked figures in one column: split height evenly, each half centred */
+.col.figcol.two-up { gap: 18px; }
+.col.figcol.two-up .figure { flex: 1 1 50%; }
+.col.figcol.two-up .fig-mini-label { flex: 0 0 auto; }
+
 /* ---------- CARDS / CALLOUTS ---------- */
 .card {
   background: var(--panel);
@@ -159,7 +217,7 @@ ul, ol { list-style: none; }
   border-radius: 12px;
   padding: 20px 22px;
 }
-.card .card-title { font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
+.card .card-title { font-family: var(--font-display); font-weight: var(--w-disp-med); font-size: var(--fs-card); color: var(--ink); margin-bottom: 8px; }
 
 /* "Remember (Abstract Sentence N)" recall box — token-driven so recolor is total */
 .recall {
@@ -174,7 +232,7 @@ ul, ol { list-style: none; }
   letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
   display: block; margin-bottom: 4px;
 }
-.recall p { font-size: 20px; margin: 0; color: var(--body); }
+.recall p { font-size: var(--fs-card); margin: 0; color: var(--body); }
 
 .callout {
   border-left: 5px solid var(--accent);
@@ -182,42 +240,51 @@ ul, ol { list-style: none; }
   border-radius: 0 10px 10px 0;
   padding: 16px 20px;
 }
-.callout.is-critical { border-left-color: var(--critical); background: #FDECEA; }
+.callout.is-critical { border-left-color: var(--critical); background: #FBEAE7; }
+
+/* JUSTIFY long-form prose blocks; single-line items are a no-op. Hyphenate to avoid rivers.
+   Bullets and table cells stay left-aligned (set elsewhere). */
+.callout, .recall p, .card p {
+  text-align: justify; hyphens: auto; -webkit-hyphens: auto; text-justify: inter-word;
+}
 
 /* stat / number highlight */
 .stat-row { display: flex; gap: 28px; }
 .stat { flex: 1; }
-.stat .num { font-family: var(--font-display); font-weight: 800; font-size: 52px; color: var(--accent); line-height: 1; }
-.stat .lbl { font-size: 16px; color: var(--muted); margin-top: 6px; }
+.stat .num { font-family: var(--font-display); font-weight: var(--w-disp-hero); font-size: var(--fs-stat); color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .lbl { font-size: var(--fs-kicker); color: var(--muted); margin-top: 6px; }
 
 /* ---------- FIGURES ---------- */
 .figure { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .figure img, .figure video { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
 .figure.framed img { border: 1px solid var(--rule); background: #fff; padding: 8px; }
 .figcaption {
-  font-size: 15px; color: var(--accent-ink); font-weight: 600;
-  text-align: center; line-height: 1.35;
+  font-size: var(--fs-cap); color: var(--accent-ink); font-weight: var(--w-body-semi);
+  line-height: 1.35;
+  text-align: justify; text-align-last: center;   /* flush block, centred final line */
+  hyphens: auto; -webkit-hyphens: auto;
 }
-.figcaption .src { color: var(--muted); font-weight: 400; }
+.figcaption .src { color: var(--muted); font-weight: var(--w-body-reg); }
 .fig-mini-label {       /* short coloured phrase above a figure */
-  font-family: var(--font-display); font-weight: 600; font-size: 16px;
+  font-family: var(--font-display); font-weight: var(--w-disp-med); font-size: 16px;
   color: var(--accent); margin-bottom: 6px;
 }
 
 /* diagram annotation overlays — only --critical and --annot-2 allowed */
 .annot { position: absolute; border: 2.5px dashed var(--critical); border-radius: 8px; }
 .annot.alt { border-color: var(--annot-2); }
-.annot-note { font-size: 14px; font-weight: 600; color: var(--critical); }
+.annot-note { font-size: 15px; font-weight: var(--w-body-semi); color: var(--critical);
+  text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
 .annot-note.alt { color: var(--annot-2); }
 
 /* ---------- TABLES ---------- */
-table.t { border-collapse: collapse; width: 100%; font-size: 19px; }
+table.t { border-collapse: collapse; width: 100%; font-size: var(--fs-table); }
 table.t th {
   background: var(--accent); color: #fff;
-  font-family: var(--font-display); font-weight: 600;
+  font-family: var(--font-display); font-weight: var(--w-disp-med);
   text-align: left; padding: 9px 12px;
 }
-table.t td { padding: 8px 12px; border-bottom: 1px solid var(--rule); }
+table.t td { padding: 8px 12px; border-bottom: 1px solid var(--rule); text-align: left; }
 table.t tr:nth-child(even) td { background: var(--panel); }
 
 /* ---------- EQUATIONS ---------- */
@@ -240,11 +307,11 @@ pre.algo {
 .slide-foot {
   position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 22px;
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 13px; color: var(--body);
+  font-size: var(--fs-foot); color: var(--body);
 }
-.slide-foot .pg { font-family: var(--font-display); font-weight: 600; color: var(--accent); }
-.refnote { font-size: 13px; color: var(--body); }
-.refnote b { color: var(--ink); font-weight: 600; }
+.slide-foot .pg { font-family: var(--font-display); font-weight: var(--w-disp-med); color: var(--accent); }
+.refnote { font-size: var(--fs-foot); color: var(--body); }
+.refnote b { color: var(--ink); font-weight: var(--w-body-semi); }
 
 /* ============================================================
    SPECIAL SLIDE TYPES
@@ -265,13 +332,13 @@ pre.algo {
   letter-spacing: .04em; color: var(--accent);
 }
 .t-title {
-  font-family: var(--font-display); font-weight: 800;
-  font-size: 74px; line-height: 1.06; letter-spacing: -.02em;
+  font-family: var(--font-display); font-weight: var(--w-disp-hero);
+  font-size: var(--fs-title-hero); line-height: 1.06; letter-spacing: -.02em;
   color: var(--ink); margin: 28px 0 0;
 }
 .t-title .lead { color: var(--accent); }
 .t-occasion {
-  font-family: var(--font-display); font-weight: 600; font-size: 25px;
+  font-family: var(--font-display); font-weight: var(--w-disp-med); font-size: var(--fs-lead);
   color: var(--muted); margin-top: 24px; letter-spacing: .01em;
 }
 .t-meta { margin-top: 30px; display: flex; flex-direction: column; gap: 14px; }
@@ -293,14 +360,15 @@ pre.algo {
   color: var(--accent); letter-spacing: .1em;
 }
 .slide--section .sec-title {
-  font-family: var(--font-display); font-weight: 800; font-size: 54px;
+  font-family: var(--font-display); font-weight: var(--w-disp-hero); font-size: var(--fs-sec);
   line-height: 1.1; margin-top: 10px;
 }
 .slide--section .sec-title::after {
   content:""; display:block; width:120px; height:5px; border-radius:3px;
   background: var(--accent); margin-top: 22px;
 }
-.slide--section .sec-pre { color: #B9B9C8; font-size: 19px; margin-top: 20px; max-width: 60%; }
+.slide--section .sec-pre { color: #C9D6CF; font-size: var(--fs-table); margin-top: 20px; max-width: 60%;
+  text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
 
 /* --- TABLE OF CONTENTS --- */
 .toc { display: flex; flex-direction: column; gap: 14px; }
@@ -320,14 +388,14 @@ pre.algo {
   letter-spacing: .04em; color: var(--accent);
 }
 .slide--closing .thanks {
-  font-family: var(--font-display); font-weight: 800; font-size: 76px;
+  font-family: var(--font-display); font-weight: var(--w-disp-hero); font-size: var(--fs-thanks);
   line-height: 1.02; color: var(--ink); letter-spacing: -.01em;
 }
-.slide--closing .close-sub { margin-top: 22px; font-size: 26px; color: var(--body); }
-.slide--closing .close-sub a { color: var(--accent-ink); font-weight: 600; text-decoration: none; }
+.slide--closing .close-sub { margin-top: 22px; font-size: var(--fs-lead); color: var(--body); }
+.slide--closing .close-sub a { color: var(--accent-ink); font-weight: var(--w-body-semi); text-decoration: none; }
 .slide--closing .close-q {
-  margin-top: 14px; font-family: var(--font-display); font-weight: 600;
-  font-size: 26px; color: var(--accent);
+  margin-top: 14px; font-family: var(--font-display); font-weight: var(--w-disp-med);
+  font-size: var(--fs-lead); color: var(--accent);
 }
 
 /* progress dots counter, e.g. Results (3/8) */

@@ -3,18 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ISIC-2024 SLICE-3D — Skin-Cancer Detection on a Quality-vs-Cost Frontier</title>
+<title>ISIC-2024 SLICE-3D, Skin-Cancer Detection on a Quality-vs-Cost Frontier</title>
 <link rel="stylesheet" href="./theme.css">
 <link rel="stylesheet" href="katex/katex.min.css">
 <style>
   /* ====================================================================
-     PER-DECK OVERRIDE — Pakistan green accent. Only --accent* tokens change.
+     PER-DECK OVERRIDE, Pakistan green accent + de-grayed ink.
+     Near-monochrome green-tinted ink on white + ONE accent (green).
      ==================================================================== */
   :root{
-    --accent:      #046A38;
-    --accent-ink:  #034425;
-    --accent-soft: #E6F2EA;
-    --accent-line: #BFE0CD;
+    /* ACCENT, Pakistan green family. Single accent, reserved for the key signal. */
+    --accent:      #046A38;   /* headers, kickers, bullets, page no., table head, hero number */
+    --accent-ink:  #034425;   /* darker green for small text / links / .hl on white */
+    --accent-soft: #E6F2EA;   /* callout / recall / hl-soft / highlighted-row fill */
+    --accent-line: #BFE0CD;   /* hairline accents, sub-bullet ring, recall border */
+    /* INK / TEXT, no washed gray anywhere. */
+    --ink:         #14241B;   /* titles + .kw, green-tinted near-black */
+    --body:        #1F2A24;   /* body copy, de-blued */
+    --muted:       #3C4A43;   /* captions/footnotes/footer, green-slate */
+    --rule:        #D7E0DB;   /* faint green hairline */
+    --panel:       #F2F6F3;   /* alternate panel, green-tinted */
+    /* RESERVED non-accent signals, MEANING only, never decoration. */
+    --critical:    #C0392B;   /* the one critical claim/warning per slide (.crit) */
+    --annot-2:     #1F6F8B;   /* 2nd diagram-annotation colour ONLY (teal, CB-safe vs green) */
+    --oof-held:    #C25A1C;   /* held-out fold in CV diagram, warm, CB-safe vs green */
     --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
     --font-body:    'Inter', 'Segoe UI', system-ui, sans-serif;
   }
@@ -22,66 +34,140 @@
   .deck { --pad-y: 48px; }
 
   /* compact stat row for the data slide */
-  .mini-stats { display:flex; gap:26px; margin-bottom:18px; }
-  .mini-stats .stat .num { font-size:40px; }
-  .mini-stats .stat .lbl { font-size:14px; }
+  .mini-stats { display:flex; gap:26px; margin-bottom:14px; flex:0 0 auto; }
+  .mini-stats .stat .num { font-size:42px; }
+  .mini-stats .stat .lbl { font-size:var(--fs-kicker); }
 
-  /* figure that fills its column without overflow */
-  .figfill { flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
-  .figfill .figure { flex:1 1 auto; min-height:0; }
-  .figfill .figure img { max-height:100%; }
+  /* slide 3 (Dataset): the class-examples montage is wide+tall; cap its height
+     and top-align the column so the figure + caption always fit inside the body
+     and the caption never bleeds past the page foot. */
+  .col.figcol.cls-fig { justify-content:flex-start; }
+  .col.figcol.cls-fig .figure { flex:0 1 auto; min-height:0; }
+  .col.figcol.cls-fig .figure img { max-height:300px; width:auto; }
+  .col.figcol.cls-fig .figcaption { margin-top:12px; }
 
-  /* two-lane pipeline diagram */
-  .lanes { display:flex; flex-direction:column; gap:10px; }
-  .lane { display:flex; align-items:stretch; gap:8px; }
-  .lane .badge { flex:0 0 92px; display:flex; align-items:center; justify-content:center;
-    font-family:var(--font-display); font-weight:700; font-size:13px; border-radius:10px;
-    background:var(--accent); color:#fff; text-align:center; padding:6px; }
+  /* === IMAGE+TEXT FIGURE SIZING (uses the shared contract in theme.css) ===
+     Figures grow to the FULL column box; captions are fixed-height below. */
+  .figfill { flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:center; }
+  .figfill .figure { flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; }
+  .figfill .figure img, .figfill .figure svg { max-height:100%; max-width:100%; width:auto; height:auto; }
+
+  /* HERO figure (frontier #12): the figure owns the slide's vertical space. */
+  .figfill.hero { flex:1 1 auto; min-height:0; }
+  .figfill.hero .figure { flex:1 1 auto; min-height:0; }
+  .figfill.hero .figure img { max-height:100%; width:auto; }
+  .figfill.hero + table.acad { flex:0 0 auto; margin-top:14px; }
+
+  /* two-lane pipeline diagram, enlarged to fill the slide */
+  .lanes { display:flex; flex-direction:column; gap:14px; }
+  .lane { display:flex; align-items:stretch; gap:10px; }
+  .lane .badge { flex:0 0 104px; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:var(--w-disp-strong); font-size:16px; border-radius:12px;
+    background:var(--accent); color:#fff; text-align:center; padding:8px; }
   .lane .badge.alt { background:var(--ink); }
-  .lane .cells { flex:1; display:flex; align-items:stretch; gap:6px; }
+  .lane .cells { flex:1; display:flex; align-items:stretch; gap:10px; }
   .lane .cell { flex:1; background:var(--panel); border:1px solid var(--rule);
-    border-radius:10px; padding:8px 10px; font-size:13px; color:var(--body); line-height:1.3;
+    border-radius:12px; padding:12px 14px; font-size:15px; color:var(--body); line-height:1.32;
     display:flex; align-items:center; }
   .lane .cell b { color:var(--ink); }
-  .lane .ar { align-self:center; color:var(--accent); font-weight:800; font-size:16px; }
-  .merge { display:flex; align-items:center; gap:8px; }
+  .lane .cell.stacked { flex-direction:column; align-items:flex-start; gap:5px; }
+  .lane .cell .pa { font-family:var(--font-display); font-weight:var(--w-disp-strong); font-size:14px; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .lane .ar { align-self:center; color:var(--accent); font-weight:var(--w-disp-hero); font-size:20px; }
+  .merge { display:flex; align-items:center; gap:10px; margin-top:2px; }
   .merge .mbox { flex:1; background:var(--accent-soft); border:1px solid var(--accent-line);
-    border-radius:10px; padding:9px 12px; font-size:13px; color:var(--body); text-align:center; }
+    border-radius:12px; padding:12px 14px; font-size:15px; color:var(--body); text-align:center; line-height:1.3; }
   .merge .mbox b { color:var(--accent-ink); }
+  .merge .mbox .pa { font-family:var(--font-display); font-weight:var(--w-disp-strong); font-size:13px; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .merge .ar { align-self:center; }
 
-  /* results figures: hard fit guards */
+  /* slide 4 (EDA): cap each stacked figure and top-align the figure column so the
+     bottom triptych's x-axis sits well clear of the page foot (no overlap). */
+  .eda-cols .figcol.two-up { justify-content:flex-start; gap:10px; }
+  .eda-cols .figcol.two-up .figure { flex:0 1 auto; min-height:0; }
+  .eda-cols .figcol.two-up .figure img { max-height:170px; width:auto; }
+
+  /* slide 13 (Ablations): pull both tables up directly under the title rule.
+     Overrides the shared image-text contract that centres .cols-7-5 columns,
+     which otherwise floats the tables in a dead band mid-slide. */
+  .cols.cols-top > .col { justify-content:flex-start; }
+
+  /* slide 11 (Results): confusion-matrix caption reads as scholarly prose, not a
+     centred poem, left-aligned, flush, sitting directly under the matrix. The
+     matrix is height-capped and the pair top-aligns so the caption sits right
+     under the matrix and the whole block stays on-page. */
+  .col.fig-cap-row.cm-col { justify-content:flex-start; }
+  .col.fig-cap-row.cm-col .figure { flex:0 1 auto; min-height:0; }
+  .col.fig-cap-row.cm-col .figure img { max-height:300px; max-width:100%; width:auto; height:auto; }
+  .figcaption.cap-left { text-align:left; text-align-last:left; margin-top:12px; }
+
+  /* results figures: vertically centred, enlarged, captions fixed below */
   .fig-cap-row { display:flex; flex-direction:column; min-height:0; flex:1 1 auto; justify-content:center; }
-  .fig-cap-row .figure { flex:0 1 auto; min-height:0; overflow:hidden; }
-  .fig-cap-row .figure img { max-height:430px; }
+  .fig-cap-row .figure { flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; }
+  .fig-cap-row .figure img, .fig-cap-row .figure svg { max-height:100%; max-width:100%; width:auto; height:auto; }
   .metric-list { list-style:none; }
   .metric-list li { display:flex; justify-content:space-between; gap:12px;
-    font-size:16px; padding:6px 0; border-bottom:1px solid var(--rule); }
+    font-size:18px; padding:6px 0; border-bottom:1px solid var(--rule); }
   .metric-list li .ml { color:var(--body); }
-  .metric-list li .mv { font-family:var(--font-display); font-weight:700; color:var(--accent); }
+  .metric-list li .mv { font-family:var(--font-display); font-weight:var(--w-disp-strong); color:var(--accent); font-variant-numeric:tabular-nums; }
+
+  /* slide 9 (Image Expert): table sits at the top of the right column, the t-SNE
+     grows to fill the full column width below it and shares the slide midline with
+     the left bullets+callout block, no stranded thumbnail, no dead corner. */
+  .col.img-right { justify-content:flex-start; }
+  .col.img-right .tsne-fig { flex:1 1 auto; min-height:0; width:100%; display:flex;
+    align-items:center; justify-content:center; }
+  .col.img-right .tsne-fig img { max-width:100%; max-height:100%; width:100%; height:auto; object-fit:contain; }
 
   /* embedded academic (booktabs-style) tables, themed to the deck */
   table.acad { border-collapse:collapse; width:100%; font-family:var(--font-body);
-    font-size:15px; line-height:1.35; color:var(--ink); }
-  table.acad caption { caption-side:top; text-align:left; font-weight:600; font-size:14px;
+    font-size:var(--fs-table); line-height:1.35; color:var(--ink); }
+  table.acad caption { caption-side:top; text-align:left; font-weight:var(--w-body-semi); font-size:15px;
     color:var(--accent-ink); padding:0 0 8px 0; }
   table.acad thead th { border-top:2px solid var(--ink); border-bottom:1px solid var(--ink);
-    padding:7px 12px; font-family:var(--font-display); font-weight:700; text-align:left; white-space:nowrap; }
-  table.acad tbody td { border:none; padding:6px 12px; }
+    padding:7px 12px; font-family:var(--font-display); font-weight:var(--w-disp-strong); text-align:left; white-space:nowrap; }
+  table.acad tbody td { border:none; padding:6px 12px; text-align:left; }
   table.acad tbody tr:last-child td { border-bottom:2px solid var(--ink); }
   table.acad td.num, table.acad th.num { text-align:right; font-variant-numeric:tabular-nums; }
-  table.acad tr.hl td { background:var(--accent-soft); font-weight:700; }
-  .acad-note { font-size:13px; color:var(--muted); padding-top:8px; }
-  table.acad.tight { font-size:13.5px; }
-  table.acad.tight thead th, table.acad.tight tbody td { padding:4px 9px; }
+  table.acad tr.hl td { background:var(--accent-soft); font-weight:var(--w-body-bold); }
+  .acad-note { font-size:15px; color:var(--body); padding-top:8px;
+    text-align:justify; hyphens:auto; -webkit-hyphens:auto; }
+  /* secondary text must read dark, never washed gray */
+  .runbar .ctx { color:var(--body); }
+  table.acad.tight { font-size:var(--fs-table-tight); }
+  table.acad.tight thead th, table.acad.tight tbody td { padding:5px 10px; }
+
+  /* ---- title-slide: highlighted members, embedded links ---- */
+  .t-occasion { color:var(--ink); }
+  .t-members { margin-top:26px; display:flex; flex-direction:column; gap:11px; align-items:center; }
+  .t-name { display:flex; align-items:center; justify-content:center; gap:12px;
+    font-size:24px; line-height:1.2; }
+  .t-name .nm { font-family:var(--font-display); font-weight:var(--w-disp-hero); color:var(--accent-ink); }
+  .t-name .t-id { font-family:var(--font-body); font-weight:var(--w-body-bold); font-size:15px;
+    color:var(--accent-ink); background:var(--accent-soft); border:1px solid var(--accent-line);
+    border-radius:999px; padding:2px 11px; letter-spacing:.01em; font-variant-numeric:tabular-nums; }
+  .t-instr { margin-top:22px; font-size:23px; color:var(--body); }
+  .t-instr .lbl { font-family:var(--font-display); font-weight:var(--w-disp-strong); color:var(--accent);
+    text-transform:uppercase; letter-spacing:.08em; font-size:15px; margin-right:10px; }
+  .t-instr strong { color:var(--accent-ink); font-weight:var(--w-disp-hero); }
+  .t-date { margin-top:14px; font-size:17px; color:var(--accent); font-weight:var(--w-body-semi); letter-spacing:.02em; }
+  .t-links { margin-top:18px; display:flex; flex-direction:column; gap:7px; align-items:center; }
+  .t-links a { font-family:var(--font-body); font-size:17px; font-weight:var(--w-body-semi);
+    color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-line);
+    padding-bottom:1px; }
+  .t-links a:hover { color:var(--accent-ink); border-bottom-color:var(--accent); }
 
   /* compact reference list */
   .reflist { list-style:none; margin:0; padding:0; }
-  .reflist li { font-size:14.5px; line-height:1.4; color:var(--body);
-    padding:5px 0 5px 16px; border-bottom:1px solid var(--rule); position:relative; }
+  .reflist li { font-size:15px; line-height:1.4; color:var(--body);
+    padding:5px 0 5px 16px; border-bottom:1px solid var(--rule); position:relative;
+    text-align:justify; hyphens:auto; -webkit-hyphens:auto; }
   .reflist li:last-child { border-bottom:none; }
   .reflist li::before { content:"›"; position:absolute; left:0; top:5px;
-    color:var(--accent); font-weight:700; }
+    color:var(--accent); font-weight:var(--w-disp-strong); }
   .reflist li i { color:var(--ink); font-style:italic; }
+
+  /* bullets and table cells stay left-aligned (ragged right), never justified */
+  .bullets > li, .bullets ul > li, table.acad td, table.t td { text-align:left; }
 
 </style>
 </head>
@@ -99,14 +185,19 @@
       <h1 class="t-title"><span class="lead">ISIC</span>-2024 <span class="lead">SLICE</span>-3D<br>Skin Cancer Detection</h1>
       <div class="t-occasion">Final Project · Neural Networks</div>
 
-      <div class="t-meta">
-        <div class="t-row"><span class="lbl">Members</span> Raja (M11217073) &nbsp;·&nbsp; Sultan (M11217078) &nbsp;·&nbsp; Hassan (M11217081)</div>
-        <div class="t-row"><span class="lbl">Instructor</span> <strong>Prof. Hsuan-Ting Chang</strong></div>
-        <div class="t-row"><span class="lbl">Date</span> June 18, 2026</div>
+      <div class="t-members">
+        <div class="t-name"><span class="nm">Raja, Muhammad Junaid Ali Asif</span><span class="t-id">M11217073</span></div>
+        <div class="t-name"><span class="nm">Sultan, Adil</span><span class="t-id">M11217078</span></div>
+        <div class="t-name"><span class="nm">Hassan, Shahzaib Ahmed</span><span class="t-id">M11217081</span></div>
       </div>
 
-      <div class="t-rule"></div>
-      <div class="t-affil">FIC Lab, National Yunlin University of Science and Technology</div>
+      <div class="t-instr"><span class="lbl">Instructor</span> <strong>Prof. Hsuan-Ting Chang</strong></div>
+      <div class="t-date">June 18, 2026</div>
+
+      <div class="t-links">
+        <a href="https://junaidaliop.github.io/isic2024-tbp/">junaidaliop.github.io/isic2024-tbp</a>
+        <a href="https://github.com/junaidaliop/isic2024-tbp">github.com/junaidaliop/isic2024-tbp</a>
+      </div>
 
       <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
     </div>
@@ -148,7 +239,7 @@
         <div class="stat"><div class="num">1,042</div><div class="lbl">patients</div></div>
       </div>
       <div class="cols cols-7-5" style="flex:1 1 auto;min-height:0">
-        <div class="col figfill">
+        <div class="col figcol cls-fig">
           <div class="figure">
             <img src="assets/fig0_class_examples.png" alt="Representative benign and malignant lesion crops">
           </div>
@@ -156,10 +247,10 @@
         </div>
         <div class="col v-center">
           <ul class="bullets">
-            <li>Square TBP tiles, 61–239 px (median 131 px).</li>
-            <li>393 malignant against <span class="kw">400,666</span> benign.</li>
-            <li>One cancer per <span class="kw">~1,021</span> crops.</li>
-            <li>Head/neck site carries ~7&times; the baseline malignant rate.</li>
+            <li>Square TBP tiles, <span class="num-hl">61&ndash;239</span> px (median <span class="num-hl">131</span> px).</li>
+            <li><span class="num-hl">393</span> malignant against <span class="num-hl">400,666</span> benign.</li>
+            <li>One cancer per <span class="num-hl">~1,021</span> crops &mdash; a <span class="num-hl">0.098%</span> base rate.</li>
+            <li>Lesion size and colour heterogeneity rise with malignancy, the first signal the experts exploit.</li>
           </ul>
         </div>
       </div>
@@ -172,23 +263,23 @@
     <div class="kicker">Exploratory Analysis</div>
     <h2 class="slide-title">What the Data Reveals</h2>
     <div class="slide-body">
-      <div class="cols cols-7-5" style="flex:1 1 auto;min-height:0">
-        <div class="col v-center">
-          <div class="fig-mini-label">Patient structure &mdash; correlated lesions per patient</div>
-          <div class="figure" style="max-height:155px">
-            <img src="assets/eda_fig2_patient_structure.svg" alt="Per-patient lesion counts; malignant-carrying patients hold most of the data" style="max-height:155px">
+      <div class="cols cols-7-5 eda-cols" style="flex:1 1 auto;min-height:0">
+        <div class="col figcol two-up">
+          <div class="fig-mini-label">Patient structure: correlated lesions per patient</div>
+          <div class="figure">
+            <img src="assets/eda_fig2_patient_structure.svg" alt="Per-patient lesion counts; malignant-carrying patients hold most of the data">
           </div>
-          <div class="fig-mini-label" style="margin-top:6px">Ugly-duckling &mdash; the malignant lesion tops its patient's own size distribution</div>
-          <div class="figure" style="max-height:155px">
-            <img src="assets/eda_fig9_ugly_duckling.svg" alt="Three patients: the malignant lesion sits at the top of its own patient size distribution" style="max-height:155px">
+          <div class="fig-mini-label">Ugly-duckling: the malignant lesion tops its patient's own size distribution</div>
+          <div class="figure">
+            <img src="assets/eda_fig9_ugly_duckling.svg" alt="Three patients: the malignant lesion sits at the top of its own patient size distribution">
           </div>
         </div>
         <div class="col v-center">
           <ul class="bullets">
-            <li>Lesions are <span class="kw">patient-grouped</span>: 1,042 patients, median 241 crops each; the 259 malignant-carrying patients hold 89% of all crops.</li>
-            <li><span class="hl">Patient-relative deviations</span> (ugly-duckling) carry ~65% of GBDT gain; 45.7% of cancers fall in the top 10% of their own patient's lesion sizes.</li>
-            <li>Head/neck site runs at <span class="kw">~7&times;</span> the baseline malignant rate despite being the smallest site &mdash; a strong site prior.</li>
-            <li>Hue <span class="kw">tbp_lv_H</span> alone reaches univariate AUC 0.81; malignant lesions are ~2&times; larger than benign.</li>
+            <li>Lesions are <span class="kw">patient-grouped</span>: <span class="num-hl">1,042</span> patients, median 241 crops each; the 259 malignant-carrying patients hold <span class="num-hl">39%</span> of all crops.</li>
+            <li><span class="hl">Patient-relative deviations</span> (ugly-duckling) carry <span class="num-hl">~65%</span> of GBDT gain; 45.7% of cancers fall in the top 10% of their own patient's lesion sizes.</li>
+            <li>Head/neck site runs at <span class="num-hl">~7&times;</span> the baseline malignant rate despite being the smallest site, a strong site prior.</li>
+            <li>Hue <span class="kw">tbp_lv_H</span> alone reaches univariate AUC <span class="num-hl">0.81</span>; malignant lesions are ~2&times; larger than benign.</li>
           </ul>
         </div>
       </div>
@@ -206,13 +297,13 @@
           <div class="figure">
             <img src="assets/fig1_class_imbalance.svg" alt="Class imbalance on a log scale and malignant count per fold">
           </div>
-          <div class="figcaption">Class counts (log scale) and the 77–83 malignant cases per fold.</div>
+          <div class="figcaption">Class counts (log scale) and the <span class="num-hl">77&ndash;83</span> malignant cases per fold.</div>
         </div>
         <div class="col v-center">
           <ul class="bullets">
-            <li>At 0.098% prevalence, plain AUC and accuracy reward the wrong region of the curve.</li>
+            <li>At <span class="num-hl">0.098%</span> prevalence, plain AUC and accuracy reward the wrong region of the curve.</li>
             <li>Scoring is restricted to the <span class="hl">high-sensitivity tail</span>: TPR from 0.80 to 1.0.</li>
-            <li>Range <span class="kw">[0, 0.20]</span>: random &asymp; 0.02, perfect = 0.20.</li>
+            <li>Range <span class="num-hl">[0, 0.20]</span>: random &asymp; 0.02, perfect = 0.20.</li>
           </ul>
           <div class="eq boxed" style="margin-top:8px">$$ \mathrm{pAUC}_{80} = \int_{0.80}^{1.0}\!\big(1-\mathrm{FPR}\big)\, d(\mathrm{TPR}) $$</div>
           <p class="small" style="text-align:center;color:var(--muted);margin-top:4px">Official ISIC-2024 metric. Every number here is OOF pAUC@80%TPR on the same frozen folds.</p>
@@ -236,10 +327,10 @@
                  aria-label="Five-fold cross-validation rotation producing out-of-fold predictions"
                  style="width:100%;height:auto;max-height:320px">
               <style>
-                .oof-lbl{font-family:'Inter','Segoe UI',sans-serif;font-size:14px;fill:#26263A;}
+                .oof-lbl{font-family:'Inter','Segoe UI',sans-serif;font-size:15px;fill:#1F2A24;}
                 .oof-cell{font-family:'Inter','Segoe UI',sans-serif;font-weight:700;font-size:15px;}
-                .oof-cap{font-family:'Inter','Segoe UI',sans-serif;font-size:13px;fill:#6C6C80;}
-                .oof-key{font-family:'Inter','Segoe UI',sans-serif;font-weight:600;font-size:13px;fill:#26263A;}
+                .oof-cap{font-family:'Inter','Segoe UI',sans-serif;font-size:14px;fill:#3C4A43;}
+                .oof-key{font-family:'Inter','Segoe UI',sans-serif;font-weight:600;font-size:14px;fill:#1F2A24;}
               </style>
               <!-- column headers -->
               <text x="60"  y="22" class="oof-cap" text-anchor="middle">Fold 1</text>
@@ -252,7 +343,7 @@
                    diagonal P down the rows. cell w=96 h=40, gap 14, x0=12, y0=32 -->
               <!-- row 1 -->
               <g>
-                <rect x="12"  y="32" width="96" height="40" rx="7" fill="#E8772E"/>
+                <rect x="12"  y="32" width="96" height="40" rx="7" fill="#C25A1C"/>
                 <rect x="122" y="32" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="232" y="32" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="342" y="32" width="96" height="40" rx="7" fill="#046A38"/>
@@ -267,7 +358,7 @@
               <!-- row 2 -->
               <g>
                 <rect x="12"  y="86" width="96" height="40" rx="7" fill="#046A38"/>
-                <rect x="122" y="86" width="96" height="40" rx="7" fill="#E8772E"/>
+                <rect x="122" y="86" width="96" height="40" rx="7" fill="#C25A1C"/>
                 <rect x="232" y="86" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="342" y="86" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="452" y="86" width="96" height="40" rx="7" fill="#046A38"/>
@@ -282,7 +373,7 @@
               <g>
                 <rect x="12"  y="140" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="122" y="140" width="96" height="40" rx="7" fill="#046A38"/>
-                <rect x="232" y="140" width="96" height="40" rx="7" fill="#E8772E"/>
+                <rect x="232" y="140" width="96" height="40" rx="7" fill="#C25A1C"/>
                 <rect x="342" y="140" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="452" y="140" width="96" height="40" rx="7" fill="#046A38"/>
                 <text x="60"  y="166" class="oof-cell" fill="#fff" text-anchor="middle">train</text>
@@ -297,7 +388,7 @@
                 <rect x="12"  y="194" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="122" y="194" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="232" y="194" width="96" height="40" rx="7" fill="#046A38"/>
-                <rect x="342" y="194" width="96" height="40" rx="7" fill="#E8772E"/>
+                <rect x="342" y="194" width="96" height="40" rx="7" fill="#C25A1C"/>
                 <rect x="452" y="194" width="96" height="40" rx="7" fill="#046A38"/>
                 <text x="60"  y="220" class="oof-cell" fill="#fff" text-anchor="middle">train</text>
                 <text x="170" y="220" class="oof-cell" fill="#fff" text-anchor="middle">train</text>
@@ -312,7 +403,7 @@
                 <rect x="122" y="248" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="232" y="248" width="96" height="40" rx="7" fill="#046A38"/>
                 <rect x="342" y="248" width="96" height="40" rx="7" fill="#046A38"/>
-                <rect x="452" y="248" width="96" height="40" rx="7" fill="#E8772E"/>
+                <rect x="452" y="248" width="96" height="40" rx="7" fill="#C25A1C"/>
                 <text x="60"  y="274" class="oof-cell" fill="#fff" text-anchor="middle">train</text>
                 <text x="170" y="274" class="oof-cell" fill="#fff" text-anchor="middle">train</text>
                 <text x="280" y="274" class="oof-cell" fill="#fff" text-anchor="middle">train</text>
@@ -322,10 +413,10 @@
               </g>
 
               <!-- key -->
-              <rect x="12" y="306" width="18" height="18" rx="4" fill="#E8772E"/>
-              <text x="36" y="320" class="oof-key">held-out fold &mdash; predicted</text>
+              <rect x="12" y="306" width="18" height="18" rx="4" fill="#C25A1C"/>
+              <text x="36" y="320" class="oof-key">held-out fold: predicted</text>
               <rect x="248" y="306" width="18" height="18" rx="4" fill="#046A38"/>
-              <text x="272" y="320" class="oof-key">4 folds &mdash; train the model</text>
+              <text x="272" y="320" class="oof-key">4 folds: train the model</text>
 
               <!-- concatenation arrow + OOF result -->
               <line x1="12" y1="346" x2="560" y2="346" stroke="#BFE0CD" stroke-width="2"/>
@@ -345,7 +436,7 @@
           </ul>
           <div class="recall" style="margin-top:8px">
             <span class="recall-tag">Why it matters</span>
-            <p>If a patient's moles appear in both train and validation, the model memorises the person, not the disease — the source of the competition's public-to-private shake-ups.</p>
+            <p>If a patient's moles appear in both train and validation, the model memorises the person, not the disease, the source of the competition's public-to-private shake-ups.</p>
           </div>
         </div>
       </div>
@@ -357,41 +448,41 @@
   <section class="slide">
     <div class="kicker">Approach</div>
     <h2 class="slide-title">Two Experts and a Rank-Average Stack</h2>
-    <div class="slide-body vcenter">
-      <div class="lanes" style="margin-bottom:16px">
+    <div class="slide-body">
+      <div class="lanes">
         <div class="lane">
-          <div class="cell" style="flex:0 0 170px"><span><b>Data</b> · 401k crops + metadata</span></div>
+          <div class="cell" style="flex:0 0 200px"><span><b>SLICE-3D</b> · 401,059 crops · 1,042 patients</span></div>
           <div class="ar">&rarr;</div>
-          <div class="cell"><span>Frozen <b>patient-grouped</b> 5-fold split</span></div>
+          <div class="cell"><span>Patient-grouped <b>StratifiedGroupKFold</b> · 5 folds · SEED=42 · frozen, no patient straddles folds</span></div>
         </div>
         <div class="lane">
           <div class="badge">Tabular</div>
           <div class="cells">
-            <div class="cell">Intrinsic&nbsp;+&nbsp;<b>patient-relative</b>&nbsp;features</div>
+            <div class="cell">Features: geometry · colour/hue · size ratios · 3D position · <b>patient-relative ugly-duckling</b> (pdev/prank/pxc) · per-fold target encoding</div>
             <div class="ar">&rarr;</div>
-            <div class="cell">Bagged&nbsp;<b>LightGBM&nbsp;+&nbsp;CatBoost</b></div>
+            <div class="cell stacked" style="flex:0 0 210px"><span>Bagged <b>LightGBM (5-seed)</b> + <b>CatBoost</b>, rank-blend</span><span class="pa">OOF pAUC 0.16890</span></div>
           </div>
         </div>
         <div class="lane">
           <div class="badge alt">Image</div>
           <div class="cells">
-            <div class="cell"><b>convnextv2_nano</b>&nbsp;@224, undersample</div>
+            <div class="cell"><b>convnextv2_nano</b> @224 · neg-undersample ~1:1 · BCE+LS · EMA(0.995) · mixup · TTA</div>
             <div class="ar">&rarr;</div>
-            <div class="cell">OOF&nbsp;<b>prob&nbsp;+&nbsp;embedding</b></div>
+            <div class="cell stacked" style="flex:0 0 210px"><span>OOF malignancy <b>prob</b> (+ embedding)</span><span class="pa">OOF pAUC 0.15821</span></div>
           </div>
         </div>
         <div class="merge">
-          <div class="mbox">Tabular&nbsp;OOF</div>
+          <div class="mbox">Tabular OOF<br><b>0.16890</b></div>
           <div class="ar" style="color:var(--accent);font-weight:800;font-size:18px">+</div>
-          <div class="mbox">Image&nbsp;OOF</div>
+          <div class="mbox">Image OOF<br><b>0.15821</b></div>
           <div class="ar" style="color:var(--accent);font-weight:800;font-size:18px">&rarr;</div>
-          <div class="mbox"><b>Rank-average</b></div>
+          <div class="mbox"><b>Rank-average</b><br><span class="pa">param-free</span></div>
           <div class="ar" style="color:var(--accent);font-weight:800;font-size:18px">&rarr;</div>
-          <div class="mbox"><b>Submission</b></div>
+          <div class="mbox" style="background:var(--accent);border-color:var(--accent-ink)"><b style="color:#fff">Final OOF 0.17376</b><br><span style="color:#dff0e6;font-size:11.5px">15.8M params · 2.46 GFLOPs · 61 ms CPU</span></div>
         </div>
       </div>
-      <div class="callout">
-        Tabular expert carries most of the score; the image expert contributes a complementary signal; the combiner is a zero-parameter rank average. No external or synthetic data.
+      <div class="callout" style="margin-top:18px">
+        Tabular expert carries most of the score (0.16890); the image expert adds a complementary signal (0.15821); the param-free rank average lifts both to <b>0.17376</b>. No external or synthetic data.
       </div>
     </div>
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
@@ -405,7 +496,7 @@
         <div class="col v-center">
           <ul class="bullets">
             <li>Intrinsic features: lesion geometry, colour, size ratios.</li>
-            <li><span class="hl">Patient-relative</span> deviations encode the ugly-duckling sign — a lesion that departs from its patient's own moles.</li>
+            <li><span class="hl">Patient-relative</span> deviations encode the ugly-duckling sign, a lesion that departs from its patient's own moles.</li>
             <li>392 of 393 cancers share a patient with benign moles, so within-patient deviation is computable for nearly every positive.</li>
             <li>Bagged <span class="kw">LightGBM</span> ensembled with <span class="kw">CatBoost</span>; early-stop on pAUC@80%TPR.</li>
           </ul>
@@ -418,10 +509,10 @@
             <caption>Table 1. Tabular LightGBM progression (OOF, leak-verified).</caption>
             <thead><tr><th>Configuration</th><th class="num">OOF pAUC@80%TPR</th></tr></thead>
             <tbody>
-              <tr><td>Step 0 — broken: is_unbalance + AUC early-stop</td><td class="num">0.09941</td></tr>
-              <tr><td>Step 1 — fixed early-stopping / objective</td><td class="num">0.11826</td></tr>
-              <tr><td>Step 2 — wide patient-relative features</td><td class="num">0.14420</td></tr>
-              <tr class="hl"><td>Step 3 — bagged + cross feats + CatBoost</td><td class="num">0.16890</td></tr>
+              <tr><td>Step 0: broken: is_unbalance + AUC early-stop</td><td class="num">0.09941</td></tr>
+              <tr><td>Step 1: fixed early-stopping / objective</td><td class="num">0.11826</td></tr>
+              <tr><td>Step 2: wide patient-relative features</td><td class="num">0.14420</td></tr>
+              <tr class="hl"><td>Step 3: bagged + cross feats + CatBoost</td><td class="num">0.16890</td></tr>
             </tbody>
           </table>
         </div>
@@ -433,8 +524,8 @@
   <!-- ============================================================ 9 · IMAGE EXPERT -->
   <section class="slide">
     <div class="runbar"><span class="mark">Image Expert</span><span class="ctx">small ImageNet-pretrained backbones at 128–224 px</span></div>
-    <div class="slide-body vcenter">
-      <div class="cols cols-7-5">
+    <div class="slide-body">
+      <div class="cols cols-7-5" style="flex:1 1 auto;min-height:0">
         <div class="col v-center">
           <ul class="bullets">
             <li>Small pretrained backbones; ImageNet weights carry no skin-cancer labels, preserving the no-external-data claim.</li>
@@ -446,7 +537,7 @@
             Resolution and light regularisation on a small backbone is the sweet spot: convnextv2_nano gains <span class="delta" style="color:var(--accent-ink);font-weight:700">+0.005</span> from 128 to 224 px; stronger EMA over-smooths and hurts.
           </div>
         </div>
-        <div class="col v-center">
+        <div class="col img-right">
           <table class="acad">
             <caption>Image backbones (OOF pAUC@80%TPR).</caption>
             <thead><tr><th>Backbone</th><th class="num">pAUC</th></tr></thead>
@@ -460,6 +551,10 @@
             </tbody>
           </table>
           <p class="acad-note">nano @224 matches tiny @224 at half the cost; chosen as the image expert.</p>
+          <div class="fig-mini-label" style="margin-top:12px">OOF embedding t-SNE &mdash; the expert separates malignant from benign</div>
+          <div class="figure tsne-fig">
+            <img src="assets/eda_fig8_embedding_tsne.svg" alt="t-SNE of the image expert's OOF embeddings; malignant lesions cluster apart from benign">
+          </div>
         </div>
       </div>
     </div>
@@ -481,10 +576,10 @@
                  aria-label="Rank-average stacking: two experts converted to ranks, then averaged"
                  style="width:100%;height:auto;max-height:260px">
               <style>
-                .ra-h{font-family:'Bricolage Grotesque','Segoe UI',sans-serif;font-weight:700;font-size:14px;fill:#1A1A2E;}
-                .ra-t{font-family:'Inter','Segoe UI',sans-serif;font-size:14px;fill:#26263A;}
+                .ra-h{font-family:'Bricolage Grotesque','Segoe UI',sans-serif;font-weight:700;font-size:14px;fill:#14241B;}
+                .ra-t{font-family:'Inter','Segoe UI',sans-serif;font-size:14px;fill:#1F2A24;}
                 .ra-b{font-family:'Inter','Segoe UI',sans-serif;font-weight:700;font-size:14px;}
-                .ra-s{font-family:'Inter','Segoe UI',sans-serif;font-size:12px;fill:#6C6C80;}
+                .ra-s{font-family:'Inter','Segoe UI',sans-serif;font-size:12px;fill:#3C4A43;}
               </style>
               <!-- column headers: Lesion | GBDT prob>rank | CNN prob>rank | avg rank | final -->
               <text x="14"  y="20" class="ra-h">Lesion</text>
@@ -494,7 +589,7 @@
               <text x="248" y="36" class="ra-s" text-anchor="middle">prob &rarr; rank</text>
               <text x="372" y="20" class="ra-h" text-anchor="middle">avg rank</text>
               <text x="490" y="20" class="ra-h" text-anchor="middle">final</text>
-              <line x1="14" y1="44" x2="546" y2="44" stroke="#1A1A2E" stroke-width="1.5"/>
+              <line x1="14" y1="44" x2="546" y2="44" stroke="#14241B" stroke-width="1.5"/>
 
               <!-- rows: rank 5 = most suspicious -->
               <!-- L1 -->
@@ -506,8 +601,8 @@
               <!-- L2 = true cancer, rescued -->
               <rect x="8" y="78" width="544" height="30" rx="6" fill="#E6F2EA" stroke="#BFE0CD"/>
               <text x="14"  y="98" class="ra-b" fill="#034425">L2 &#9733;</text>
-              <text x="118" y="98" class="ra-b" fill="#26263A" text-anchor="middle">0.62 &rarr; 4</text>
-              <text x="248" y="98" class="ra-b" fill="#26263A" text-anchor="middle">0.88 &rarr; 5</text>
+              <text x="118" y="98" class="ra-b" fill="#1F2A24" text-anchor="middle">0.62 &rarr; 4</text>
+              <text x="248" y="98" class="ra-b" fill="#1F2A24" text-anchor="middle">0.88 &rarr; 5</text>
               <text x="372" y="98" class="ra-b" fill="#046A38" text-anchor="middle">4.5</text>
               <text x="490" y="98" class="ra-b" fill="#046A38" text-anchor="middle">1st</text>
               <!-- L3 -->
@@ -529,7 +624,7 @@
               <text x="372" y="178" class="ra-t" text-anchor="middle">1.0</text>
               <text x="490" y="178" class="ra-t" text-anchor="middle">5th</text>
 
-              <line x1="14" y1="192" x2="546" y2="192" stroke="#1A1A2E" stroke-width="1.5"/>
+              <line x1="14" y1="192" x2="546" y2="192" stroke="#14241B" stroke-width="1.5"/>
               <!-- the rescue note -->
               <text x="14" y="222" class="ra-t">
                 <tspan font-weight="700" fill="#046A38">&#9733; L2 is the true cancer.</tspan>
@@ -548,7 +643,7 @@
           </ul>
           <div class="recall" style="margin-top:8px">
             <span class="recall-tag">Why trivial wins</span>
-            <p>A rank average has <b>zero learned parameters</b>, so it cannot overfit the 393 positives. A learned meta-stacker reaches only 0.17108; a learned per-lesion gate falls to 0.15007 — below tabular alone.</p>
+            <p>A rank average has <b>zero learned parameters</b>, so it cannot overfit the 393 positives. A learned meta-stacker reaches only 0.17108; a learned per-lesion gate falls to 0.15007, below tabular alone.</p>
           </div>
         </div>
       </div>
@@ -562,11 +657,11 @@
     <h2 class="slide-title">Ranking and the Operating Point</h2>
     <div class="slide-body">
       <div class="cols cols-5-7" style="flex:1 1 auto;min-height:0">
-        <div class="col fig-cap-row">
+        <div class="col fig-cap-row cm-col">
           <div class="figure">
             <img src="assets/fig7_confusion_matrix.svg" alt="Confusion matrix at the 80% TPR operating point">
           </div>
-          <div class="figcaption">Illustrative 80%-TPR point: 315/393 caught at 95.2% specificity. The score is pAUC@80%TPR — rank-based over the high-sensitivity band — so at 0.1% prevalence a large absolute false-positive count is intrinsic; a stronger model has fewer at the same sensitivity.</div>
+          <div class="figcaption cap-left">Illustrative 80%-TPR point: 315/393 caught at 95.2% specificity. The score is pAUC@80%TPR &mdash; rank-based over the high-sensitivity band &mdash; so at 0.1% prevalence a large absolute false-positive count is intrinsic; a stronger model has fewer at the same sensitivity.</div>
         </div>
         <div class="col v-center">
           <div class="fig-mini-label">Stack, out-of-fold</div>
@@ -577,7 +672,7 @@
             <li><span class="ml">Sensitivity / specificity @ op. point</span><span class="mv">0.802 / 0.952</span></li>
           </ul>
           <div class="callout is-critical" style="margin-top:10px">
-            ROC-AUC is high, but at <span class="kw">0.098% prevalence</span> precision is mathematically forced low — <span class="crit">which is why scoring is pAUC@80%TPR</span>, not precision or accuracy.
+            ROC-AUC is high, but at <span class="kw">0.098% prevalence</span> precision is mathematically forced low, <span class="crit">which is why scoring is pAUC@80%TPR</span>, not precision or accuracy.
           </div>
         </div>
       </div>
@@ -613,8 +708,8 @@
     <div class="kicker">Ablations</div>
     <h2 class="slide-title">Negative Results and Leaderboard Comparison</h2>
     <div class="slide-body">
-      <div class="cols cols-7-5" style="flex:1 1 auto;min-height:0">
-        <div class="col v-center">
+      <div class="cols cols-7-5 cols-top" style="flex:1 1 auto;min-height:0">
+        <div class="col">
           <table class="acad tight">
             <caption>Table 3. Added complexity that did not improve OOF pAUC@80%TPR.</caption>
             <thead><tr><th>Idea tried</th><th class="num">Its pAUC</th><th>Beaten by</th><th>Honest finding</th></tr></thead>
@@ -628,14 +723,14 @@
           </table>
           <p class="acad-note">Every complexity increment lost on the frozen folds: each learned addition overfits the 393 positives or is dominated on cost.</p>
         </div>
-        <div class="col v-center">
+        <div class="col">
           <table class="acad tight">
             <caption>Table 4. Comparison to top Kaggle solutions.</caption>
             <thead><tr><th>Solution</th><th>Ext.</th><th>Syn.</th><th class="num">pAUC</th></tr></thead>
             <tbody>
-              <tr><td>1st — Novoselskiy (EVA-02 + GBDT)</td><td>Yes</td><td>Yes</td><td class="num">0.17264</td></tr>
-              <tr><td>2nd — uchiyama33</td><td>Yes</td><td>Yes</td><td class="num">—</td></tr>
-              <tr><td>3rd — kyohei-123</td><td>Yes</td><td>Yes</td><td class="num">—</td></tr>
+              <tr><td>1st, Novoselskiy (EVA-02 + GBDT)</td><td>Yes</td><td>Yes</td><td class="num">0.17264</td></tr>
+              <tr><td>2nd, uchiyama33</td><td>Yes</td><td>Yes</td><td class="num">—</td></tr>
+              <tr><td>3rd, kyohei-123</td><td>Yes</td><td>Yes</td><td class="num">—</td></tr>
               <tr class="hl"><td>Ours (single-dataset)</td><td>No</td><td>No</td><td class="num">CV 0.17376</td></tr>
             </tbody>
           </table>
@@ -655,7 +750,7 @@
         <div class="col v-center">
           <div class="fig-mini-label">Self-imposed constraints</div>
           <ul class="bullets">
-            <li><span class="kw">No external data.</span> SLICE-3D only — no ISIC-2019/2020, no PAD-UFES, no external dermoscopy.</li>
+            <li><span class="kw">No external data.</span> SLICE-3D only, no ISIC-2019/2020, no PAD-UFES, no external dermoscopy.</li>
             <li><span class="kw">No synthetic lesions.</span> Fabricated pathology is a label-validity hole in a medical task.</li>
             <li>ImageNet-pretrained encoders allowed: no skin-cancer labels, so the no-external-data property holds.</li>
           </ul>
@@ -693,7 +788,7 @@
             <p>SOTA among single-dataset, no-external-data, no-synthetic solutions, reported on a quality-versus-cost frontier rather than a single leaderboard point.</p>
           </div>
           <div class="callout" style="margin-top:12px">
-            At 393 positives, the efficient choices were not only cheaper — they were <span class="hl">more accurate</span>.
+            At 393 positives, the efficient choices were not only cheaper, they were <span class="hl">more accurate</span>.
           </div>
         </div>
       </div>
@@ -766,7 +861,7 @@
     </div>
     <div class="thanks">Thank you</div>
     <div class="close-sub"><a href="https://junaidaliop.github.io/isic2024-tbp/">https://junaidaliop.github.io/isic2024-tbp/</a></div>
-    <div class="close-q">Questions?</div>
+    <div class="close-q" style="margin-top:22px;color:var(--muted)">Questions?</div>
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 

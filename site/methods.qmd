@@ -219,7 +219,7 @@ cheaper and more accurate. Full numbers in [Ablations](ablations.qmd).
 
 Every reported model logs parameters, FLOPs, and single-thread CPU latency
 (`src/efficiency.py`) alongside its pAUC, placing each model as one point on a quality-vs-cost
-plane. The Pareto-optimal set — points no other model beats on both axes — is the headline
+plane. The Pareto-optimal set (points no other model beats on both axes) is the headline
 figure. A model that does not earn its cost is not retained. See [Results](results.qmd).
 
 ---
