@@ -70,8 +70,7 @@ website:
   page-footer:
     border: true
     left: >-
-      &copy; 2026 **Pakistan.AI** — Raja · Sultan · Hassan ·
-      Neural Networks · National Yunlin University of Science and Technology
+      &copy; 2026 **Pakistan.AI** — Raja · Sultan · Hassan · Neural Networks
     center:
       - text: "Cite this"
         href: references.qmd#cite-this-work

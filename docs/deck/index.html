@@ -74,6 +74,15 @@
   table.acad.tight { font-size:13.5px; }
   table.acad.tight thead th, table.acad.tight tbody td { padding:4px 9px; }
 
+  /* compact reference list */
+  .reflist { list-style:none; margin:0; padding:0; }
+  .reflist li { font-size:14.5px; line-height:1.4; color:var(--body);
+    padding:5px 0 5px 16px; border-bottom:1px solid var(--rule); position:relative; }
+  .reflist li:last-child { border-bottom:none; }
+  .reflist li::before { content:"›"; position:absolute; left:0; top:5px;
+    color:var(--accent); font-weight:700; }
+  .reflist li i { color:var(--ink); font-style:italic; }
+
 </style>
 </head>
 <body>
@@ -158,9 +167,38 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 4 · IMBALANCE + METRIC -->
+  <!-- ============================================================ 4 · EDA / DATA CHARACTERISATION -->
   <section class="slide">
-    <div class="kicker">Imbalance &amp; Metric</div>
+    <div class="kicker">Exploratory Analysis</div>
+    <h2 class="slide-title">What the Data Reveals</h2>
+    <div class="slide-body">
+      <div class="cols cols-7-5" style="flex:1 1 auto;min-height:0">
+        <div class="col v-center">
+          <div class="fig-mini-label">Patient structure &mdash; correlated lesions per patient</div>
+          <div class="figure" style="max-height:155px">
+            <img src="assets/eda_fig2_patient_structure.svg" alt="Per-patient lesion counts; malignant-carrying patients hold most of the data" style="max-height:155px">
+          </div>
+          <div class="fig-mini-label" style="margin-top:6px">Ugly-duckling &mdash; the malignant lesion tops its patient's own size distribution</div>
+          <div class="figure" style="max-height:155px">
+            <img src="assets/eda_fig9_ugly_duckling.svg" alt="Three patients: the malignant lesion sits at the top of its own patient size distribution" style="max-height:155px">
+          </div>
+        </div>
+        <div class="col v-center">
+          <ul class="bullets">
+            <li>Lesions are <span class="kw">patient-grouped</span>: 1,042 patients, median 241 crops each; the 259 malignant-carrying patients hold 89% of all crops.</li>
+            <li><span class="hl">Patient-relative deviations</span> (ugly-duckling) carry ~65% of GBDT gain; 45.7% of cancers fall in the top 10% of their own patient's lesion sizes.</li>
+            <li>Head/neck site runs at <span class="kw">~7&times;</span> the baseline malignant rate despite being the smallest site &mdash; a strong site prior.</li>
+            <li>Hue <span class="kw">tbp_lv_H</span> alone reaches univariate AUC 0.81; malignant lesions are ~2&times; larger than benign.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
+  </section>
+
+  <!-- ============================================================ 5 · IMBALANCE + METRIC -->
+  <section class="slide">
+    <div class="kicker">Evaluation</div>
     <h2 class="slide-title">Class Imbalance and the Metric</h2>
     <div class="slide-body">
       <div class="cols cols-5-7" style="flex:1 1 auto;min-height:0">
@@ -184,7 +222,7 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 5 · VALIDATION -->
+  <!-- ============================================================ 6 · VALIDATION -->
   <section class="slide">
     <div class="kicker">Validation</div>
     <h2 class="slide-title">Patient-Grouped, Target-Stratified 5-Fold</h2>
@@ -315,10 +353,10 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 6 · PIPELINE -->
+  <!-- ============================================================ 7 · PIPELINE -->
   <section class="slide">
     <div class="kicker">Approach</div>
-    <h2 class="slide-title">Approach: Two Experts and a Rank-Average Stack</h2>
+    <h2 class="slide-title">Two Experts and a Rank-Average Stack</h2>
     <div class="slide-body vcenter">
       <div class="lanes" style="margin-bottom:16px">
         <div class="lane">
@@ -359,7 +397,7 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 7 · TABULAR EXPERT -->
+  <!-- ============================================================ 8 · TABULAR EXPERT -->
   <section class="slide">
     <div class="runbar"><span class="mark">Tabular Expert</span><span class="ctx">intrinsic + patient-relative features, bagged gradient boosting</span></div>
     <div class="slide-body vcenter">
@@ -392,7 +430,7 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 8 · IMAGE EXPERT -->
+  <!-- ============================================================ 9 · IMAGE EXPERT -->
   <section class="slide">
     <div class="runbar"><span class="mark">Image Expert</span><span class="ctx">small ImageNet-pretrained backbones at 128–224 px</span></div>
     <div class="slide-body vcenter">
@@ -428,7 +466,7 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 9 · COMBINER -->
+  <!-- ============================================================ 10 · COMBINER -->
   <section class="slide">
     <div class="kicker">Combiner</div>
     <h2 class="slide-title">Rank-Average Stack</h2>
@@ -518,10 +556,10 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 10 · RESULTS -->
+  <!-- ============================================================ 11 · RESULTS -->
   <section class="slide">
     <div class="kicker">Results</div>
-    <h2 class="slide-title">Results</h2>
+    <h2 class="slide-title">Ranking and the Operating Point</h2>
     <div class="slide-body">
       <div class="cols cols-5-7" style="flex:1 1 auto;min-height:0">
         <div class="col fig-cap-row">
@@ -547,7 +585,7 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 11 · FRONTIER -->
+  <!-- ============================================================ 12 · FRONTIER -->
   <section class="slide">
     <div class="kicker">Efficiency Frontier</div>
     <h2 class="slide-title">Quality vs. Cost: Three Axes</h2>
@@ -570,10 +608,10 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 12 · ABLATIONS / NEGATIVES -->
+  <!-- ============================================================ 13 · ABLATIONS / NEGATIVES -->
   <section class="slide">
-    <div class="kicker">Ablations &amp; Comparison</div>
-    <h2 class="slide-title">Ablations and Negative Results</h2>
+    <div class="kicker">Ablations</div>
+    <h2 class="slide-title">Negative Results and Leaderboard Comparison</h2>
     <div class="slide-body">
       <div class="cols cols-7-5" style="flex:1 1 auto;min-height:0">
         <div class="col v-center">
@@ -608,9 +646,9 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 13 · CONSTRAINTS + LIMITATIONS -->
+  <!-- ============================================================ 14 · CONSTRAINTS + LIMITATIONS -->
   <section class="slide">
-    <div class="kicker">Constraints &amp; Limitations</div>
+    <div class="kicker">Scope</div>
     <h2 class="slide-title">Constraints and Limitations</h2>
     <div class="slide-body">
       <div class="cols cols-2">
@@ -635,9 +673,9 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 14 · CONCLUSION -->
+  <!-- ============================================================ 15 · CONCLUSION -->
   <section class="slide">
-    <div class="kicker">Conclusion</div>
+    <div class="kicker">Closing</div>
     <h2 class="slide-title">Conclusion</h2>
     <div class="slide-body">
       <div class="cols cols-7-5">
@@ -663,7 +701,64 @@
     <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
   </section>
 
-  <!-- ============================================================ 15 · THANK YOU -->
+  <!-- ============================================================ 16 · CREDITS -->
+  <section class="slide">
+    <div class="kicker">Credits</div>
+    <h2 class="slide-title">Attribution and Lineage</h2>
+    <div class="slide-body">
+      <div class="cols cols-2" style="flex:1 1 auto;min-height:0">
+        <div class="col v-center">
+          <div class="fig-mini-label">Leaderboard solutions positioned against</div>
+          <ul class="bullets">
+            <li><span class="kw">1st &mdash; I. Novoselskiy</span>: EVA-02 + EdgeNeXt fused with a GBDT stack; used external dermoscopy and ~30k synthetic positives (both banned here).</li>
+            <li><span class="kw">2nd &mdash; uchiyama33</span>: image + tabular ensemble &mdash; source of the EMA + mixup recipe adopted for our small backbone.</li>
+            <li><span class="kw">3rd &mdash; kyohei-123</span>: image/tabular blend.</li>
+          </ul>
+        </div>
+        <div class="col v-center">
+          <div class="fig-mini-label">Public-notebook lineage (reused with attribution)</div>
+          <ul class="bullets">
+            <li><span class="kw">greysky</span> &mdash; LightGBM hyperparameters and the tabular-first thesis; the bagging + undersampling structure.</li>
+            <li><span class="kw">snnclsr</span> &mdash; tabular feature-engineering patterns and CV structure.</li>
+            <li><span class="kw">motono0223</span> &mdash; small-backbone image-baseline recipe.</li>
+            <li><span class="kw">andreasbis</span> &mdash; the stacking idea: CNN OOF probability as a GBDT feature.</li>
+            <li>Official pAUC scorer (Kurtansky / MSKCC) vendored verbatim to verify the metric.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
+  </section>
+
+  <!-- ============================================================ 17 · REFERENCES -->
+  <section class="slide">
+    <div class="kicker">References</div>
+    <h2 class="slide-title">Dataset, Metric and Methods</h2>
+    <div class="slide-body">
+      <div class="cols cols-2" style="flex:1 1 auto;min-height:0">
+        <div class="col v-center">
+          <div class="fig-mini-label">Dataset &amp; metric</div>
+          <ul class="reflist">
+            <li>Kurtansky, N. R. et al. <i>The SLICE-3D dataset: 400,000 skin-lesion crops from 3D TBP for skin-cancer detection.</i> Scientific Data (2024). doi:10.1038/s41597-024-03743-w</li>
+            <li>International Skin Imaging Collaboration. <i>SLICE-3D 2024 Challenge Dataset.</i> doi:10.34970/2024-slice-3d (CC BY-NC 4.0).</li>
+            <li>ISIC Research / Kurtansky (MSKCC). <i>Official ISIC-2024 scorer</i> &mdash; partial AUC above 80% TPR, scores in [0, 0.20].</li>
+          </ul>
+        </div>
+        <div class="col v-center">
+          <div class="fig-mini-label">Backbones &amp; gradient boosting</div>
+          <ul class="reflist">
+            <li>Woo, S. et al. <i>ConvNeXt-V2 / FCMAE.</i> CVPR (2023) &mdash; the primary backbone (convnextv2_nano).</li>
+            <li>Ke, G. et al. <i>LightGBM.</i> NeurIPS (2017).</li>
+            <li>Prokhorenkova, L. et al. <i>CatBoost.</i> NeurIPS (2018).</li>
+            <li>Wightman, R. <i>timm (PyTorch Image Models).</i> (2019) &mdash; backbones and the latency-axis timings.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>ISIC-2024 SLICE-3D · Pakistan.AI</span><span class="pg" data-pagenum></span></div>
+  </section>
+
+  <!-- ============================================================ 18 · THANK YOU -->
   <section class="slide slide--closing">
     <div class="close-mark">
       <svg width="36" height="36" viewBox="0 0 100 100" aria-hidden="true"><defs><mask id="crmask2"><rect width="100" height="100" fill="black"/><circle cx="50" cy="50" r="38" fill="white"/><circle cx="63" cy="44" r="32" fill="black"/></mask></defs><circle cx="50" cy="50" r="38" fill="#046A38" mask="url(#crmask2)"/><polygon fill="#046A38" points="72,38 74.8,46.1 83.4,46.3 76.6,51.5 79.1,59.7 72,54.8 65,59.7 67.4,51.5 60.6,46.3 69.2,46.1"/></svg>

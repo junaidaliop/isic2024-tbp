@@ -4,7 +4,7 @@ subtitle: "Presentation deck — Pakistan.AI · ISIC-2024 SLICE-3D"
 toc: false
 ---
 
-The 15-slide deck (~20 minutes), embedded live below.
+The 18-slide deck (~20 minutes), embedded live below.
 [Open fullscreen ↗](deck/index.html){target="_blank" .btn .btn-primary .btn-sm role="button"}
 &nbsp;
 [Download PDF](ISIC2024-slides.pdf){.btn .btn-outline-secondary .btn-sm role="button"}
