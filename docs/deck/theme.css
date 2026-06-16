@@ -295,6 +295,13 @@ table.t tr:nth-child(even) td { background: var(--panel); }
 }
 .katex { font-size: 1.04em; }
 
+/* compact variant — for dense slides, so vcentred content clears title + footer */
+.slide.is-tight .eq.boxed { padding: 10px 20px; margin: 4px 0 10px; }
+.slide.is-tight .bullets > li { font-size: 22px; margin-bottom: 9px; }
+.slide.is-tight .recall { padding: 10px 16px; }
+.slide.is-tight .recall p { font-size: 17px; line-height: 1.4; }
+.slide.is-tight .figure svg { max-height: 215px; }
+
 /* ---------- CODE / ALGORITHM ---------- */
 pre.algo {
   font-family: var(--font-mono); font-size: 15px; line-height: 1.5;
@@ -309,7 +316,7 @@ pre.algo {
   display: flex; justify-content: space-between; align-items: center;
   font-size: var(--fs-foot); color: var(--body);
 }
-.slide-foot .pg { font-family: var(--font-display); font-weight: var(--w-disp-med); color: var(--accent); }
+.slide-foot .pg { font-family: var(--font-display); font-weight: var(--w-disp-med); color: var(--accent); font-size: 18px; margin-right: -24px; }
 .refnote { font-size: var(--fs-foot); color: var(--body); }
 .refnote b { color: var(--ink); font-weight: var(--w-body-semi); }
 
