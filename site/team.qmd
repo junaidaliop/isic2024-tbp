@@ -1,21 +1,22 @@
 ---
 title: "Team — Pakistan.AI"
-subtitle: "Neural Networks course project · CSIE, NYUST"
+subtitle: "Neural Networks course project · National Yunlin University of Science and Technology"
 toc: false
 ---
 
 ::: {.callout-note appearance="simple" icon=false}
 **Group:** Pakistan.AI  ·  **Course:** Neural Networks  ·
-**Affiliation:** FIC Lab / CSIE, National Yunlin University of Science and Technology (NYUST)
+**Instructor:** Prof. Hsuan-Ting Chang  ·
+**Affiliation:** FIC Lab, National Yunlin University of Science and Technology
 :::
 
 ## Members
 
 | Member | Student ID | Profile |
 |--------|-----------|---------|
-| **Raja, Muhammad Junaid Ali Asif** | **M11217073** | [ORCID 0009-0008-9249-9983](https://orcid.org/0009-0008-9249-9983) · FIC Lab, CSIE, NYUST |
-| **Sultan, Adil** | **M11217078** | CSIE, NYUST |
-| **Hassan, Shahzaib Ahmed** | **M11217081** | CSIE, NYUST |
+| **Raja, Muhammad Junaid Ali Asif** | **M11217073** | [ORCID 0009-0008-9249-9983](https://orcid.org/0009-0008-9249-9983) · FIC Lab, National Yunlin University of Science and Technology |
+| **Sultan, Adil** | **M11217078** | FIC Lab, National Yunlin University of Science and Technology |
+| **Hassan, Shahzaib Ahmed** | **M11217081** | FIC Lab, National Yunlin University of Science and Technology |
 
 All three members contributed to the design, experiments, analysis, and this report.
 

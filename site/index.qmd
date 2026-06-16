@@ -9,12 +9,12 @@ author:
     note: "M11217078"
   - name: "Hassan, Shahzaib Ahmed"
     note: "M11217081"
-date: last-modified
+date: "2026-06-18"
 toc: true
 ---
 
 ::: {.hero}
-[Pakistan.AI · Neural Networks · CSIE, NYUST]{.eyebrow}
+[Pakistan.AI · Neural Networks · National Yunlin University of Science and Technology]{.eyebrow}
 
 # ISIC-2024 SLICE-3D — quality–efficiency frontier
 
@@ -63,7 +63,7 @@ This site is the companion report. Each page is self-contained and quantitative.
 - **[Credits](credits.qmd)** — attribution to the leaderboard solutions and the public-notebook lineage.
 - **[References](references.qmd)** — citations for the dataset, metric, backbones, and GBDTs.
 
-**Offline copies:** [report PDF](ISIC2024-report.pdf) · [slide deck (HTML)](slides.qmd)
+**Presentation:** [slide deck (PDF)](ISIC2024-slides.pdf)
 :::
 
 ## Abstract

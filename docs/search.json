@@ -1,108 +1,10 @@
 [
   {
-    "objectID": "slides.html#the-problem",
-    "href": "slides.html#the-problem",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "The problem",
-    "text": "The problem\n\nISIC-2024 SLICE-3D: automated triage of malignant skin lesions in 3D total-body-photography crops.\n401,059 crops · 1,042 patients · 393 malignant / 400,666 benign → a 1,021:1 imbalance.\nMetric: official pAUC above 80% TPR, range [0, 0.20] (random ≈ 0.02, perfect = 0.20).\nThe defining difficulty is the imbalance: 393 positives is limited signal for a deep net alone."
-  },
-  {
-    "objectID": "slides.html#banned-constraints",
-    "href": "slides.html#banned-constraints",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Banned constraints",
-    "text": "Banned constraints\n\nNo external data — ISIC-2024 SLICE-3D only (no ISIC-2019/2020, no PAD-UFES, no external dermoscopy).\nNo generative / synthetic positives — fabricating pathology breaks label validity.\nThe winners’ ~0.173 used both; matching it is out of reach by construction.\n\n\n\n\n\n\n\n\nImportant\n\n\nThat impossibility defines the experiment, so the question is changed."
-  },
-  {
-    "objectID": "slides.html#the-question",
-    "href": "slides.html#the-question",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "The question",
-    "text": "The question\n\nWhat is the best pAUC achievable per unit of inference cost on SLICE-3D data alone?\n\n\nNot one private-LB number → a quality-vs-cost Pareto frontier.\nAxes: pAUC vs params · FLOPs · CPU latency.\nA model counts only if it earns its cost."
-  },
-  {
-    "objectID": "slides.html#cv-discipline",
-    "href": "slides.html#cv-discipline",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "CV discipline",
-    "text": "CV discipline\n\nLeaky CV moved teams ~200 places on the private split.\nPatient-grouped, target-stratified folds (5, SEED 42), frozen once into data/folds.parquet.\nNo patient straddles folds. One metric, one implementation (src/cv.py), == official scorer.\ncv-guardian agent holds veto power over splits & metric."
-  },
-  {
-    "objectID": "slides.html#the-pipeline",
-    "href": "slides.html#the-pipeline",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "The pipeline",
-    "text": "The pipeline\n\n\n\n\n\nflowchart LR\n    A[\"SLICE-3D&lt;br/&gt;401k crops · 393 mal\"] --&gt; B[\"Patient-grouped&lt;br/&gt;5-fold (frozen)\"]\n    B --&gt; C[\"Tabular FE&lt;br/&gt;+ ugly-duckling\"]\n    B --&gt; E[\"Small image&lt;br/&gt;backbone @128/224\"]\n    C --&gt; D[\"Bagged GBDT&lt;br/&gt;0.16890\"]\n    E --&gt; F[\"Image OOF prob&lt;br/&gt;0.15821\"]\n    D --&gt; G[\"rank-average&lt;br/&gt;(param-free)\"]\n    F --&gt; G\n    G --&gt; H[\"Stack&lt;br/&gt;&lt;b&gt;0.17376&lt;/b&gt;\"]\n    style A fill:#0b6e4f,color:#fff\n    style H fill:#1e8449,color:#fff"
-  },
-  {
-    "objectID": "slides.html#where-the-signal-lives",
-    "href": "slides.html#where-the-signal-lives",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Where the signal lives",
-    "text": "Where the signal lives\n\nThe dominant signal is the ugly-duckling sign: how anomalous a lesion is vs the same patient’s moles.\nPatient-relative features (pdev_ / prank_ / pxc_) = ~65% of GBDT gain.\nTop features: tbp_lv_H (hue, univariate AUC 0.81), pdev_tbp_lv_H, pdev_clin_size."
-  },
-  {
-    "objectID": "slides.html#headline-results",
-    "href": "slides.html#headline-results",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Headline results",
-    "text": "Headline results\n\n\n\nModel\nOOF pAUC@80%TPR\nParams\nGFLOPs\nCPU ms\n\n\n\n\nGBDT (tabular)\n0.16890\n0.86 M\n~0\n0.02\n\n\nBest image (nano@224)\n0.15821\n14.98 M\n2.46\n60.9\n\n\nStack (rank-avg)\n0.17376\n15.84 M\n2.46\n60.9\n\n\nCheap stack\n0.17117\n23.84 M\n1.22\n32.9\n\n\n\nGBDT alone reaches ~97% of the best score at near-free cost. The image expert adds +0.0049 inside the stack."
-  },
-  {
-    "objectID": "slides.html#the-frontier",
-    "href": "slides.html#the-frontier",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "The frontier",
-    "text": "The frontier"
-  },
-  {
-    "objectID": "slides.html#the-scored-region-pauc80tpr",
-    "href": "slides.html#the-scored-region-pauc80tpr",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "The scored region (pAUC@80%TPR)",
-    "text": "The scored region (pAUC@80%TPR)\n\nThe stack sits above both experts where the metric integrates."
-  },
-  {
-    "objectID": "slides.html#per-fold-stability",
-    "href": "slides.html#per-fold-stability",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Per-fold stability",
-    "text": "Per-fold stability\n\n\n\n\nmean ± std\n\n\n\n\nTabular\n0.1693 ± 0.0112\n\n\nBest image\n0.1591 ± 0.0091\n\n\nStack\n0.1747 ± 0.0073\n\n\n\nFold variance (~0.025) exceeds model gaps, yet the stack wins/ties every fold and has the lowest std."
-  },
-  {
-    "objectID": "slides.html#complexity-reduces-the-score",
-    "href": "slides.html#complexity-reduces-the-score",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Complexity reduces the score",
-    "text": "Complexity reduces the score\n\n\nLearned MoE gate 0.150 — below tabular alone.\nMeta-LGBM stacker 0.171 &lt; rank-average 0.174. Image embeddings reduce. Heavy transformers collapse."
-  },
-  {
-    "objectID": "slides.html#why-simpler-wins",
-    "href": "slides.html#why-simpler-wins",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Why simpler wins",
-    "text": "Why simpler wins\n\nEvery learned add-on must fit parameters from the same 393 positives the experts already used.\nA rank-average has zero parameters and cannot overfit the folds.\nAt extreme imbalance: bias toward zero-parameter fusion + small backbones — also the cheapest."
-  },
-  {
-    "objectID": "slides.html#credits",
-    "href": "slides.html#credits",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Credits",
-    "text": "Credits\n\n1st — Ilya Novoselskiy (EVA-02 + EdgeNeXt + GBDT, private 0.17264; external + ~30k synthetic — both banned here; synthetic added only +0.0007 in their own ablation).\n2nd — uchiyama33, 3rd — kyohei-123.\nPublic lineage: greysky (tabular), snnclsr, motono0223, andreasbis (CNN-preds-as-feature), richolson."
-  },
-  {
-    "objectID": "slides.html#conclusion",
-    "href": "slides.html#conclusion",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Conclusion",
-    "text": "Conclusion\n\nDefensible claim: SOTA among single-dataset, no-external-data, no-synthetic solutions, on a quality–efficiency frontier.\nBest constrained point: OOF pAUC 0.17376 @ 15.8 M / 2.46 GFLOPs / 61 ms CPU.\nValidation discipline + an explicit cost axis give the result teeth.\nReproducible: SEED=42, config-driven, make folds → gbdt → vision → frontier → site."
-  },
-  {
-    "objectID": "slides.html#thank-you-pakistan.ai",
-    "href": "slides.html#thank-you-pakistan.ai",
-    "title": "ISIC-2024 SLICE-3D — the honest frontier",
-    "section": "Thank you — Pakistan.AI",
-    "text": "Thank you — Pakistan.AI\n\nRaja, Muhammad Junaid Ali Asif — M11217073\nSultan, Adil — M11217078\nHassan, Shahzaib Ahmed — M11217081\nNeural Networks · FIC Lab / CSIE, NYUST\nFull report, frontier, and reproduction recipe on the companion site."
+    "objectID": "slides.html",
+    "href": "slides.html",
+    "title": "Slides",
+    "section": "",
+    "text": "The 14-slide presentation deck (~20 minutes), in the Pakistan.AI house style. ⬇ Download PDF\n\n\n\n\n\n\n\n\n\n\nIf the deck does not render inline in your browser, open the PDF directly."
   },
   {
     "objectID": "references.html",
@@ -158,7 +60,7 @@
     "href": "references.html#cite-this-work",
     "title": "References & Citations",
     "section": "Cite this work",
-    "text": "Cite this work\nPlease cite the repository (CITATION.cff renders a “Cite this repository” button on GitHub) and also the SLICE-3D dataset above.\n@software{pakistanai_isic2024,\n  title   = {ISIC-2024 SLICE-3D: an efficiency-frontier, single-dataset,\n             no-external-data baseline (Pakistan.AI)},\n  author  = {Raja, Muhammad Junaid Ali Asif and Sultan, Adil and Hassan, Shahzaib Ahmed},\n  year    = {2026},\n  url     = {https://github.com/junaidaliop/isic2024-tbp},\n  note    = {Neural Networks course project, CSIE, NYUST}\n}"
+    "text": "Cite this work\nPlease cite the repository (CITATION.cff renders a “Cite this repository” button on GitHub) and also the SLICE-3D dataset above.\n@software{pakistanai_isic2024,\n  title   = {ISIC-2024 SLICE-3D: an efficiency-frontier, single-dataset,\n             no-external-data baseline (Pakistan.AI)},\n  author  = {Raja, Muhammad Junaid Ali Asif and Sultan, Adil and Hassan, Shahzaib Ahmed},\n  year    = {2026},\n  url     = {https://github.com/junaidaliop/isic2024-tbp},\n  note    = {Neural Networks course project, National Yunlin University of Science and Technology}\n}"
   },
   {
     "objectID": "references.html#full-bibliography",
@@ -312,7 +214,7 @@
     "href": "index.html",
     "title": "ISIC-2024 SLICE-3D",
     "section": "",
-    "text": "Pakistan.AI · Neural Networks · CSIE, NYUST\n\n\nAutomated triage of skin-lesion crops from 3D total-body photography: classifying 393 malignant lesions among 400,666 benign crops (a 1,021:1 imbalance) using only the ISIC-2024 SLICE-3D dataset, with no external dermoscopy and no synthetic positives.\n\nClaim under test: state-of-the-art among single-dataset, no-external-data, no-synthetic solutions, reported as a quality-vs-cost Pareto frontier rather than a single number."
+    "text": "Pakistan.AI · Neural Networks · National Yunlin University of Science and Technology\n\n\nAutomated triage of skin-lesion crops from 3D total-body photography: classifying 393 malignant lesions among 400,666 benign crops (a 1,021:1 imbalance) using only the ISIC-2024 SLICE-3D dataset, with no external dermoscopy and no synthetic positives.\n\nClaim under test: state-of-the-art among single-dataset, no-external-data, no-synthetic solutions, reported as a quality-vs-cost Pareto frontier rather than a single number."
   },
   {
     "objectID": "index.html#abstract",
@@ -452,28 +354,28 @@
     "href": "ablations.html#tabular",
     "title": "Ablations & Negative Results",
     "section": "Tabular GBDT progression",
-    "text": "Tabular GBDT progression\n\n\n\n\n\n\nFigure 1: Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.\n\n\n\n\n\n\n\n\n\n\n\n\nStep\nChange\nOOF pAUC\nΔ\n\n\n\n\n0\nBroken: is_unbalance + AUC early-stop → best_iter = 1\n0.09941\n—\n\n\n1\nFix early-stopping / objective (drop is_unbalance, early-stop on pAUC)\n0.11826\n+0.01885\n\n\n2\nWide patient-relative ugly-duckling features (pdev_ / prank_ / pxc_)\n0.14420\n+0.02594\n\n\n3\nGreysky-bagged LightGBM + pxc_ + CatBoost rank-blend\n0.16890\n+0.02470\n\n\n\nThe broken config scored barely above 5× random: on extreme imbalance the training setup dominates the model. The patient-relative feature block (Step 2) is the single largest jump (+0.026), confirming the ugly-duckling thesis. Bagging plus CatBoost (Step 3) adds +0.025 from variance reduction across seeds and families."
+    "text": "Tabular GBDT progression\n\n\n\n\n\n\n\n\n\nStep\nChange\nOOF pAUC\nΔ\n\n\n\n\n0\nBroken: is_unbalance + AUC early-stop → best_iter = 1\n0.09941\n—\n\n\n1\nFix early-stopping / objective (drop is_unbalance, early-stop on pAUC)\n0.11826\n+0.01885\n\n\n2\nWide patient-relative ugly-duckling features (pdev_ / prank_ / pxc_)\n0.14420\n+0.02594\n\n\n3\nGreysky-bagged LightGBM + pxc_ + CatBoost rank-blend\n0.16890\n+0.02470\n\n\n\nThe broken config scored barely above 5× random: on extreme imbalance the training setup dominates the model. The patient-relative feature block (Step 2) is the single largest jump (+0.026), confirming the ugly-duckling thesis. Bagging plus CatBoost (Step 3) adds +0.025 from variance reduction across seeds and families."
   },
   {
     "objectID": "ablations.html#image",
     "href": "ablations.html#image",
     "title": "Ablations & Negative Results",
     "section": "Image expert — resolution & regularizer",
-    "text": "Image expert — resolution & regularizer\n\n\n\n\n\n\nFigure 2: Image-expert ablation: the small backbone wins; heavy ones collapse.\n\n\n\n\n\n\n\n\n\n\n\nConfig\nOOF pAUC\nVerdict\n\n\n\n\nconvnextv2_nano @128\n0.15311\nbaseline image point\n\n\nconvnextv2_nano @224 + EMA0.995 + mixup\n0.15821\nbest image\n\n\n↳ same, EMA 0.999\n~0.146\nreduced (over-smooths at ~23 steps/epoch)\n\n\nconvnextv2_tiny @224\n0.15824\ncomparable to nano, ~2× the cost\n\n\nswinv2_tiny @256\n0.10422\ncollapse — near random\n\n\neva02_small @336\n0.09984\ncollapse — near random\n\n\n\nResolution plus light EMA(0.995) and mixup on the small nano backbone is the optimum. Stronger EMA (0.999) over-smooths because the undersampled epochs are short. Heavy transformers (Swin, EVA-02) collapse to near-random — overfitting at 393 positives. convnextv2_tiny (2× nano’s params) does not exceed nano."
+    "text": "Image expert — resolution & regularizer\n\n\n\n\n\n\n\n\nConfig\nOOF pAUC\nVerdict\n\n\n\n\nconvnextv2_nano @128\n0.15311\nbaseline image point\n\n\nconvnextv2_nano @224 + EMA0.995 + mixup\n0.15821\nbest image\n\n\n↳ same, EMA 0.999\n~0.146\nreduced (over-smooths at ~23 steps/epoch)\n\n\nconvnextv2_tiny @224\n0.15824\ncomparable to nano, ~2× the cost\n\n\nswinv2_tiny @256\n0.10422\ncollapse — near random\n\n\neva02_small @336\n0.09984\ncollapse — near random\n\n\n\nResolution plus light EMA(0.995) and mixup on the small nano backbone is the optimum. Stronger EMA (0.999) over-smooths because the undersampled epochs are short. Heavy transformers (Swin, EVA-02) collapse to near-random — overfitting at 393 positives. convnextv2_tiny (2× nano’s params) does not exceed nano."
   },
   {
     "objectID": "ablations.html#stack",
     "href": "ablations.html#stack",
     "title": "Ablations & Negative Results",
     "section": "Stack combiners",
-    "text": "Stack combiners\n\n\n\n\n\n\nFigure 3: Stack-combiner ablation: the trivial rank-average wins.\n\n\n\n\n\n\n\n\n\n\n\nCombiner\nOOF pAUC\nVerdict\n\n\n\n\nrank-avg [GBDT, nano@224]\n0.17376\nwinner\n\n\nmeta-LGBM stacker\n0.17108\nloses to rank-average\n\n\nrank [+ weak images]\n0.16679\ndilutes\n\n\nlearned per-lesion gate (MoE)\n0.15007\nloss — below tabular 0.16890\n\n\n+ PCA image embeddings into GBDT\n&lt; 0.17376\nreduces\n\n\n\nThe trivial 2-way rank-average wins. Every learned or heavier combiner loses, and the MoE gate falls below the tabular expert alone (0.150 &lt; 0.169). Adding weak images, or PCA embeddings into the GBDT, dilutes.\n\n\n\n\n\n\nReconstruction note. A recomputed rank-average over {GBDT + 4 image OOFs} scores 0.16917; the logged “rank [+ weak images]” run (0.16679) used a different weak-image set and is kept as the authoritative logged number. The conclusion holds either way: adding weak images dilutes."
+    "text": "Stack combiners\n\n\n\n\n\n\n\n\nCombiner\nOOF pAUC\nVerdict\n\n\n\n\nrank-avg [GBDT, nano@224]\n0.17376\nwinner\n\n\nmeta-LGBM stacker\n0.17108\nloses to rank-average\n\n\nrank [+ weak images]\n0.16679\ndilutes\n\n\nlearned per-lesion gate (MoE)\n0.15007\nloss — below tabular 0.16890\n\n\n+ PCA image embeddings into GBDT\n&lt; 0.17376\nreduces\n\n\n\nThe trivial 2-way rank-average wins. Every learned or heavier combiner loses, and the MoE gate falls below the tabular expert alone (0.150 &lt; 0.169). Adding weak images, or PCA embeddings into the GBDT, dilutes.\n\n\n\n\n\n\nReconstruction note. A recomputed rank-average over {GBDT + 4 image OOFs} scores 0.16917; the logged “rank [+ weak images]” run (0.16679) used a different weak-image set and is kept as the authoritative logged number. The conclusion holds either way: adding weak images dilutes."
   },
   {
     "objectID": "ablations.html#negatives",
     "href": "ablations.html#negatives",
     "title": "Ablations & Negative Results",
     "section": "Negative results summary",
-    "text": "Negative results summary\n\n\n\n\n\n\nFigure 4: Every idea that reduced the score, and what beat it.\n\n\n\n\n\n\n\n\n\n\n\n\nIdea tried\nIts pAUC\nBeaten by\nFinding\n\n\n\n\nLearned per-lesion gate (MoE)\n0.15007\n0.16890 (tabular)\nloses to tabular alone\n\n\nMeta-LGBM stacker\n0.17108\n0.17376 (rank-avg)\nloses to rank-average\n\n\n+ PCA image embeddings into GBDT\n&lt; 0.1738\n0.17376\nembeddings reduce\n\n\nHeavy backbones (SwinV2 / EVA-02)\n0.104 / 0.100\n0.15821 (nano@224)\ndominated — overfit at 393 pos\n\n\nEMA 0.999 (over-smoothing)\n~0.146\n0.15821 (EMA0.995)\nstronger EMA reduces"
+    "text": "Negative results summary\n\n\n\n\n\n\n\n\n\nIdea tried\nIts pAUC\nBeaten by\nFinding\n\n\n\n\nLearned per-lesion gate (MoE)\n0.15007\n0.16890 (tabular)\nloses to tabular alone\n\n\nMeta-LGBM stacker\n0.17108\n0.17376 (rank-avg)\nloses to rank-average\n\n\n+ PCA image embeddings into GBDT\n&lt; 0.1738\n0.17376\nembeddings reduce\n\n\nHeavy backbones (SwinV2 / EVA-02)\n0.104 / 0.100\n0.15821 (nano@224)\ndominated — overfit at 393 pos\n\n\nEMA 0.999 (over-smoothing)\n~0.146\n0.15821 (EMA0.995)\nstronger EMA reduces"
   },
   {
     "objectID": "ablations.html#why-complexity-reduces-the-score",
@@ -529,14 +431,14 @@
     "href": "team.html",
     "title": "Team — Pakistan.AI",
     "section": "",
-    "text": "Group: Pakistan.AI · Course: Neural Networks · Affiliation: FIC Lab / CSIE, National Yunlin University of Science and Technology (NYUST)"
+    "text": "Group: Pakistan.AI · Course: Neural Networks · Instructor: Prof. Hsuan-Ting Chang · Affiliation: FIC Lab, National Yunlin University of Science and Technology"
   },
   {
     "objectID": "team.html#members",
     "href": "team.html#members",
     "title": "Team — Pakistan.AI",
     "section": "Members",
-    "text": "Members\n\n\n\nMember\nStudent ID\nProfile\n\n\n\n\nRaja, Muhammad Junaid Ali Asif\nM11217073\nORCID 0009-0008-9249-9983 · FIC Lab, CSIE, NYUST\n\n\nSultan, Adil\nM11217078\nCSIE, NYUST\n\n\nHassan, Shahzaib Ahmed\nM11217081\nCSIE, NYUST\n\n\n\nAll three members contributed to the design, experiments, analysis, and this report."
+    "text": "Members\n\n\n\nMember\nStudent ID\nProfile\n\n\n\n\nRaja, Muhammad Junaid Ali Asif\nM11217073\nORCID 0009-0008-9249-9983 · FIC Lab, National Yunlin University of Science and Technology\n\n\nSultan, Adil\nM11217078\nFIC Lab, National Yunlin University of Science and Technology\n\n\nHassan, Shahzaib Ahmed\nM11217081\nFIC Lab, National Yunlin University of Science and Technology\n\n\n\nAll three members contributed to the design, experiments, analysis, and this report."
   },
   {
     "objectID": "team.html#contributions",

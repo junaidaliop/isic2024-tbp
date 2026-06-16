@@ -16,7 +16,7 @@ pAUC@80%TPR per unit of inference cost, on ISIC-2024 data alone.
 > construction — and quantifying that gap honestly is the point.
 
 **Companion website:** <https://junaidaliop.github.io/isic2024-tbp/>
-([report PDF](docs/ISIC2024-report.pdf) · [slides](docs/ISIC2024-slides.pdf))
+([slide deck (PDF)](docs/ISIC2024-slides.pdf))
 
 ## Results (out-of-fold, official pAUC@80%TPR ∈ [0, 0.20])
 
@@ -113,7 +113,8 @@ late-submission procedure.
 
 ## Team — Pakistan.AI
 
-Neural Networks course project, CSIE, National Yunlin University of Science and Technology.
+Neural Networks course project, National Yunlin University of Science and Technology.
+Instructor: Prof. Hsuan-Ting Chang.
 
 | Member | Student ID |
 |---|---|
@@ -135,7 +136,7 @@ src/submit.py        submission builder
 experiments/run_stack.py   the stack ablation + headline OOF
 reports/             frontier + EDA + performance figure generators
 site/                Quarto companion website (renders to docs/)
-docs/                rendered website + report/slides PDFs
+docs/                rendered website + slides PDF
 ```
 
 ## Citing

@@ -6,14 +6,15 @@ authors:
   - given-names: Muhammad Junaid Ali Asif
     family-names: Raja
     orcid: "https://orcid.org/0009-0008-9249-9983"
-    affiliation: "FIC Lab, CSIE, National Yunlin University of Science and Technology"
+    affiliation: "FIC Lab, National Yunlin University of Science and Technology"
   - given-names: Adil
     family-names: Sultan
-    affiliation: "CSIE, National Yunlin University of Science and Technology"
+    affiliation: "FIC Lab, National Yunlin University of Science and Technology"
   - given-names: Shahzaib Ahmed
     family-names: Hassan
-    affiliation: "CSIE, National Yunlin University of Science and Technology"
+    affiliation: "FIC Lab, National Yunlin University of Science and Technology"
 repository-code: "https://github.com/junaidaliop/isic2024-tbp"
+date-released: "2026-06-18"
 keywords:
   - Pakistan.AI
   - skin cancer detection

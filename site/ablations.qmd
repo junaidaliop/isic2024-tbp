@@ -14,7 +14,6 @@ cheaper and more accurate. That negative result is the contribution.
 
 ## Tabular GBDT progression {#tabular}
 
-![Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.](figures/perf_fig3a_ablation_tabular.svg){#fig-abl-tab}
 
 | Step | Change | OOF pAUC | Δ |
 |---|---|---:|---:|
@@ -30,7 +29,6 @@ variance reduction across seeds and families.
 
 ## Image expert — resolution & regularizer {#image}
 
-![Image-expert ablation: the small backbone wins; heavy ones collapse.](figures/perf_fig3b_ablation_image.svg){#fig-abl-img}
 
 | Config | OOF pAUC | Verdict |
 |---|---:|---|
@@ -48,7 +46,6 @@ params) does not exceed nano.
 
 ## Stack combiners {#stack}
 
-![Stack-combiner ablation: the trivial rank-average wins.](figures/perf_fig3c_ablation_stack.svg){#fig-abl-stack}
 
 | Combiner | OOF pAUC | Verdict |
 |---|---:|---|
@@ -70,7 +67,6 @@ authoritative logged number. The conclusion holds either way: adding weak images
 
 ## Negative results summary {#negatives}
 
-![Every idea that reduced the score, and what beat it.](figures/perf_fig6_negative_results.svg){#fig-neg}
 
 | Idea tried | Its pAUC | Beaten by | Finding |
 |---|---:|---|---|

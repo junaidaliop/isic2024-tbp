@@ -77,7 +77,7 @@ Please cite the repository (`CITATION.cff` renders a "Cite this repository" butt
   author  = {Raja, Muhammad Junaid Ali Asif and Sultan, Adil and Hassan, Shahzaib Ahmed},
   year    = {2026},
   url     = {https://github.com/junaidaliop/isic2024-tbp},
-  note    = {Neural Networks course project, CSIE, NYUST}
+  note    = {Neural Networks course project, National Yunlin University of Science and Technology}
 }
 ```
 

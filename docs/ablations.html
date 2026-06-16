@@ -83,12 +83,10 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="Ablations &amp; Negative Results – ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta property="og:description" content="Every complexity increase tested, including those that reduced the score">
-<meta property="og:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig3a_ablation_tabular.svg">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta name="twitter:title" content="Ablations &amp; Negative Results – ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta name="twitter:description" content="Every complexity increase tested, including those that reduced the score">
-<meta name="twitter:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig3a_ablation_tabular.svg">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -317,11 +315,6 @@ ul.task-list li input[type="checkbox"] {
 </i> 
 <span class="menu-text">Slides</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./ISIC2024-report.pdf"> <i class="bi bi-file-pdf" role="img">
-</i> 
-<span class="menu-text">PDF</span></a>
-  </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/junaidaliop/isic2024-tbp"> <i class="bi bi-github" role="img" aria-label="GitHub repository">
 </i> 
@@ -396,16 +389,6 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <section id="tabular" class="level2">
 <h2 class="anchored" data-anchor-id="tabular">Tabular GBDT progression</h2>
-<div id="fig-abl-tab" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-abl-tab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig3a_ablation_tabular.svg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-abl-tab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.
-</figcaption>
-</figure>
-</div>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 21%">
@@ -452,16 +435,6 @@ Figure&nbsp;1: Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.
 </section>
 <section id="image" class="level2">
 <h2 class="anchored" data-anchor-id="image">Image expert — resolution &amp; regularizer</h2>
-<div id="fig-abl-img" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-abl-img-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig3b_ablation_image.svg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-abl-img-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Image-expert ablation: the small backbone wins; heavy ones collapse.
-</figcaption>
-</figure>
-</div>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 30%">
@@ -512,16 +485,6 @@ Figure&nbsp;2: Image-expert ablation: the small backbone wins; heavy ones collap
 </section>
 <section id="stack" class="level2">
 <h2 class="anchored" data-anchor-id="stack">Stack combiners</h2>
-<div id="fig-abl-stack" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-abl-stack-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig3c_ablation_stack.svg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-abl-stack-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Stack-combiner ablation: the trivial rank-average wins.
-</figcaption>
-</figure>
-</div>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 30%">
@@ -577,16 +540,6 @@ Figure&nbsp;3: Stack-combiner ablation: the trivial rank-average wins.
 </section>
 <section id="negatives" class="level2">
 <h2 class="anchored" data-anchor-id="negatives">Negative results summary</h2>
-<div id="fig-neg" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-neg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig6_negative_results.svg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-neg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Every idea that reduced the score, and what beat it.
-</figcaption>
-</figure>
-</div>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 23%">
@@ -1070,7 +1023,7 @@ Figure&nbsp;4: Every idea that reduced the score, and what beat it.
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2026 <strong>Pakistan.AI</strong> — Raja · Sultan · Hassan · Neural Networks, CSIE NYUST</p>
+<p>© 2026 <strong>Pakistan.AI</strong> — Raja · Sultan · Hassan · Neural Networks · National Yunlin University of Science and Technology</p>
 </div>   
     <div class="nav-footer-center">
       <ul class="footer-items list-unstyled">

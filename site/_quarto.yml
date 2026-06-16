@@ -16,6 +16,7 @@ project:
   resources:
     - "figures/**"
     - "tables/**"
+    - "ISIC2024-slides.pdf"
 
 website:
   title: "ISIC-2024 SLICE-3D · Pakistan.AI"
@@ -62,9 +63,6 @@ website:
       - text: "Slides"
         href: slides.qmd
         icon: easel
-      - text: "PDF"
-        href: ISIC2024-report.pdf
-        icon: file-pdf
       - icon: github
         href: https://github.com/junaidaliop/isic2024-tbp
         aria-label: GitHub repository
@@ -72,7 +70,7 @@ website:
     border: true
     left: >-
       &copy; 2026 **Pakistan.AI** — Raja · Sultan · Hassan ·
-      Neural Networks, CSIE NYUST
+      Neural Networks · National Yunlin University of Science and Technology
     center:
       - text: "Cite this"
         href: references.qmd#cite-this-work
