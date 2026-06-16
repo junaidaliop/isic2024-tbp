@@ -15,6 +15,7 @@ project:
     - "slides.qmd"
   resources:
     - "figures/**"
+    - "tables/**"
 
 website:
   title: "ISIC-2024 SLICE-3D · Pakistan.AI"
@@ -106,7 +107,9 @@ format:
     fig-cap-location: bottom
     grid:
       body-width: 950px
-    css: figures/site.css
+    css:
+      - figures/site.css
+      - tables/tables.css
     include-in-header:
       - file: _fonts.html
 

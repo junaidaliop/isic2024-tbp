@@ -1,93 +1,89 @@
 ---
 title: "Credits & Positioning"
-subtitle: "Gracious credit to the leaderboard champions and the public-notebook lineage we learned from"
+subtitle: "Attribution to the leaderboard solutions and the public-notebook lineage"
 toc: true
 ---
 
-This project stands on the shoulders of the ISIC-2024 community. We are explicit about what we
-**reused** versus what is **ours**, and we credit the people whose work taught us the task.
+This work builds on the ISIC-2024 community. Reused components and original contributions are
+stated explicitly, with attribution.
 
 ## The leaderboard champions {#champions}
 
-We did **not** beat the unconstrained private leaderboard, and we are not trying to — we banned
-the two ingredients (external data, synthetic positives) that the top teams relied on. Their
-results are the benchmark our *constrained* claim is positioned against, and they deserve full
-credit.
+This study does not beat the unconstrained private leaderboard, and does not attempt to: the two
+ingredients the top teams relied on (external data, synthetic positives) are banned here. Their
+results are the benchmark the constrained claim is positioned against.
 
 ::: {.callout-note}
 ## 1st place — Ilya Novoselskiy
 Private pAUC **0.17264** (post-competition reports cite ~0.1755 for the best unconstrained
-configuration). An ensemble of **EVA-02 + EdgeNeXt** image models fused with a **GBDT** tabular
-stack. Crucially, the solution used **external ISIC-archive dermoscopy data** *and* **~30,000
-Stable-Diffusion-synthesized malignant lesions** — both of which we **deliberately ban**.
-
-**The most instructive detail for our study:** their own ablation reports the ~30k synthetic
-lesions added only **+0.0007** pAUC. On a 393-positive task, fabricating 30k positives bought
-almost nothing — a sobering data point for the "just add synthetic data" reflex, and part of
-why we judged the label-validity risk not worth taking.
+configuration). An ensemble of EVA-02 + EdgeNeXt image models fused with a GBDT tabular stack.
+The solution used external ISIC-archive dermoscopy data and ~30,000 Stable-Diffusion-synthesized
+malignant lesions, both banned here. Their own ablation reports the ~30k synthetic lesions added
+only **+0.0007** pAUC — a quantitative bound on synthetic augmentation for a 393-positive task.
 :::
 
 ::: {.callout-note appearance="simple"}
 ## 2nd & 3rd place
-- **2nd — `uchiyama33`** — strong image + tabular ensemble; a source of the EMA + mixup recipe we
-  adopted for the small backbone.
-- **3rd — `kyohei-123`** — likewise a top image/tabular blend.
-
-Both are credited for the public methodology that shaped the field's image-expert recipe.
+- **2nd — `uchiyama33`** — image + tabular ensemble; the source of the EMA + mixup recipe adopted
+  for the small backbone.
+- **3rd — `kyohei-123`** — image/tabular blend.
 :::
+
+## Leaderboard comparison
+
+{{< include tables/table3_leaderboard.html >}}
 
 ## The public-notebook lineage {#lineage}
 
-Our tabular feature engineering and overall recipe descend directly from the public Kaggle
-notebooks. We learned the task from them and reuse their ideas with attribution:
+The tabular feature engineering and overall recipe descend from public Kaggle notebooks, reused
+with attribution:
 
-| Source | What we learned / reused |
+| Source | Reused / learned |
 |---|---|
-| **greysky** — "only tabular" | The LightGBM hyperparameters and the tabular-first thesis. Our `lgb_bag` params are greysky-lineage; the bagging + undersampling structure follows this work. |
+| **greysky** — "only tabular" | LightGBM hyperparameters and the tabular-first thesis; the `lgb_bag` params are greysky-lineage, and the bagging + undersampling structure follows this work. |
 | **snnclsr** | Tabular feature-engineering patterns and CV structure. |
 | **motono0223** | Image-baseline training recipe (small backbones, undersampling). |
-| **andreasbis** — "CNN preds as features" | The core stacking idea: feed an image model's OOF probability into the GBDT as a feature. |
-| **richolson** | Additional baseline ideas and ensembling practice. |
+| **andreasbis** — "CNN preds as features" | The stacking idea: feed an image model's OOF probability into the GBDT as a feature. |
+| **richolson** | Additional baseline and ensembling practice. |
 
-We also vendored the **official ISIC-2024 scorer** (`src/metric_official.py`, © 2024 N. R.
-Kurtansky, MSKCC) verbatim and attributed, purely to *prove* our metric matches it.
+The official ISIC-2024 scorer (`src/metric_official.py`, © 2024 N. R. Kurtansky, MSKCC) is
+vendored verbatim and attributed, used only to verify the metric implementation.
 
-## What we reused vs. what is ours {#contributions}
+## Reused vs. original {#contributions}
 
 ::: {.callout-tip}
 ## Reused (with attribution)
-- The **tabular-first thesis** and LightGBM hyperparameter lineage (greysky).
-- The **CNN-preds-as-a-feature** stacking idea (andreasbis).
-- The **EMA + mixup** small-backbone recipe (2nd/4th-place public methodology).
-- The **official pAUC scorer** (Kurtansky / MSKCC), vendored to verify our implementation.
+- The tabular-first thesis and LightGBM hyperparameter lineage (greysky).
+- The CNN-preds-as-a-feature stacking idea (andreasbis).
+- The EMA + mixup small-backbone recipe (2nd/4th-place public methodology).
+- The official pAUC scorer (Kurtansky / MSKCC), vendored to verify the implementation.
 :::
 
 ::: {.callout-important}
-## Our own contributions
-1. **The efficiency frontier as the deliverable.** We reframe the task from "one private-LB
-   number" to a **quality-vs-cost Pareto frontier** across params, FLOPs, and CPU latency — so a
-   model only counts if it earns its cost. Every reported model is one measured point.
-2. **The no-external / no-synthetic discipline, made rigorous.** A locked scope
-   (`docs/DECISIONS.md`), a `cv-guardian` with veto power, and a hard no-leak guarantee — turning
-   "we didn't cheat" into something *audited*, not asserted.
-3. **The image-space ugly-duckling.** Extending the tabular ugly-duckling idea into the image
-   expert (a within-patient image-deviation signal) — tried, measured, and reported even though
-   it did **not** help, because honest negatives are the point.
-4. **A complete, honest negative-results catalogue.** Meta-stacker, learned MoE gate, image
-   embeddings, heavy transformers, over-strong EMA — every one logged with its number. The
-   finding that *complexity consistently lost at 393 positives* is itself the contribution.
+## Original contributions
+1. **The efficiency frontier as the deliverable.** The task is reframed from one private-LB number
+   to a quality-vs-cost Pareto frontier across params, FLOPs, and CPU latency; a model counts only
+   if it earns its cost, and every reported model is one measured point.
+2. **An audited no-external / no-synthetic discipline.** A locked scope (`docs/DECISIONS.md`), a
+   `cv-guardian` with veto power, and a hard no-leak guarantee make the constraint auditable rather
+   than asserted.
+3. **The image-space ugly-duckling.** The tabular ugly-duckling idea extended into the image expert
+   (a within-patient image-deviation signal), tested and reported despite not improving the score.
+4. **A complete negative-results catalogue.** Meta-stacker, learned MoE gate, image embeddings,
+   heavy transformers, over-strong EMA — each logged with its number. The finding that complexity
+   consistently reduces the score at 393 positives is itself a contribution.
 :::
 
-## Where our claim sits {#claim-position}
+## Positioning {#claim-position}
 
 ::: {.callout-warning}
-## Honest positioning
-- We claim **SOTA within the no-external-data / no-synthetic / single-dataset class**, on a
-  transparent efficiency frontier with leak-audited CV.
-- We **do not** claim to beat the champions' unconstrained ~0.1755 — that used the very
-  ingredients we banned, and matching it is impossible by construction.
-- Our best constrained point is **OOF pAUC 0.17376** at 15.8 M params / 2.46 GFLOPs / 61 ms CPU.
-  The honest private-test projection is **that minus ~0.01–0.02** (see [Results](results.qmd)).
+## The claim
+- SOTA within the no-external-data / no-synthetic / single-dataset class, on a transparent
+  efficiency frontier with leak-audited CV.
+- Not a claim to beat the champions' unconstrained ~0.1755, which used the banned ingredients and
+  is impossible to match by construction.
+- The best constrained point is OOF pAUC **0.17376** at 15.8 M params / 2.46 GFLOPs / 61 ms CPU;
+  the private-test projection is that minus ~0.01–0.02 (see [Results](results.qmd)).
 :::
 
 ---

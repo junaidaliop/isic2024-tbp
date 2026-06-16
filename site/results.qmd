@@ -4,9 +4,9 @@ subtitle: "The three-axis Pareto frontier, the scored ROC region, per-fold stabi
 toc: true
 ---
 
-All numbers are **out-of-fold** on the frozen patient-grouped folds (5 folds, SEED = 42), scored
-**only** by `src/cv.py` at **80% TPR**, and independently re-derived from the OOF parquet files
-by the `cv-guardian` agent. Figures come from `reports/frontier.py` and `reports/perf/make_perf.py`.
+All numbers are out-of-fold on the frozen patient-grouped folds (5 folds, SEED = 42), scored only
+by `src/cv.py` at 80% TPR, and independently re-derived from the OOF parquet files by the
+`cv-guardian` agent. Figures come from `reports/frontier.py` and `reports/perf/make_perf.py`.
 
 ## Headline numbers
 
@@ -14,72 +14,69 @@ by the `cv-guardian` agent. Figures come from `reports/frontier.py` and `reports
 |---|---:|
 | Tabular GBDT | **0.16890** |
 | Best image (ConvNeXtV2-nano &#64;224) | 0.15821 |
-| **Stack — rank-avg[GBDT, nano@224]** | **[0.17376]{.metric-chip}** |
+| **Stack — rank-avg[GBDT, nano&#64;224]** | **[0.17376]{.metric-chip}** |
 
-The stack reconstruction `rank-avg[gbdt, r224]` recomputes to **0.17376**, matching the canonical
-`stack_oof.parquet` exactly — the combiner is genuinely a 2-way rank average, with nothing
-hidden. Image and tabular make **complementary errors**, so the trivial rank-average buys
-**+0.0049** over tabular alone.
+The stack reconstruction `rank-avg[gbdt, r224]` recomputes to 0.17376, matching the canonical
+`stack_oof.parquet` exactly; the combiner is a 2-way rank average. Image and tabular make
+complementary errors, so the rank-average yields +0.0049 over tabular alone.
+
+### Tabular progression
+
+{{< include tables/table1_tabular.html >}}
+
+The tabular expert progresses from a broken baseline (0.09941) to the production
+LightGBM+CatBoost ensemble (0.16890); the patient-relative feature block is the single largest
+step (see [Ablations → Tabular](ablations.qmd#tabular)).
 
 ## The quality-vs-cost frontier (three axes)
 
-A point is **Pareto-optimal** if no other model is both cheaper *and* more accurate. We draw the
-frontier against all three cost axes, because "cost" means different things in different
-deployments.
+A point is Pareto-optimal if no other model is both cheaper and more accurate. The frontier is
+drawn against all three cost axes, since cost means different things in different deployments.
 
 ### Combined view
 
-![pAUC@80%TPR vs cost — the headline frontier.](figures/frontier.png){#fig-frontier}
+![pAUC@80%TPR vs cost — the headline frontier.](figures/frontier.svg){#fig-frontier}
 
 ### Versus parameters
 
-![pAUC vs parameter count (model size / memory).](figures/frontier_params.png){#fig-frontier-params}
+![pAUC vs parameter count (model size / memory).](figures/frontier_params.svg){#fig-frontier-params}
 
 ### Versus FLOPs
 
-![pAUC vs GFLOPs (compute per image).](figures/frontier_gflops.png){#fig-frontier-gflops}
+![pAUC vs GFLOPs (compute per image).](figures/frontier_gflops.svg){#fig-frontier-gflops}
 
 ### Versus CPU latency
 
-![pAUC vs single-thread CPU latency (deployability).](figures/frontier_cpu.png){#fig-frontier-cpu}
+![pAUC vs single-thread CPU latency (deployability).](figures/frontier_cpu.svg){#fig-frontier-cpu}
 
-### The Pareto-optimal set
+### All experiments and the Pareto-optimal set
 
-Reading across the three axes, the defensible frontier points are:
-
-| Frontier point | pAUC | Params (M) | GFLOPs | CPU ms/img | Why it is on the frontier |
-|---|---:|---:|---:|---:|---|
-| `mnv4_small` &#64;128 | 0.11242 | 2.49 | 0.062 | **3.06** | the cheapest usable point (latency floor) |
-| `effvit_b0` &#64;128 | 0.13706 | **2.13** | **0.034** | 3.45 | most accuracy per FLOP/param |
-| **GBDT** | 0.16890 | 0.86 | ~0 | **0.02** | dominates everything on cost — the anchor |
-| Cheap stack `gbdt+3img+udk` | 0.17117 | 23.84 | 1.22 | 32.9 | second-best accuracy, ~half the latency of best |
-| **Stack `gbdt+nano@224`** | **0.17376** | 15.84 | 2.46 | 60.9 | **best accuracy** on the whole study |
+{{< include tables/table2_experiments.html >}}
 
 ::: {.callout-note}
-## How to read this
-- The **GBDT alone** is almost free and already at 0.169 — it dominates every image-only model
-  on cost, and most on accuracy too. This is why the architecture is GBDT-first.
-- The image expert only earns its place **inside the stack**: `+0.0049` pAUC for `+60 ms`. Whether
-  that trade is worth it is a deployment decision — which is exactly why we report a frontier,
-  not a single number.
-- The heavy backbones (`mnv5_300m` at 294 M / 765 ms, `eva02_small`, `swinv2_tiny`) are **far off
-  the frontier**: dominated on both axes. More capacity is actively harmful at 393 positives.
+## Reading the frontier
+- The GBDT alone is near-free and already at 0.169; it dominates every image-only model on cost
+  and most on accuracy. This motivates the GBDT-first architecture.
+- The image expert earns its place only inside the stack: +0.0049 pAUC for +60 ms. Whether that
+  trade is worthwhile is a deployment decision, which is why a frontier is reported, not a single
+  number.
+- The heavy backbones (`mnv5_300m` at 294 M / 765 ms, `eva02_small`, `swinv2_tiny`) are far off
+  the frontier, dominated on both axes. Added capacity reduces the score at 393 positives.
 :::
 
 ## The scored ROC region
 
-![OOF ROC with the pAUC@80%TPR band shaded.](figures/perf_fig1_roc_pauc.png){#fig-roc}
+![OOF ROC with the pAUC@80%TPR band shaded.](figures/perf_fig1_roc_pauc.svg){#fig-roc}
 
-![Zoom on the high-sensitivity tail (TPR ≥ 0.80) that the metric actually integrates.](figures/perf_fig1b_roc_pauc_zoom.png){#fig-roc-zoom}
+![Zoom on the high-sensitivity tail (TPR ≥ 0.80) that the metric integrates.](figures/perf_fig1b_roc_pauc_zoom.svg){#fig-roc-zoom}
 
-The shaded band is **exactly what the metric integrates** — the area under the ROC for TPR ≥
-0.80 (equivalently FPR ≤ 0.20). In that scored band the **stack sits above both single experts**:
-the visual confirmation that the +0.0049 lift is concentrated where it is scored, not smeared
-across useless low-sensitivity operating points.
+The shaded band is the region the metric integrates — the area under the ROC for TPR ≥ 0.80
+(equivalently FPR ≤ 0.20). In that band the stack sits above both single experts: the +0.0049
+lift is concentrated where it is scored, not in low-sensitivity operating points.
 
 ## Per-fold stability
 
-![Per-fold pAUC for tabular, best image, and stack.](figures/perf_fig2_perfold_pauc.png){#fig-perfold}
+![Per-fold pAUC for tabular, best image, and stack.](figures/perf_fig2_perfold_pauc.svg){#fig-perfold}
 
 | Fold | Tabular | Best image | Stack |
 |---|---:|---:|---:|
@@ -91,20 +88,19 @@ across useless low-sensitivity operating points.
 | **mean ± std** | **0.1693 ± 0.0112** | **0.1591 ± 0.0091** | **0.1747 ± 0.0073** |
 
 ::: {.callout-important}
-## Fold variance is the dominant uncertainty — and the stack tames it
-At 393 positives, per-fold pAUC swings by ~0.025 (tabular ranges 0.154 → 0.180 across folds), so
-**fold-to-fold variance is larger than the gap between models.** This is why a single-fold number
-would be untrustworthy. The strongest evidence the +0.0049 is real and not a fluke: the **stack
-has the lowest std (0.0073) and wins or ties on *every* fold**. It is both the most accurate and
-the most stable estimator we have.
+## Fold variance is the dominant uncertainty
+At 393 positives, per-fold pAUC swings by ~0.025 (tabular ranges 0.154 → 0.180), so fold-to-fold
+variance exceeds the gap between models; a single-fold number would be untrustworthy. The stack
+has the lowest std (0.0073) and wins or ties on every fold — the strongest evidence the +0.0049
+is real, and it is both the most accurate and the most stable estimator.
 :::
 
-## Feature importance — where the signal lives
+## Feature importance
 
-![Top-20 GBDT features by mean gain (25 LightGBM + 25 CatBoost boosters).](figures/perf_fig4_feature_importance.png){#fig-featimp}
+![Top-20 GBDT features by mean gain (25 LightGBM + 25 CatBoost boosters).](figures/perf_fig4_feature_importance.svg){#fig-featimp}
 
-Aggregated mean **gain** over 25 LightGBM + 25 CatBoost boosters (each booster normalized to
-sum = 1 so the two libraries are comparable, then averaged):
+Aggregated mean gain over 25 LightGBM + 25 CatBoost boosters (each booster normalized to sum = 1
+for cross-library comparability, then averaged):
 
 | Rank | Feature | Gain % |
 |---:|---|---:|
@@ -119,31 +115,38 @@ sum = 1 so the two libraries are comparable, then averaged):
 | 9 | `pxc_tbp_lv_H_anatom_site_general` | 1.09 |
 | 10 | `f_normalized_lesion_size` | 1.07 |
 
-**Patient-relative ugly-duckling features** (`pdev_` / `prank_` / `pxc_`) make up **56% of
-top-20 gain and ~65% of total gain.** A lesion's deviation from its own patient's distribution
-is the dominant signal — the quantitative vindication of the architecture's tabular thesis.
+Patient-relative ugly-duckling features (`pdev_` / `prank_` / `pxc_`) make up 56% of top-20 gain
+and ~65% of total gain. A lesion's deviation from its own patient's distribution is the dominant
+signal, confirming the tabular architecture.
 
 ## Score separation & calibration
 
-![Left: stack score histogram by class. Right: reliability curve.](figures/perf_fig5_calibration_separation.png){#fig-calib}
+![Left: stack score histogram by class. Right: reliability curve.](figures/perf_fig5_calibration_separation.svg){#fig-calib}
 
 Malignant score-mass concentrates near 1.0 and benign mass near 0.0, with the mid-range overlap
-that the partial-AUC region penalizes. The reliability curve shows the model separates classes
-well **by rank** but is **far from probability-calibrated** (observed malignant fraction stays ≈0
-even in the top bin). This is **expected and fine**: under 0.1% prevalence and a rank-based
-metric, calibration is irrelevant to pAUC. It is a feature of the design, not a defect.
+penalized by the partial-AUC region. The reliability curve shows the model separates classes well
+by rank but is far from probability-calibrated (observed malignant fraction stays ≈0 even in the
+top bin). Under 0.1% prevalence and a rank-based metric, calibration is irrelevant to pAUC.
 
-## The honest CV → private projection
+## The CV → private projection
 
 ::: {.callout-warning}
 ## What to expect on a hidden test set
-The field saw a roughly **0.013–0.021 public→private drop** on this task even with clean CV —
-driven by the 393-positive scale and (for the winners) heavy reliance on external/synthetic data.
-Our headline is **OOF CV 0.1738 (stack) / 0.1689 (tabular)**; a fair private-test projection is
-**headline minus ~0.01–0.02**. We state this openly. Because **no part of our pipeline ever saw
-out-of-distribution data**, our OOF number is, if anything, a *more* honest predictor of
-generalization than a leaderboard-tuned score.
+The field saw a ~0.013–0.021 public→private drop on this task even with clean CV, driven by the
+393-positive scale and (for the winners) reliance on external/synthetic data. The headline is
+OOF CV 0.1738 (stack) / 0.1689 (tabular); a fair private-test projection is headline minus
+~0.01–0.02. Because no part of the pipeline saw out-of-distribution data, the OOF number is a
+conservative predictor of generalization.
 :::
+
+## Leaderboard context
+
+{{< include tables/table3_leaderboard.html >}}
+
+The constrained CV result (0.17376) sits in the same range as the unconstrained 1st-place private
+pAUC (0.17264), achieved without the external and synthetic data the champions relied on. The
+out-of-fold CV is not directly comparable to a private-LB number; see
+[Submission](submission.qmd) and [Credits](credits.qmd).
 
 ---
 

@@ -134,6 +134,7 @@ div.csl-indent {
 
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="References &amp; Citations – ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta property="og:description" content="Dataset, metric, backbones, and methods — with the license obligations">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
@@ -454,13 +455,13 @@ div.csl-indent {
 <ul>
 <li><strong>SLICE-3D dataset</strong> — Kurtansky, N. R. et al.&nbsp;<em>The SLICE-3D dataset: 400,000 skin lesion image crops extracted from 3D TBP for skin cancer detection.</em> <strong>Scientific Data</strong> (2024). <a href="https://doi.org/10.1038/s41597-024-03743-w">doi:10.1038/s41597-024-03743-w</a> <span class="citation" data-cites="kurtansky2024slice3d">(<a href="#ref-kurtansky2024slice3d" role="doc-biblioref"><span class="nocase">Kurtansky et al.</span> 2024</a>)</span></li>
 <li><strong>Challenge release</strong> — International Skin Imaging Collaboration. <em>SLICE-3D 2024 Challenge Dataset.</em> <a href="https://doi.org/10.34970/2024-slice-3d">doi:10.34970/2024-slice-3d</a>, <strong>CC BY-NC 4.0</strong> <span class="citation" data-cites="isic2024challenge">(<a href="#ref-isic2024challenge" role="doc-biblioref">International Skin Imaging Collaboration 2024</a>)</span></li>
-<li><strong>Challenge recap</strong> — Kurtansky, N. R. et al.&nbsp;<em>Automated triage of cancer-suspicious skin lesions with 3D total-body photography.</em> <strong>npj Digital Medicine</strong> (2025). PMC12639164. Establishes the intra-patient-context result we deliberately do <strong>not</strong> use external data to beat — useful framing for the no-external-data scope <span class="citation" data-cites="kurtansky2025npj">(<a href="#ref-kurtansky2025npj" role="doc-biblioref"><span class="nocase">Kurtansky et al.</span> 2025</a>)</span>.</li>
+<li><strong>Challenge recap</strong> — Kurtansky, N. R. et al.&nbsp;<em>Automated triage of cancer-suspicious skin lesions with 3D total-body photography.</em> <strong>npj Digital Medicine</strong> (2025). PMC12639164. Establishes the intra-patient-context result and frames the no-external-data scope <span class="citation" data-cites="kurtansky2025npj">(<a href="#ref-kurtansky2025npj" role="doc-biblioref"><span class="nocase">Kurtansky et al.</span> 2025</a>)</span>.</li>
 </ul>
 </section>
 <section id="metric" class="level2">
 <h2 class="anchored" data-anchor-id="metric">Metric</h2>
 <ul>
-<li><strong>Official ISIC-2024 scorer</strong> — ISIC Research / Kurtansky (MSKCC). Partial AUC above <strong>80%</strong> TPR; scores in <code>[0, 0.20]</code>. <a href="https://github.com/ISIC-Research/Challenge-2024-Metrics">github.com/ISIC-Research/Challenge-2024-Metrics</a> <span class="citation" data-cites="isicmetric2024">(<a href="#ref-isicmetric2024" role="doc-biblioref">ISIC Research and Kurtansky 2024</a>)</span>. <em>Note:</em> the repo README states 88% (<code>[0, 0.12]</code>); the live leaderboard used <strong>80%</strong> — we pin 80%.</li>
+<li><strong>Official ISIC-2024 scorer</strong> — ISIC Research / Kurtansky (MSKCC). Partial AUC above <strong>80%</strong> TPR; scores in <code>[0, 0.20]</code>. <a href="https://github.com/ISIC-Research/Challenge-2024-Metrics">github.com/ISIC-Research/Challenge-2024-Metrics</a> <span class="citation" data-cites="isicmetric2024">(<a href="#ref-isicmetric2024" role="doc-biblioref">ISIC Research and Kurtansky 2024</a>)</span>. <em>Note:</em> the repo README states 88% (<code>[0, 0.12]</code>); the live leaderboard used <strong>80%</strong>, which is pinned here.</li>
 </ul>
 </section>
 <section id="gradient-boosted-decision-trees" class="level2">
@@ -474,7 +475,7 @@ div.csl-indent {
 <section id="image-backbones-the-frontier-sweep" class="level2">
 <h2 class="anchored" data-anchor-id="image-backbones-the-frontier-sweep">Image backbones (the frontier sweep)</h2>
 <ul>
-<li><strong>ConvNeXt-V2 + FCMAE</strong> — Woo, S. et al.&nbsp;(2023) <span class="citation" data-cites="woo2023convnextv2">(<a href="#ref-woo2023convnextv2" role="doc-biblioref">Woo et al. 2023</a>)</span> — our protagonist (<code>convnextv2_nano</code>, MAE self-supervised init then in22k→in1k fine-tune).</li>
+<li><strong>ConvNeXt-V2 + FCMAE</strong> — Woo, S. et al.&nbsp;(2023) <span class="citation" data-cites="woo2023convnextv2">(<a href="#ref-woo2023convnextv2" role="doc-biblioref">Woo et al. 2023</a>)</span> — the primary backbone (<code>convnextv2_nano</code>, MAE self-supervised init then in22k→in1k fine-tune).</li>
 <li><strong>ViT / AugReg</strong> — Dosovitskiy, A. et al.&nbsp;ICLR (2021) <span class="citation" data-cites="dosovitskiy2021vit">(<a href="#ref-dosovitskiy2021vit" role="doc-biblioref"><span class="nocase">Dosovitskiy et al.</span> 2021</a>)</span>; Steiner, A. et al.
 <ol start="2021" type="1">
 <li><span class="citation" data-cites="steiner2021augreg">(<a href="#ref-steiner2021augreg" role="doc-biblioref">Steiner et al. 2021</a>)</span>.</li>
@@ -502,12 +503,12 @@ div.csl-indent {
 <li><strong>MAE</strong> — He, K. et al.&nbsp;CVPR (2022) <span class="citation" data-cites="he2022mae">(<a href="#ref-he2022mae" role="doc-biblioref">He et al. 2022</a>)</span>.</li>
 <li><strong>DINOv2</strong> — Oquab, M. et al.&nbsp;TMLR (2024) <span class="citation" data-cites="oquab2024dinov2">(<a href="#ref-oquab2024dinov2" role="doc-biblioref"><span class="nocase">Oquab et al.</span> 2024</a>)</span>.</li>
 </ul>
-<p>These motivate the principled future-work direction: self-supervised pretraining on the 400k+ <strong>unlabeled</strong> SLICE-3D crops, as the in-constraint substitute for the external data we banned.</p>
+<p>These motivate the future-work direction: self-supervised pretraining on the 400k+ unlabeled SLICE-3D crops, as the in-constraint substitute for the banned external data.</p>
 </section>
 <section id="related-isic-2024-solutions-positioning" class="level2">
 <h2 class="anchored" data-anchor-id="related-isic-2024-solutions-positioning">Related ISIC-2024 solutions (positioning)</h2>
 <ul>
-<li>Hasan, M. Z. &amp; Rifat, F. Y. <em>Hybrid Ensemble of Segmentation-Assisted Classification and GBDT.</em> arXiv:2506.03420 (2025) <span class="citation" data-cites="hasan2025hybrid">(<a href="#ref-hasan2025hybrid" role="doc-biblioref">Hasan and Rifat 2025</a>)</span> — image + GBDT + <strong>synthetic</strong> augmentation, explicitly the approach we reject; a clean contrast for the no-synthetic-data argument.</li>
+<li>Hasan, M. Z. &amp; Rifat, F. Y. <em>Hybrid Ensemble of Segmentation-Assisted Classification and GBDT.</em> arXiv:2506.03420 (2025) <span class="citation" data-cites="hasan2025hybrid">(<a href="#ref-hasan2025hybrid" role="doc-biblioref">Hasan and Rifat 2025</a>)</span> — image + GBDT + synthetic augmentation; a contrast for the no-synthetic-data argument.</li>
 </ul>
 </section>
 <section id="cite-this-work" class="level2">

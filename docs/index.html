@@ -87,6 +87,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta property="og:description" content="An efficiency-frontier, single-dataset, no-external-data study of skin-lesion classification">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
@@ -356,10 +357,10 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
   <li><a href="#headline" id="toc-headline" class="nav-link" data-scroll-target="#headline">Headline results</a>
   <ul class="collapse">
-  <li><a href="#where-the-score-comes-from" id="toc-where-the-score-comes-from" class="nav-link" data-scroll-target="#where-the-score-comes-from">Where the score comes from</a></li>
+  <li><a href="#source-of-the-score" id="toc-source-of-the-score" class="nav-link" data-scroll-target="#source-of-the-score">Source of the score</a></li>
   </ul></li>
-  <li><a href="#the-pipeline" id="toc-the-pipeline" class="nav-link" data-scroll-target="#the-pipeline">The pipeline</a></li>
-  <li><a href="#scope-honesty" id="toc-scope-honesty" class="nav-link" data-scroll-target="#scope-honesty">Scope honesty</a></li>
+  <li><a href="#pipeline" id="toc-pipeline" class="nav-link" data-scroll-target="#pipeline">Pipeline</a></li>
+  <li><a href="#scope-honesty" id="toc-scope-honesty" class="nav-link" data-scroll-target="#scope-honesty">Scope</a></li>
   </ul>
 </nav>
     </div>
@@ -403,11 +404,11 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="hero">
 <p><span class="eyebrow">Pakistan.AI · Neural Networks · CSIE, NYUST</span></p>
-<section id="isic-2024-slice-3d-the-honest-frontier" class="level1">
-<h1>ISIC-2024 SLICE-3D — the honest frontier</h1>
-<p>Detecting the <strong>393 malignant lesions hidden among 400,666 benign crops</strong> (a 1,021:1 imbalance) — using <strong>only</strong> the ISIC-2024 SLICE-3D dataset, <strong>no</strong> external dermoscopy, and <strong>no</strong> synthetic/generative positives.</p>
+<section id="isic-2024-slice-3d-qualityefficiency-frontier" class="level1">
+<h1>ISIC-2024 SLICE-3D — quality–efficiency frontier</h1>
+<p>Automated triage of skin-lesion crops from 3D total-body photography: classifying <strong>393 malignant lesions among 400,666 benign crops</strong> (a 1,021:1 imbalance) using <strong>only</strong> the ISIC-2024 SLICE-3D dataset, with <strong>no</strong> external dermoscopy and <strong>no</strong> synthetic positives.</p>
 <div class="claim">
-<p><strong>The claim under test:</strong> <em>state-of-the-art among single-dataset, no-external-data, no-synthetic solutions — reported not as one number, but as a <strong>quality-vs-cost Pareto frontier</strong>.</em></p>
+<p><strong>Claim under test:</strong> state-of-the-art among single-dataset, no-external-data, no-synthetic solutions, reported as a quality-vs-cost Pareto frontier rather than a single number.</p>
 </div>
 </section>
 </div>
@@ -434,32 +435,32 @@ ul.task-list li input[type="checkbox"] {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>On this site
+<span class="screen-reader-only">Note</span>Contents
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This is the complete companion report for the project. It is written to be read by anyone — from someone meeting the partial-AUC metric for the first time, to a reviewer checking that every headline number is reproducible from disk.</p>
+<p>This site is the companion report. Each page is self-contained and quantitative.</p>
 <ul>
-<li><strong><a href="./data.html">Data &amp; EDA</a></strong> — the dataset, the imbalance, the nine exploratory figures, the leak columns we drop.</li>
-<li><strong><a href="./methods.html">Methods</a></strong> — basic → complex: the metric, the CV spine, tabular features, the GBDT, the image experts, the stack.</li>
-<li><strong><a href="./results.html">Results</a></strong> — the three-axis Pareto frontier, ROC / pAUC region, per-fold, calibration.</li>
-<li><strong><a href="./ablations.html">Ablations</a></strong> — every complexity increase we tried, including the ones that lost (that <em>is</em> the finding).</li>
-<li><strong><a href="./reproducibility.html">Reproduce</a></strong> — the exact env, seeds, and commands; how each number was re-verified.</li>
-<li><strong><a href="./credits.html">Credits</a></strong> — gracious credit to the leaderboard champions and the public-notebook lineage.</li>
-<li><strong><a href="./references.html">References</a></strong> — full citations; dataset, metric, backbones, GBDTs.</li>
+<li><strong><a href="./data.html">Data &amp; EDA</a></strong> — dataset, imbalance, exploratory figures, dropped leak columns.</li>
+<li><strong><a href="./methods.html">Methods</a></strong> — the metric, the CV spine, tabular features, the GBDT, the image experts, the stack.</li>
+<li><strong><a href="./results.html">Results</a></strong> — the three-axis Pareto frontier, the scored ROC region, per-fold stability, calibration.</li>
+<li><strong><a href="./ablations.html">Ablations</a></strong> — each complexity increase tested, including those that reduced the score.</li>
+<li><strong><a href="./reproducibility.html">Reproduce</a></strong> — environment, seeds, commands, and the re-verification of each number.</li>
+<li><strong><a href="./credits.html">Credits</a></strong> — attribution to the leaderboard solutions and the public-notebook lineage.</li>
+<li><strong><a href="./references.html">References</a></strong> — citations for the dataset, metric, backbones, and GBDTs.</li>
 </ul>
 <p><strong>Offline copies:</strong> <a href="ISIC2024-report.pdf">report PDF</a> · <a href="./slides.html">slide deck (HTML)</a></p>
 </div>
 </div>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
-<p>We study the <strong>ISIC-2024 SLICE-3D</strong> skin-lesion task — classifying ~401,059 lesion crops extracted from 3D total-body photography (TBP) as malignant or benign — under a deliberately strict regime. The competition’s top private-leaderboard solutions reached pAUC ≈ 0.173, but they did so by importing <strong>external</strong> dermoscopy archives <strong>and</strong> roughly <strong>30,000 diffusion-synthesized malignant lesions</strong>. We ban both. On medical images, training or validating on fabricated pathology is a label-validity hole; and importing external data breaks the “single dataset” premise. Removing those two crutches is exactly what our experiment isolates.</p>
-<p>Because the absolute leaderboard number is then <strong>out of reach by construction</strong>, we re-pose the problem as a <strong>Pareto frontier</strong>: the best official <strong>pAUC above 80% TPR</strong> achievable per unit of inference cost (parameters, FLOPs, and single-thread CPU latency), on SLICE-3D data alone. The architecture is a <strong>hybrid</strong>: a LightGBM tabular expert over intrinsic engineered features (geometry, color/hue contrast, size ratios, and patient-relative “ugly-duckling” deviations) provides the efficient anchor; a <strong>small</strong> ImageNet-pretrained image backbone contributes an out-of-fold (OOF) malignancy probability that is fused into the final score by a <strong>trivial rank-average</strong> combiner.</p>
-<p>The honest punchline: <strong>every increase in model complexity we tried lost.</strong> The trivial 2-way rank-average beats a meta-LightGBM stacker, a learned per-lesion gate, and the addition of image embeddings; the small <code>convnextv2_nano</code> backbone beats heavy transformers (SwinV2, EVA-02) that collapse to near-random at 393 positives. Our best frontier point — <code>rank-avg[GBDT, convnextv2_nano@224]</code> — reaches <strong>OOF pAUC 0.17376</strong> at <strong>15.8 M params / 2.46 GFLOPs / 61 ms CPU per image</strong>.</p>
+<p>The ISIC-2024 SLICE-3D task requires classifying ~401,059 lesion crops, extracted from 3D total-body photography (TBP), as malignant or benign. The constraint regime is deliberately strict. The competition’s top private-leaderboard solutions reached pAUC ≈ 0.173 by importing external dermoscopy archives and approximately 30,000 diffusion-synthesized malignant lesions; both are banned here. Training or validating on fabricated pathology is a label-validity hole, and external data breaks the single-dataset premise. Removing both is what this study isolates.</p>
+<p>Because the absolute leaderboard number is then out of reach by construction, the problem is re-posed as a Pareto frontier: the best official pAUC above 80% TPR achievable per unit of inference cost (parameters, FLOPs, single-thread CPU latency) on SLICE-3D alone. The architecture is a hybrid. A LightGBM tabular expert over intrinsic engineered features (geometry, color/hue contrast, size ratios, patient-relative “ugly-duckling” deviations) provides the efficient anchor. A small ImageNet-pretrained image backbone contributes an out-of-fold (OOF) malignancy probability, fused into the final score by a trivial rank-average combiner.</p>
+<p>Every tested increase in model complexity reduced the score. The trivial two-way rank-average exceeds a meta-LightGBM stacker, a learned per-lesion gate, and the addition of image embeddings; the small <code>convnextv2_nano</code> backbone exceeds heavier transformers (SwinV2, EVA-02), which collapse to near-random at 393 positives. The best frontier point, <code>rank-avg[GBDT, convnextv2_nano@224]</code>, reaches OOF pAUC <strong>0.17376</strong> at 15.8 M params / 2.46 GFLOPs / 61 ms CPU per image.</p>
 </section>
 <section id="headline" class="level2">
 <h2 class="anchored" data-anchor-id="headline">Headline results</h2>
-<p>All numbers are <strong>out-of-fold (OOF)</strong> on the frozen patient-grouped folds (<code>data/folds.parquet</code>, 5 folds, SEED = 42), and every pAUC is computed <strong>only</strong> by the official scorer (<code>src/cv.py</code>), pinned at <strong>80% TPR</strong> (range <code>[0, 0.20]</code>; random ≈ 0.02, perfect = 0.20). All values were independently re-derived from the OOF parquet files by the <code>cv-guardian</code> agent.</p>
+<p>All numbers are out-of-fold (OOF) on the frozen patient-grouped folds (<code>data/folds.parquet</code>, 5 folds, SEED = 42). Each pAUC is computed only by the official scorer (<code>src/cv.py</code>), pinned at 80% TPR (range <code>[0, 0.20]</code>; random ≈ 0.02, perfect = 0.20). All values were independently re-derived from the OOF parquet files by the <code>cv-guardian</code> agent.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
@@ -486,7 +487,7 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: right;">0.86</td>
 <td style="text-align: right;">~0</td>
 <td style="text-align: right;">0.02</td>
-<td>the efficient anchor — ≈ free</td>
+<td>efficient anchor (near-free)</td>
 </tr>
 <tr class="even">
 <td>Best image (<code>convnextv2_nano@224</code>)</td>
@@ -494,7 +495,7 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: right;">14.98</td>
 <td style="text-align: right;">2.46</td>
 <td style="text-align: right;">60.9</td>
-<td>the protagonist backbone</td>
+<td>primary backbone</td>
 </tr>
 <tr class="odd">
 <td><strong>Stack — <code>rank-avg[GBDT, nano@224]</code></strong></td>
@@ -502,7 +503,7 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: right;">15.84</td>
 <td style="text-align: right;">2.46</td>
 <td style="text-align: right;">60.9</td>
-<td>best overall; <strong>Pareto-optimal</strong></td>
+<td>best overall; Pareto-optimal</td>
 </tr>
 <tr class="even">
 <td>Cheap stack (<code>gbdt+3img+udk</code>)</td>
@@ -510,10 +511,10 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: right;">23.84</td>
 <td style="text-align: right;">1.22</td>
 <td style="text-align: right;">32.9</td>
-<td>also on the frontier (cheaper)</td>
+<td>frontier point (cheaper)</td>
 </tr>
 <tr class="odd">
-<td>Frontier — cheap end (<code>effvit_b0</code>)</td>
+<td>Cheap frontier (<code>effvit_b0</code>)</td>
 <td style="text-align: right;">0.13706</td>
 <td style="text-align: right;">2.13</td>
 <td style="text-align: right;">0.034</td>
@@ -521,12 +522,12 @@ ul.task-list li input[type="checkbox"] {
 <td>most accuracy per millisecond</td>
 </tr>
 <tr class="even">
-<td>Frontier — cheapest (<code>mnv4_small</code>)</td>
+<td>Cost floor (<code>mnv4_small</code>)</td>
 <td style="text-align: right;">0.11242</td>
 <td style="text-align: right;">2.49</td>
 <td style="text-align: right;">0.062</td>
 <td style="text-align: right;">3.1</td>
-<td>floor of the cost axis</td>
+<td>latency floor</td>
 </tr>
 </tbody>
 </table>
@@ -536,13 +537,13 @@ ul.task-list li input[type="checkbox"] {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>Reading the metric.</strong> pAUC@80%TPR integrates the ROC curve only in the high-sensitivity tail (TPR ≥ 0.80). It is bounded in <code>[0, 0.20]</code>, so a move from 0.169 → 0.174 is a <strong>+2.9% relative</strong> improvement, not a rounding error. See <a href="./methods.html#the-metric">Methods → The metric</a>.</p>
+<p><strong>The metric.</strong> pAUC@80%TPR integrates the ROC curve only in the high-sensitivity tail (TPR ≥ 0.80). It is bounded in <code>[0, 0.20]</code>, so 0.169 → 0.174 is a +2.9% relative improvement. See <a href="./methods.html#the-metric">Methods → The metric</a>.</p>
 </div>
 </div>
 </div>
-<section id="where-the-score-comes-from" class="level3">
-<h3 class="anchored" data-anchor-id="where-the-score-comes-from">Where the score comes from</h3>
-<p>The single most important finding for <em>understanding</em> the task: the dominant signal is not the raw lesion, it is <strong>how anomalous a lesion is relative to the same patient’s other moles</strong> — the classic “ugly-duckling” sign. Patient-relative features (<code>pdev_*</code>, <code>prank_*</code>, <code>pxc_*</code>) account for <strong>~65% of total GBDT gain</strong>. The top features:</p>
+<section id="source-of-the-score" class="level3">
+<h3 class="anchored" data-anchor-id="source-of-the-score">Source of the score</h3>
+<p>The dominant signal is not the raw lesion but how anomalous a lesion is relative to the same patient’s other moles — the ugly-duckling sign. Patient-relative features (<code>pdev_*</code>, <code>prank_*</code>, <code>pxc_*</code>) account for ~65% of total GBDT gain.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 28%">
@@ -555,7 +556,7 @@ ul.task-list li input[type="checkbox"] {
 <th style="text-align: right;">Rank</th>
 <th>Feature</th>
 <th style="text-align: right;">Mean gain %</th>
-<th>What it is</th>
+<th>Definition</th>
 </tr>
 </thead>
 <tbody>
@@ -563,13 +564,13 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: right;">1</td>
 <td><code>tbp_lv_H</code></td>
 <td style="text-align: right;">3.28</td>
-<td>lesion hue angle (univariate AUC 0.81 on its own)</td>
+<td>lesion hue angle (univariate AUC 0.81)</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2</td>
 <td><code>pdev_tbp_lv_H</code></td>
 <td style="text-align: right;">3.05</td>
-<td>how far this lesion’s hue deviates from the patient’s mean</td>
+<td>hue deviation from the patient’s mean</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">3</td>
@@ -587,8 +588,8 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="the-pipeline" class="level2">
-<h2 class="anchored" data-anchor-id="the-pipeline">The pipeline</h2>
+<section id="pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline">Pipeline</h2>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div id="fig-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -606,7 +607,7 @@ ul.task-list li input[type="checkbox"] {
     C --&gt; D["Bagged GBDT expert&lt;br/&gt;LightGBM (5-seed) + CatBoost&lt;br/&gt;rank-blend&lt;br/&gt;&lt;b&gt;OOF pAUC 0.16890&lt;/b&gt;"]
     E --&gt; F["Image expert&lt;br/&gt;OOF malignancy prob&lt;br/&gt;(+ embedding, ablated)&lt;br/&gt;&lt;b&gt;OOF pAUC 0.15821&lt;/b&gt;"]
 
-    D --&gt; G["Combiner = rank-average&lt;br/&gt;(param-free, robust)"]
+    D --&gt; G["Combiner = rank-average&lt;br/&gt;(param-free)"]
     F --&gt; G
 
     G --&gt; H["Final OOF score&lt;br/&gt;&lt;b&gt;pAUC 0.17376&lt;/b&gt;&lt;br/&gt;15.8M params · 2.46 GFLOPs · 61 ms CPU"]
@@ -620,7 +621,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: End-to-end pipeline. Patient-grouped folds are frozen once; every expert and the stack read the same split. Nothing trains until the no-leak guarantee passes.
+Figure&nbsp;1: End-to-end pipeline. Patient-grouped folds are frozen once; every expert and the stack read the same split. No model trains until the no-leak guarantee passes.
 </figcaption>
 </figure>
 </div>
@@ -628,22 +629,22 @@ Figure&nbsp;1: End-to-end pipeline. Patient-grouped folds are frozen once; every
 </div>
 </section>
 <section id="scope-honesty" class="level2">
-<h2 class="anchored" data-anchor-id="scope-honesty">Scope honesty</h2>
+<h2 class="anchored" data-anchor-id="scope-honesty">Scope</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>What we are — and are not — claiming
+<span class="screen-reader-only">Important</span>What is and is not claimed
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>We are <strong>not</strong> claiming to beat the unconstrained leaderboard winner’s private pAUC ≈ 0.1755. That score used external data + ~30k synthetic positives; matching it under our rules is <strong>impossible by construction</strong>, and that is precisely the point of the experiment.</li>
-<li>We <strong>are</strong> claiming SOTA <em>within the no-external-data / no-synthetic / single-dataset class</em>, on a transparent quality-vs-cost frontier, with leak-audited CV.</li>
-<li>The 1st-place team’s own ablation shows their ~30k synthetic lesions added only <strong>+0.0007</strong> pAUC — a sobering data point for the “just add synthetic data” reflex on a 393-positive task.</li>
-<li>Our OOF number is, if anything, a <strong>more honest</strong> predictor of generalization than a leaderboard-tuned number, because no part of our pipeline ever saw out-of-distribution data. Expect a typical public→private drop of <strong>~0.013–0.021</strong> on this task; we report the OOF CV and state that projection openly.</li>
+<li>This study does <strong>not</strong> claim to beat the unconstrained leaderboard winner’s private pAUC ≈ 0.1755. That score used external data plus ~30k synthetic positives; matching it under these rules is impossible by construction, which is the purpose of the experiment.</li>
+<li>The claim is SOTA within the no-external-data / no-synthetic / single-dataset class, on a transparent quality-vs-cost frontier with leak-audited CV.</li>
+<li>The 1st-place team’s own ablation reports their ~30k synthetic lesions added only +0.0007 pAUC, a quantitative bound on the value of synthetic augmentation for a 393-positive task.</li>
+<li>The OOF number is a conservative generalization estimate, because no part of the pipeline saw out-of-distribution data. The expected public→private drop on this task is ~0.013–0.021; the OOF CV is reported with that projection stated.</li>
 </ul>
 </div>
 </div>
@@ -653,11 +654,11 @@ Figure&nbsp;1: End-to-end pipeline. Patient-grouped folds are frozen once; every
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Licensing note on figures
+<span class="screen-reader-only">Note</span>Figures
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Every figure on this site is <strong>our own</strong> (generated by <code>reports/eda/make_eda.py</code>, <code>reports/perf/make_perf.py</code>, <code>reports/frontier.py</code>) plus Mermaid diagrams. We deliberately use <strong>no external copyrighted images</strong> — appropriate for a medical-imaging deliverable and for the dataset’s CC BY-NC 4.0 terms.</p>
+<p>Every figure on this site is generated by <code>reports/eda/make_eda.py</code>, <code>reports/perf/make_perf.py</code>, and <code>reports/frontier.py</code>, plus Mermaid diagrams. No external copyrighted images are used, consistent with the dataset’s CC BY-NC 4.0 terms.</p>
 </div>
 </div>
 <hr>

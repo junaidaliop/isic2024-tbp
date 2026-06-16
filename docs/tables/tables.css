@@ -1,0 +1,51 @@
+.acad-table {
+  border-collapse: collapse;
+  margin: 1.25rem auto;
+  font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #1a1a1a;
+}
+
+.acad-table caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  padding: 0 0 0.6rem 0;
+  color: #1a1a1a;
+}
+
+.acad-table thead th {
+  border-top: 2px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  padding: 0.5rem 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.acad-table tbody td {
+  border: none;
+  padding: 0.4rem 0.9rem;
+}
+
+.acad-table tbody tr:last-child td {
+  border-bottom: 2px solid #1a1a1a;
+}
+
+.acad-table td.num,
+.acad-table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.acad-table tr.highlight td {
+  background: #cdeccd;
+  font-weight: 600;
+}
+
+.acad-table .note {
+  font-size: 0.85rem;
+  color: #555;
+  padding-top: 0.5rem;
+}

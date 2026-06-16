@@ -80,17 +80,18 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="Data &amp; Exploratory Analysis – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta property="og:description" content="The SLICE-3D dataset, the imbalance, and what the nine EDA figures reveal">
-<meta property="og:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/eda_fig1_class_imbalance.png">
+<meta property="og:description" content="The SLICE-3D dataset, the class imbalance, and the exploratory figures">
+<meta property="og:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/eda_fig0_class_examples.png">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta property="og:image:height" content="670">
-<meta property="og:image:width" content="2005">
+<meta property="og:image:height" content="1980">
+<meta property="og:image:width" content="4200">
 <meta name="twitter:title" content="Data &amp; Exploratory Analysis – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta name="twitter:description" content="The SLICE-3D dataset, the imbalance, and what the nine EDA figures reveal">
-<meta name="twitter:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/eda_fig1_class_imbalance.png">
-<meta name="twitter:image-height" content="670">
-<meta name="twitter:image-width" content="2005">
+<meta name="twitter:description" content="The SLICE-3D dataset, the class imbalance, and the exploratory figures">
+<meta name="twitter:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/eda_fig0_class_examples.png">
+<meta name="twitter:image-height" content="1980">
+<meta name="twitter:image-width" content="4200">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -352,24 +353,26 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-the-data-is" id="toc-what-the-data-is" class="nav-link active" data-scroll-target="#what-the-data-is">What the data is</a>
+  <li><a href="#the-problem" id="toc-the-problem" class="nav-link active" data-scroll-target="#the-problem">The problem</a></li>
+  <li><a href="#the-dataset" id="toc-the-dataset" class="nav-link" data-scroll-target="#the-dataset">The dataset</a>
   <ul class="collapse">
-  <li><a href="#image-details-and-why-we-train-at-128-224-px" id="toc-image-details-and-why-we-train-at-128-224-px" class="nav-link" data-scroll-target="#image-details-and-why-we-train-at-128-224-px">Image details (and why we train at 128 / 224 px)</a></li>
+  <li><a href="#representative-crops" id="toc-representative-crops" class="nav-link" data-scroll-target="#representative-crops">Representative crops</a></li>
+  <li><a href="#image-details" id="toc-image-details" class="nav-link" data-scroll-target="#image-details">Image details</a></li>
   <li><a href="#missingness" id="toc-missingness" class="nav-link" data-scroll-target="#missingness">Missingness</a></li>
   </ul></li>
-  <li><a href="#the-nine-eda-figures" id="toc-the-nine-eda-figures" class="nav-link" data-scroll-target="#the-nine-eda-figures">The nine EDA figures</a>
+  <li><a href="#exploratory-figures" id="toc-exploratory-figures" class="nav-link" data-scroll-target="#exploratory-figures">Exploratory figures</a>
   <ul class="collapse">
   <li><a href="#fig-1-class-imbalance-fold-stratification" id="toc-fig-1-class-imbalance-fold-stratification" class="nav-link" data-scroll-target="#fig-1-class-imbalance-fold-stratification">Fig 1 — Class imbalance &amp; fold stratification</a></li>
   <li><a href="#fig-2-patient-structure" id="toc-fig-2-patient-structure" class="nav-link" data-scroll-target="#fig-2-patient-structure">Fig 2 — Patient structure</a></li>
   <li><a href="#fig-3-demographics" id="toc-fig-3-demographics" class="nav-link" data-scroll-target="#fig-3-demographics">Fig 3 — Demographics</a></li>
   <li><a href="#fig-4-lesion-size" id="toc-fig-4-lesion-size" class="nav-link" data-scroll-target="#fig-4-lesion-size">Fig 4 — Lesion size</a></li>
-  <li><a href="#fig-5-color-border-ugly-duckling-signals" id="toc-fig-5-color-border-ugly-duckling-signals" class="nav-link" data-scroll-target="#fig-5-color-border-ugly-duckling-signals">Fig 5 — Color &amp; border “ugly-duckling” signals</a></li>
+  <li><a href="#fig-5-color-border-signals" id="toc-fig-5-color-border-signals" class="nav-link" data-scroll-target="#fig-5-color-border-signals">Fig 5 — Color &amp; border signals</a></li>
   <li><a href="#fig-6-correlation-of-key-tbp-features" id="toc-fig-6-correlation-of-key-tbp-features" class="nav-link" data-scroll-target="#fig-6-correlation-of-key-tbp-features">Fig 6 — Correlation of key TBP features</a></li>
   <li><a href="#fig-7-sample-lesion-crops" id="toc-fig-7-sample-lesion-crops" class="nav-link" data-scroll-target="#fig-7-sample-lesion-crops">Fig 7 — Sample lesion crops</a></li>
   <li><a href="#fig-8-image-embedding-class-separation" id="toc-fig-8-image-embedding-class-separation" class="nav-link" data-scroll-target="#fig-8-image-embedding-class-separation">Fig 8 — Image-embedding class separation</a></li>
   <li><a href="#fig-9-ugly-duckling-illustration" id="toc-fig-9-ugly-duckling-illustration" class="nav-link" data-scroll-target="#fig-9-ugly-duckling-illustration">Fig 9 — Ugly-duckling illustration</a></li>
   </ul></li>
-  <li><a href="#the-four-most-striking-takeaways" id="toc-the-four-most-striking-takeaways" class="nav-link" data-scroll-target="#the-four-most-striking-takeaways">The four most striking takeaways</a></li>
+  <li><a href="#summary-of-findings" id="toc-summary-of-findings" class="nav-link" data-scroll-target="#summary-of-findings">Summary of findings</a></li>
   </ul>
 </nav>
     </div>
@@ -380,7 +383,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Data &amp; Exploratory Analysis</h1>
-<p class="subtitle lead">The SLICE-3D dataset, the imbalance, and what the nine EDA figures reveal</p>
+<p class="subtitle lead">The SLICE-3D dataset, the class imbalance, and the exploratory figures</p>
 </div>
 
 
@@ -397,9 +400,13 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="what-the-data-is" class="level2">
-<h2 class="anchored" data-anchor-id="what-the-data-is">What the data is</h2>
-<p>ISIC-2024 <strong>SLICE-3D</strong> is a corpus of lesion crops extracted from <strong>3D Total-Body Photography (TBP)</strong> — full-body imaging that captures every visible mole on a patient at once. Each row is one lesion, with a small square JPEG crop plus a rich tabular record of measurements computed by the TBP vendor’s software (geometry, color, 3D position) and clinical context (age, sex, body site).</p>
+<section id="the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem">The problem</h2>
+<p>The task is automated triage of skin-lesion crops extracted from <strong>3D total-body photography (TBP)</strong>: each crop must be classified as malignant or benign so that high-risk lesions are flagged for clinical review. The clinical objective is high sensitivity — catching nearly every malignancy — at an acceptable false-positive rate.</p>
+</section>
+<section id="the-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="the-dataset">The dataset</h2>
+<p>ISIC-2024 <strong>SLICE-3D</strong> is a corpus of lesion crops from TBP, which images every visible mole on a patient in a single capture. Each row is one lesion: a small square JPEG crop plus a tabular record of measurements computed by the TBP vendor’s software (geometry, color, 3D position) and clinical context (age, sex, body site).</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -454,30 +461,49 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<p>Data are <strong>patient-grouped</strong>: a patient contributes many correlated lesions, so the unit of independence is the patient, not the crop.</p>
+<section id="representative-crops" class="level3">
+<h3 class="anchored" data-anchor-id="representative-crops">Representative crops</h3>
+<div id="fig-eda0" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/eda_fig0_class_examples.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Five malignant (top) and five benign (bottom) crops, annotated with clinical longest diameter. Malignant lesions trend larger, more color-heterogeneous, and more border-irregular; benign nevi are smaller and more uniform.
+</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>The imbalance is the whole problem
+<span class="screen-reader-only">Important</span>The challenge
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>At <strong>0.098% prevalence</strong>, a model that predicts “benign” for everything is 99.9% accurate and clinically useless. This is why the task is scored by <strong>partial AUC above 80% TPR</strong>, not plain accuracy or even plain AUC — see <a href="./methods.html#the-metric">Methods → The metric</a>. It is also why <strong>patient-grouped, target-stratified</strong> cross-validation is non-negotiable: with only 393 positives, a single leaked patient or an unlucky split can swing the score more than any model choice.</p>
-</div>
-</div>
-<section id="image-details-and-why-we-train-at-128-224-px" class="level3">
-<h3 class="anchored" data-anchor-id="image-details-and-why-we-train-at-128-224-px">Image details (and why we train at 128 / 224 px)</h3>
-<p>The crops are <strong>variable-size square JPEGs</strong>, ranging from <strong>61 px to 239 px</strong> on a side (median / mean ≈ <strong>131 / 133 px</strong>), and only <strong>~2.8 KB each</strong>. Two consequences for our image experts:</p>
 <ul>
-<li><strong>128 px ≈ the native median.</strong> Training at 128 px is essentially training at the crops’ natural resolution — no information is being thrown away, and epochs are cheap.</li>
-<li><strong>224 px <em>upsamples</em>.</strong> The 224 px model does <strong>not</strong> see extra pixels; it sees the same lesion interpolated larger. So the measured 224 px gain (0.15311 → 0.15821) is a <strong>capacity / training-dynamics</strong> effect (a bigger receptive field for the pretrained backbone, more effective augmentation), <strong>not</strong> extra image detail. We keep both points because <em>resolution is a frontier axis</em>, and we report this caveat honestly.</li>
+<li><strong>Extreme class imbalance.</strong> At 0.098% prevalence, a constant “benign” predictor is 99.9% accurate and clinically useless. With only 393 positives, fold variance and leakage dominate model choice.</li>
+<li><strong>The official metric.</strong> Scoring uses partial AUC above 80% TPR (pAUC@80), the area under the ROC restricted to the high-sensitivity tail — see <a href="./methods.html#the-metric">Methods → The metric</a>. Accuracy and plain AUC are unsuitable.</li>
+<li><strong>No external, no synthetic.</strong> Only SLICE-3D is permitted; no external dermoscopy archives and no generative/synthetic positives. ImageNet-pretrained weights are allowed; external training data is not.</li>
+<li><strong>Efficiency is a first-class axis.</strong> Every reported model logs parameters, FLOPs, and single-thread CPU latency alongside pAUC; a model is retained only if it earns its cost.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="image-details" class="level3">
+<h3 class="anchored" data-anchor-id="image-details">Image details</h3>
+<p>The crops are variable-size square JPEGs, <strong>61–239 px</strong> on a side (median/mean ≈ <strong>131/133 px</strong>), ~2.8 KB each. Two consequences for the image experts:</p>
+<ul>
+<li><strong>128 px ≈ native median.</strong> Training at 128 px is near the crops’ natural resolution; epochs are cheap and no detail is discarded.</li>
+<li><strong>224 px upsamples.</strong> The 224 px model receives the same lesion interpolated larger, not extra pixels. The measured 224 px gain (0.15311 → 0.15821) is therefore a capacity / training-dynamics effect — larger receptive field, more effective augmentation — not added image detail. Resolution is treated as a frontier axis, so both points are retained.</li>
 </ul>
 </section>
 <section id="missingness" class="level3">
 <h3 class="anchored" data-anchor-id="missingness">Missingness</h3>
-<p>Only three real feature columns have any missing values; everything else is 100% complete.</p>
+<p>Three real feature columns have missing values; all others are complete.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -506,60 +532,60 @@ ul.task-list li input[type="checkbox"] {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Train-only LEAK columns — we drop them
+<span class="screen-reader-only">Warning</span>Train-only leak columns (dropped)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Several columns exist only in the training split and encode the <strong>answer</strong> or <strong>post-biopsy pathology</strong>. Feeding any of them to a model is leakage; we use them for EDA framing only and drop them before training:</p>
-<p><code>iddx_full</code>, <code>iddx_1</code> … <code>iddx_5</code> (<code>iddx_1</code> is literally <em>Benign / Malignant / Indeterminate</em>), <code>mel_mitotic_index</code>, <code>mel_thick_mm</code>, <code>lesion_id</code>, and <code>tbp_lv_dnn_lesion_confidence</code> (a vendor model’s own confidence — not available at inference and effectively a label proxy).</p>
+<p>Several columns exist only in the training split and encode the answer or post-biopsy pathology. They are used for EDA framing only and dropped before training:</p>
+<p><code>iddx_full</code>, <code>iddx_1</code> … <code>iddx_5</code> (<code>iddx_1</code> is <em>Benign / Malignant / Indeterminate</em>), <code>mel_mitotic_index</code>, <code>mel_thick_mm</code>, <code>lesion_id</code>, and <code>tbp_lv_dnn_lesion_confidence</code> (a vendor model’s confidence — unavailable at inference and effectively a label proxy).</p>
 </div>
 </div>
 </section>
 </section>
-<section id="the-nine-eda-figures" class="level2">
-<h2 class="anchored" data-anchor-id="the-nine-eda-figures">The nine EDA figures</h2>
-<p>All figures are generated by <code>reports/eda/make_eda.py</code> (read-only on <code>data/</code>, SEED = 42, DPI 150, Okabe-Ito colorblind-safe palette).</p>
+<section id="exploratory-figures" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-figures">Exploratory figures</h2>
+<p>All figures are generated by <code>reports/eda/make_eda.py</code> (read-only on <code>data/</code>, SEED = 42, Okabe-Ito colorblind-safe palette).</p>
 <section id="fig-1-class-imbalance-fold-stratification" class="level3">
 <h3 class="anchored" data-anchor-id="fig-1-class-imbalance-fold-stratification">Fig 1 — Class imbalance &amp; fold stratification</h3>
 <div id="fig-eda1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/eda_fig1_class_imbalance.png" class="img-fluid figure-img">
+<img src="figures/eda_fig1_class_imbalance.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Class imbalance and per-fold positive counts.
+Figure&nbsp;2: Class imbalance and per-fold positive counts.
 </figcaption>
 </figure>
 </div>
-<p>400,666 benign vs 393 malignant (0.098% prevalence). The five patient-grouped CV folds each hold <strong>77–83 positives</strong> (~0.096–0.103% prevalence per fold), so stratification is tight and <strong>no fold is starved of signal</strong> — a precondition for trustworthy OOF estimates.</p>
+<p>400,666 benign vs 393 malignant (0.098% prevalence). The five patient-grouped CV folds each hold <strong>77–83 positives</strong> (~0.096–0.103% prevalence per fold); stratification is tight and no fold is starved of signal, a precondition for trustworthy OOF estimates.</p>
 </section>
 <section id="fig-2-patient-structure" class="level3">
 <h3 class="anchored" data-anchor-id="fig-2-patient-structure">Fig 2 — Patient structure</h3>
 <div id="fig-eda2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/eda_fig2_patient_structure.png" class="img-fluid figure-img">
+<img src="figures/eda_fig2_patient_structure.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Per-patient lesion counts; malignant-carrying patients hold most of the data.
+Figure&nbsp;3: Per-patient lesion counts; malignant-carrying patients hold most of the data.
 </figcaption>
 </figure>
 </div>
-<p>1,042 patients with a heavily right-skewed lesion count (<strong>median 241, max 9,184</strong>). The 259 patients who carry at least one malignant lesion hold <strong>89% of all crops</strong> — most data lives with the high-risk patients. This is the structural reason splits <strong>must</strong> be patient-grouped: a patient’s lesions are correlated, so any patient straddling folds leaks information.</p>
+<p>1,042 patients with a heavily right-skewed lesion count (<strong>median 241, max 9,184</strong>). The 259 patients carrying at least one malignant lesion hold <strong>89% of all crops</strong>. Because a patient’s lesions are correlated, splits must be patient-grouped: any patient straddling folds leaks information.</p>
 </section>
 <section id="fig-3-demographics" class="level3">
 <h3 class="anchored" data-anchor-id="fig-3-demographics">Fig 3 — Demographics</h3>
 <div id="fig-eda3" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/eda_fig3_demographics.png" class="img-fluid figure-img">
+<img src="figures/eda_fig3_demographics.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Age, sex, and body-site malignant rates.
+Figure&nbsp;4: Age, sex, and body-site malignant rates.
 </figcaption>
 </figure>
 </div>
-<p>Malignant lesions skew older (peak ~60–75), males contribute most crops, and <strong>head/neck stands out</strong>:</p>
+<p>Malignant lesions skew older (peak ~60–75), males contribute most crops, and head/neck stands out:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -596,49 +622,49 @@ Figure&nbsp;3: Age, sex, and body-site malignant rates.
 </tr>
 </tbody>
 </table>
-<p>Head/neck carries <strong>~7× the baseline malignant rate</strong> of any other site, despite being the smallest site — a strong site prior the model should respect.</p>
+<p>Head/neck carries ~7× the baseline malignant rate of any other site despite being the smallest site — a strong site prior.</p>
 </section>
 <section id="fig-4-lesion-size" class="level3">
 <h3 class="anchored" data-anchor-id="fig-4-lesion-size">Fig 4 — Lesion size</h3>
 <div id="fig-eda4" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/eda_fig4_lesion_size.png" class="img-fluid figure-img">
+<img src="figures/eda_fig4_lesion_size.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Clinical diameter and TBP area: malignant ~2× larger.
+Figure&nbsp;5: Clinical diameter and TBP area: malignant ~2× larger.
 </figcaption>
 </figure>
 </div>
-<p>On both clinical longest diameter and TBP area, the malignant distribution is shifted <strong>~2× larger</strong> than benign. Raw lesion size is a strong, cheap univariate signal — and, as the ablations show, its <em>patient-relative</em> version is even stronger.</p>
+<p>On both clinical longest diameter and TBP area, the malignant distribution is shifted ~2× larger than benign. Raw lesion size is a strong, cheap univariate signal; its patient-relative version is stronger (see <a href="./ablations.html">Ablations</a>).</p>
 </section>
-<section id="fig-5-color-border-ugly-duckling-signals" class="level3">
-<h3 class="anchored" data-anchor-id="fig-5-color-border-ugly-duckling-signals">Fig 5 — Color &amp; border “ugly-duckling” signals</h3>
+<section id="fig-5-color-border-signals" class="level3">
+<h3 class="anchored" data-anchor-id="fig-5-color-border-signals">Fig 5 — Color &amp; border signals</h3>
 <div id="fig-eda5" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/eda_fig5_color_border.png" class="img-fluid figure-img">
+<img src="figures/eda_fig5_color_border.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Hue, contrast, border/color irregularity, eccentricity.
+Figure&nbsp;6: Hue, contrast, border/color irregularity, eccentricity.
 </figcaption>
 </figure>
 </div>
-<p>Hue angle (<code>tbp_lv_H</code>) separates the classes most cleanly — <strong>univariate AUC 0.81 on a single feature</strong>. Lesion-skin contrast, border/color irregularity, and eccentricity all shift toward higher values for malignant, confirming the TBP color/geometry features carry real, independent signal.</p>
+<p>Hue angle (<code>tbp_lv_H</code>) separates the classes most cleanly — univariate AUC 0.81 on a single feature. Lesion-skin contrast, border/color irregularity, and eccentricity shift toward higher values for malignant lesions, indicating independent color/geometry signal.</p>
 </section>
 <section id="fig-6-correlation-of-key-tbp-features" class="level3">
 <h3 class="anchored" data-anchor-id="fig-6-correlation-of-key-tbp-features">Fig 6 — Correlation of key TBP features</h3>
 <div id="fig-eda6" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/eda_fig6_correlation.png" class="img-fluid figure-img">
+<img src="figures/eda_fig6_correlation.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Correlation heatmap of 21 core geometry/color features.
+Figure&nbsp;7: Correlation heatmap of 21 core geometry/color features.
 </figcaption>
 </figure>
 </div>
-<p>The core features form tight blocks (a <strong>size group</strong>: diameter / area / perimeter / minor-axis; a <strong>color group</strong>: A / B / ΔA / ΔB). The GBDT therefore sees substantial redundancy — useful for robustness, but a sign that a handful of axes capture most of the variance.</p>
+<p>The core features form tight blocks (a size group: diameter / area / perimeter / minor-axis; a color group: A / B / ΔA / ΔB). The GBDT therefore sees substantial redundancy; a small number of axes capture most of the variance.</p>
 </section>
 <section id="fig-7-sample-lesion-crops" class="level3">
 <h3 class="anchored" data-anchor-id="fig-7-sample-lesion-crops">Fig 7 — Sample lesion crops</h3>
@@ -648,39 +674,39 @@ Figure&nbsp;6: Correlation heatmap of 21 core geometry/color features.
 <img src="figures/eda_fig7_sample_crops.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Eight malignant (top) vs eight benign (bottom) crops.
+Figure&nbsp;8: Eight malignant (top) vs eight benign (bottom) crops.
 </figcaption>
 </figure>
 </div>
-<p>Malignant lesions tend to be larger, darker, and more color-varied — but the <strong>visual overlap with benign is large</strong>. That overlap is exactly why a learned image expert is needed on top of the tabular features, and equally why the image expert alone (0.15821) cannot beat the tabular expert (0.16890).</p>
+<p>Malignant lesions tend to be larger, darker, and more color-varied, but visual overlap with benign is large. The overlap motivates a learned image expert on top of the tabular features and explains why the image expert alone (0.15821) does not exceed the tabular expert (0.16890).</p>
 </section>
 <section id="fig-8-image-embedding-class-separation" class="level3">
 <h3 class="anchored" data-anchor-id="fig-8-image-embedding-class-separation">Fig 8 — Image-embedding class separation</h3>
 <div id="fig-eda8" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/eda_fig8_embedding_tsne.png" class="img-fluid figure-img">
+<img src="figures/eda_fig8_embedding_tsne.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: PCA-50 → t-SNE of ConvNeXtV2-nano OOF embeddings.
+Figure&nbsp;9: PCA-50 → t-SNE of ConvNeXtV2-nano OOF embeddings.
 </figcaption>
 </figure>
 </div>
-<p>A t-SNE of the small CNN’s OOF embeddings (all 393 positives + 3,000 random negatives): the malignant points <strong>concentrate into a recognizable region</strong> of feature space rather than scattering uniformly. Even a small CNN learns a malignancy-relevant representation — evidence for stacking its OOF probability into the GBDT.</p>
+<p>A t-SNE of the small CNN’s OOF embeddings (all 393 positives + 3,000 random negatives): the malignant points concentrate into a recognizable region of feature space. A small CNN learns a malignancy-relevant representation, supporting the use of its OOF probability as a stacked GBDT feature.</p>
 </section>
 <section id="fig-9-ugly-duckling-illustration" class="level3">
 <h3 class="anchored" data-anchor-id="fig-9-ugly-duckling-illustration">Fig 9 — Ugly-duckling illustration</h3>
 <div id="fig-eda9" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/eda_fig9_ugly_duckling.png" class="img-fluid figure-img">
+<img src="figures/eda_fig9_ugly_duckling.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Three patients: the malignant lesion sits at the top of its own size distribution.
+Figure&nbsp;10: Three patients: the malignant lesion sits at the top of its own size distribution.
 </figcaption>
 </figure>
 </div>
-<p>For three patients with one malignant lesion among many benign ones, the malignant lesion sits at the <strong>top of its own patient’s size distribution</strong> (98th–100th percentile). This is the concrete picture behind the within-patient deviation features.</p>
+<p>For three patients with one malignant lesion among many benign ones, the malignant lesion sits at the top of its own patient’s size distribution (98th–100th percentile) — the concrete basis for the within-patient deviation features.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -692,20 +718,21 @@ Figure&nbsp;9: Three patients: the malignant lesion sits at the top of its own s
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><strong>392 of 393</strong> malignant lesions come from a patient who <em>also</em> has benign lesions — so almost every positive can be judged against that patient’s own “normal” moles.</li>
-<li>On <code>clin_size_long_diam_mm</code>, the malignant lesion sits at a <strong>median 88th within-patient percentile</strong>; <strong>45.7%</strong> of malignant lesions are in the <strong>top 10%</strong> of their own patient’s lesion sizes. This is the quantitative basis for the engineered patient-relative features — not folklore, but a measured effect.</li>
+<li><strong>392 of 393</strong> malignant lesions belong to a patient who also has benign lesions, so almost every positive can be judged against that patient’s own normal moles.</li>
+<li>On <code>clin_size_long_diam_mm</code>, the malignant lesion sits at a <strong>median 88th within-patient percentile</strong>; <strong>45.7%</strong> of malignant lesions fall in the <strong>top 10%</strong> of their own patient’s lesion sizes.</li>
 </ul>
+<p>This is the quantitative basis for the engineered patient-relative features.</p>
 </div>
 </div>
 </section>
 </section>
-<section id="the-four-most-striking-takeaways" class="level2">
-<h2 class="anchored" data-anchor-id="the-four-most-striking-takeaways">The four most striking takeaways</h2>
+<section id="summary-of-findings" class="level2">
+<h2 class="anchored" data-anchor-id="summary-of-findings">Summary of findings</h2>
 <ol type="1">
-<li><strong>The imbalance is the whole problem.</strong> 0.098% prevalence is why the task uses partial-AUC-above-80%-TPR and why patient-grouped, target-stratified CV is mandatory. The folds confirm 77–83 positives each with zero patients straddling folds.</li>
-<li><strong>Tabular signal is real and cheap.</strong> Single features already separate well: hue <code>tbp_lv_H</code> reaches univariate AUC 0.81, and lesion size shows a clean ~2× malignant shift. This is the evidence base for the LightGBM-first architecture.</li>
-<li><strong>The ugly-duckling sign is quantitatively present.</strong> A lesion’s deviation from its own patient’s distribution is well-motivated — and it turns out to be the single dominant signal in the trained model (~65% of GBDT gain; see <a href="./results.html">Results</a>).</li>
-<li><strong>The small CNN adds an orthogonal axis.</strong> Its embeddings cluster the positives despite heavy visual overlap in raw crops — justifying a stacked image OOF probability, while head/neck’s ~7× elevated rate flags a site prior worth respecting.</li>
+<li><strong>Imbalance defines the task.</strong> 0.098% prevalence motivates partial-AUC-above-80%-TPR scoring and mandatory patient-grouped, target-stratified CV. The folds hold 77–83 positives each with no patient straddling folds.</li>
+<li><strong>Tabular signal is strong and cheap.</strong> Hue <code>tbp_lv_H</code> reaches univariate AUC 0.81, and lesion size shows a clean ~2× malignant shift — the evidence base for the LightGBM-first architecture.</li>
+<li><strong>The ugly-duckling sign is quantitatively present</strong> and is the dominant signal in the trained model (~65% of GBDT gain; see <a href="./results.html">Results</a>).</li>
+<li><strong>The small CNN adds an orthogonal axis.</strong> Its embeddings cluster the positives despite heavy visual overlap in raw crops, justifying a stacked image OOF probability; head/neck’s ~7× elevated rate provides a site prior.</li>
 </ol>
 <hr>
 <p><em>Continue to <a href="./methods.html">Methods →</a></em></p>

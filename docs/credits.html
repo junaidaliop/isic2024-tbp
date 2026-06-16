@@ -80,11 +80,12 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="Credits &amp; Positioning – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta property="og:description" content="Gracious credit to the leaderboard champions and the public-notebook lineage we learned from">
+<meta property="og:description" content="Attribution to the leaderboard solutions and the public-notebook lineage">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta name="twitter:title" content="Credits &amp; Positioning – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta name="twitter:description" content="Gracious credit to the leaderboard champions and the public-notebook lineage we learned from">
+<meta name="twitter:description" content="Attribution to the leaderboard solutions and the public-notebook lineage">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -347,9 +348,10 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#champions" id="toc-champions" class="nav-link active" data-scroll-target="#champions">The leaderboard champions</a></li>
+  <li><a href="#leaderboard-comparison" id="toc-leaderboard-comparison" class="nav-link" data-scroll-target="#leaderboard-comparison">Leaderboard comparison</a></li>
   <li><a href="#lineage" id="toc-lineage" class="nav-link" data-scroll-target="#lineage">The public-notebook lineage</a></li>
-  <li><a href="#contributions" id="toc-contributions" class="nav-link" data-scroll-target="#contributions">What we reused vs.&nbsp;what is ours</a></li>
-  <li><a href="#claim-position" id="toc-claim-position" class="nav-link" data-scroll-target="#claim-position">Where our claim sits</a></li>
+  <li><a href="#contributions" id="toc-contributions" class="nav-link" data-scroll-target="#contributions">Reused vs.&nbsp;original</a></li>
+  <li><a href="#claim-position" id="toc-claim-position" class="nav-link" data-scroll-target="#claim-position">Positioning</a></li>
   </ul>
 </nav>
     </div>
@@ -360,7 +362,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Credits &amp; Positioning</h1>
-<p class="subtitle lead">Gracious credit to the leaderboard champions and the public-notebook lineage we learned from</p>
+<p class="subtitle lead">Attribution to the leaderboard solutions and the public-notebook lineage</p>
 </div>
 
 
@@ -377,10 +379,10 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This project stands on the shoulders of the ISIC-2024 community. We are explicit about what we <strong>reused</strong> versus what is <strong>ours</strong>, and we credit the people whose work taught us the task.</p>
+<p>This work builds on the ISIC-2024 community. Reused components and original contributions are stated explicitly, with attribution.</p>
 <section id="champions" class="level2">
 <h2 class="anchored" data-anchor-id="champions">The leaderboard champions</h2>
-<p>We did <strong>not</strong> beat the unconstrained private leaderboard, and we are not trying to — we banned the two ingredients (external data, synthetic positives) that the top teams relied on. Their results are the benchmark our <em>constrained</em> claim is positioned against, and they deserve full credit.</p>
+<p>This study does not beat the unconstrained private leaderboard, and does not attempt to: the two ingredients the top teams relied on (external data, synthetic positives) are banned here. Their results are the benchmark the constrained claim is positioned against.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -391,8 +393,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Private pAUC <strong>0.17264</strong> (post-competition reports cite ~0.1755 for the best unconstrained configuration). An ensemble of <strong>EVA-02 + EdgeNeXt</strong> image models fused with a <strong>GBDT</strong> tabular stack. Crucially, the solution used <strong>external ISIC-archive dermoscopy data</strong> <em>and</em> <strong>~30,000 Stable-Diffusion-synthesized malignant lesions</strong> — both of which we <strong>deliberately ban</strong>.</p>
-<p><strong>The most instructive detail for our study:</strong> their own ablation reports the ~30k synthetic lesions added only <strong>+0.0007</strong> pAUC. On a 393-positive task, fabricating 30k positives bought almost nothing — a sobering data point for the “just add synthetic data” reflex, and part of why we judged the label-validity risk not worth taking.</p>
+<p>Private pAUC <strong>0.17264</strong> (post-competition reports cite ~0.1755 for the best unconstrained configuration). An ensemble of EVA-02 + EdgeNeXt image models fused with a GBDT tabular stack. The solution used external ISIC-archive dermoscopy data and ~30,000 Stable-Diffusion-synthesized malignant lesions, both banned here. Their own ablation reports the ~30k synthetic lesions added only <strong>+0.0007</strong> pAUC — a quantitative bound on synthetic augmentation for a 393-positive task.</p>
 </div>
 </div>
 <div class="callout callout-style-simple callout-note callout-titled">
@@ -406,16 +407,100 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><strong>2nd — <code>uchiyama33</code></strong> — strong image + tabular ensemble; a source of the EMA + mixup recipe we adopted for the small backbone.</li>
-<li><strong>3rd — <code>kyohei-123</code></strong> — likewise a top image/tabular blend.</li>
+<li><strong>2nd — <code>uchiyama33</code></strong> — image + tabular ensemble; the source of the EMA + mixup recipe adopted for the small backbone.</li>
+<li><strong>3rd — <code>kyohei-123</code></strong> — image/tabular blend.</li>
 </ul>
-<p>Both are credited for the public methodology that shaped the field’s image-expert recipe.</p>
 </div>
 </div>
 </section>
+<section id="leaderboard-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="leaderboard-comparison">Leaderboard comparison</h2>
+<table class="acad-table">
+<caption>
+Table 3. Honest comparison to top Kaggle solutions (champion private-LB pAUC; ours is leak-audited cross-validation).
+</caption>
+<thead>
+<tr>
+<th>
+Solution
+</th>
+<th>
+External data?
+</th>
+<th>
+Synthetic data?
+</th>
+<th class="num">
+pAUC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+1st — Ilya Novoselskiy (EVA-02 + EdgeNeXt + GBDT)
+</td>
+<td>
+Yes
+</td>
+<td>
+Yes (~30k)
+</td>
+<td class="num">
+0.17264
+</td>
+</tr>
+<tr>
+<td>
+2nd — uchiyama33 (image + tabular ensemble)
+</td>
+<td>
+Yes
+</td>
+<td>
+Yes
+</td>
+<td class="num">
+—
+</td>
+</tr>
+<tr>
+<td>
+3rd — kyohei-123 (image + tabular blend)
+</td>
+<td>
+Yes
+</td>
+<td>
+Yes
+</td>
+<td class="num">
+—
+</td>
+</tr>
+<tr class="highlight">
+<td>
+Ours (single-dataset, no external, no synthetic)
+</td>
+<td>
+No
+</td>
+<td>
+No
+</td>
+<td class="num">
+CV 0.17376
+</td>
+</tr>
+</tbody>
+</table>
+<p class="note">
+Champions used external ISIC-archive dermoscopy and synthetic positives, both banned here; their own ablation reports the ~30k synthetic lesions added only +0.0007 pAUC. Ours is an out-of-fold CV number, not private LB.
+</p>
+</section>
 <section id="lineage" class="level2">
 <h2 class="anchored" data-anchor-id="lineage">The public-notebook lineage</h2>
-<p>Our tabular feature engineering and overall recipe descend directly from the public Kaggle notebooks. We learned the task from them and reuse their ideas with attribution:</p>
+<p>The tabular feature engineering and overall recipe descend from public Kaggle notebooks, reused with attribution:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -424,13 +509,13 @@ ul.task-list li input[type="checkbox"] {
 <thead>
 <tr class="header">
 <th>Source</th>
-<th>What we learned / reused</th>
+<th>Reused / learned</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>greysky</strong> — “only tabular”</td>
-<td>The LightGBM hyperparameters and the tabular-first thesis. Our <code>lgb_bag</code> params are greysky-lineage; the bagging + undersampling structure follows this work.</td>
+<td>LightGBM hyperparameters and the tabular-first thesis; the <code>lgb_bag</code> params are greysky-lineage, and the bagging + undersampling structure follows this work.</td>
 </tr>
 <tr class="even">
 <td><strong>snnclsr</strong></td>
@@ -442,18 +527,18 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><strong>andreasbis</strong> — “CNN preds as features”</td>
-<td>The core stacking idea: feed an image model’s OOF probability into the GBDT as a feature.</td>
+<td>The stacking idea: feed an image model’s OOF probability into the GBDT as a feature.</td>
 </tr>
 <tr class="odd">
 <td><strong>richolson</strong></td>
-<td>Additional baseline ideas and ensembling practice.</td>
+<td>Additional baseline and ensembling practice.</td>
 </tr>
 </tbody>
 </table>
-<p>We also vendored the <strong>official ISIC-2024 scorer</strong> (<code>src/metric_official.py</code>, © 2024 N. R. Kurtansky, MSKCC) verbatim and attributed, purely to <em>prove</em> our metric matches it.</p>
+<p>The official ISIC-2024 scorer (<code>src/metric_official.py</code>, © 2024 N. R. Kurtansky, MSKCC) is vendored verbatim and attributed, used only to verify the metric implementation.</p>
 </section>
 <section id="contributions" class="level2">
-<h2 class="anchored" data-anchor-id="contributions">What we reused vs.&nbsp;what is ours</h2>
+<h2 class="anchored" data-anchor-id="contributions">Reused vs.&nbsp;original</h2>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -465,10 +550,10 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>The <strong>tabular-first thesis</strong> and LightGBM hyperparameter lineage (greysky).</li>
-<li>The <strong>CNN-preds-as-a-feature</strong> stacking idea (andreasbis).</li>
-<li>The <strong>EMA + mixup</strong> small-backbone recipe (2nd/4th-place public methodology).</li>
-<li>The <strong>official pAUC scorer</strong> (Kurtansky / MSKCC), vendored to verify our implementation.</li>
+<li>The tabular-first thesis and LightGBM hyperparameter lineage (greysky).</li>
+<li>The CNN-preds-as-a-feature stacking idea (andreasbis).</li>
+<li>The EMA + mixup small-backbone recipe (2nd/4th-place public methodology).</li>
+<li>The official pAUC scorer (Kurtansky / MSKCC), vendored to verify the implementation.</li>
 </ul>
 </div>
 </div>
@@ -478,35 +563,35 @@ ul.task-list li input[type="checkbox"] {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Our own contributions
+<span class="screen-reader-only">Important</span>Original contributions
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ol type="1">
-<li><strong>The efficiency frontier as the deliverable.</strong> We reframe the task from “one private-LB number” to a <strong>quality-vs-cost Pareto frontier</strong> across params, FLOPs, and CPU latency — so a model only counts if it earns its cost. Every reported model is one measured point.</li>
-<li><strong>The no-external / no-synthetic discipline, made rigorous.</strong> A locked scope (<code>docs/DECISIONS.md</code>), a <code>cv-guardian</code> with veto power, and a hard no-leak guarantee — turning “we didn’t cheat” into something <em>audited</em>, not asserted.</li>
-<li><strong>The image-space ugly-duckling.</strong> Extending the tabular ugly-duckling idea into the image expert (a within-patient image-deviation signal) — tried, measured, and reported even though it did <strong>not</strong> help, because honest negatives are the point.</li>
-<li><strong>A complete, honest negative-results catalogue.</strong> Meta-stacker, learned MoE gate, image embeddings, heavy transformers, over-strong EMA — every one logged with its number. The finding that <em>complexity consistently lost at 393 positives</em> is itself the contribution.</li>
+<li><strong>The efficiency frontier as the deliverable.</strong> The task is reframed from one private-LB number to a quality-vs-cost Pareto frontier across params, FLOPs, and CPU latency; a model counts only if it earns its cost, and every reported model is one measured point.</li>
+<li><strong>An audited no-external / no-synthetic discipline.</strong> A locked scope (<code>docs/DECISIONS.md</code>), a <code>cv-guardian</code> with veto power, and a hard no-leak guarantee make the constraint auditable rather than asserted.</li>
+<li><strong>The image-space ugly-duckling.</strong> The tabular ugly-duckling idea extended into the image expert (a within-patient image-deviation signal), tested and reported despite not improving the score.</li>
+<li><strong>A complete negative-results catalogue.</strong> Meta-stacker, learned MoE gate, image embeddings, heavy transformers, over-strong EMA — each logged with its number. The finding that complexity consistently reduces the score at 393 positives is itself a contribution.</li>
 </ol>
 </div>
 </div>
 </section>
 <section id="claim-position" class="level2">
-<h2 class="anchored" data-anchor-id="claim-position">Where our claim sits</h2>
+<h2 class="anchored" data-anchor-id="claim-position">Positioning</h2>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Honest positioning
+<span class="screen-reader-only">Warning</span>The claim
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>We claim <strong>SOTA within the no-external-data / no-synthetic / single-dataset class</strong>, on a transparent efficiency frontier with leak-audited CV.</li>
-<li>We <strong>do not</strong> claim to beat the champions’ unconstrained ~0.1755 — that used the very ingredients we banned, and matching it is impossible by construction.</li>
-<li>Our best constrained point is <strong>OOF pAUC 0.17376</strong> at 15.8 M params / 2.46 GFLOPs / 61 ms CPU. The honest private-test projection is <strong>that minus ~0.01–0.02</strong> (see <a href="./results.html">Results</a>).</li>
+<li>SOTA within the no-external-data / no-synthetic / single-dataset class, on a transparent efficiency frontier with leak-audited CV.</li>
+<li>Not a claim to beat the champions’ unconstrained ~0.1755, which used the banned ingredients and is impossible to match by construction.</li>
+<li>The best constrained point is OOF pAUC <strong>0.17376</strong> at 15.8 M params / 2.46 GFLOPs / 61 ms CPU; the private-test projection is that minus ~0.01–0.02 (see <a href="./results.html">Results</a>).</li>
 </ul>
 </div>
 </div>

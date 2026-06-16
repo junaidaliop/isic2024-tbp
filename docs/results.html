@@ -80,17 +80,14 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="Results – ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta property="og:description" content="The three-axis Pareto frontier, the scored ROC region, per-fold stability, and calibration">
-<meta property="og:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig4_feature_importance.png">
+<meta property="og:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig4_feature_importance.svg">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta property="og:image:height" content="1080">
-<meta property="og:image:width" content="1425">
 <meta name="twitter:title" content="Results – ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta name="twitter:description" content="The three-axis Pareto frontier, the scored ROC region, per-fold stability, and calibration">
-<meta name="twitter:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig4_feature_importance.png">
-<meta name="twitter:image-height" content="1080">
-<meta name="twitter:image-width" content="1425">
+<meta name="twitter:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig4_feature_importance.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -352,20 +349,24 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#headline-numbers" id="toc-headline-numbers" class="nav-link active" data-scroll-target="#headline-numbers">Headline numbers</a></li>
+  <li><a href="#headline-numbers" id="toc-headline-numbers" class="nav-link active" data-scroll-target="#headline-numbers">Headline numbers</a>
+  <ul class="collapse">
+  <li><a href="#tabular-progression" id="toc-tabular-progression" class="nav-link" data-scroll-target="#tabular-progression">Tabular progression</a></li>
+  </ul></li>
   <li><a href="#the-quality-vs-cost-frontier-three-axes" id="toc-the-quality-vs-cost-frontier-three-axes" class="nav-link" data-scroll-target="#the-quality-vs-cost-frontier-three-axes">The quality-vs-cost frontier (three axes)</a>
   <ul class="collapse">
   <li><a href="#combined-view" id="toc-combined-view" class="nav-link" data-scroll-target="#combined-view">Combined view</a></li>
   <li><a href="#versus-parameters" id="toc-versus-parameters" class="nav-link" data-scroll-target="#versus-parameters">Versus parameters</a></li>
   <li><a href="#versus-flops" id="toc-versus-flops" class="nav-link" data-scroll-target="#versus-flops">Versus FLOPs</a></li>
   <li><a href="#versus-cpu-latency" id="toc-versus-cpu-latency" class="nav-link" data-scroll-target="#versus-cpu-latency">Versus CPU latency</a></li>
-  <li><a href="#the-pareto-optimal-set" id="toc-the-pareto-optimal-set" class="nav-link" data-scroll-target="#the-pareto-optimal-set">The Pareto-optimal set</a></li>
+  <li><a href="#all-experiments-and-the-pareto-optimal-set" id="toc-all-experiments-and-the-pareto-optimal-set" class="nav-link" data-scroll-target="#all-experiments-and-the-pareto-optimal-set">All experiments and the Pareto-optimal set</a></li>
   </ul></li>
   <li><a href="#the-scored-roc-region" id="toc-the-scored-roc-region" class="nav-link" data-scroll-target="#the-scored-roc-region">The scored ROC region</a></li>
   <li><a href="#per-fold-stability" id="toc-per-fold-stability" class="nav-link" data-scroll-target="#per-fold-stability">Per-fold stability</a></li>
-  <li><a href="#feature-importance-where-the-signal-lives" id="toc-feature-importance-where-the-signal-lives" class="nav-link" data-scroll-target="#feature-importance-where-the-signal-lives">Feature importance — where the signal lives</a></li>
+  <li><a href="#feature-importance" id="toc-feature-importance" class="nav-link" data-scroll-target="#feature-importance">Feature importance</a></li>
   <li><a href="#score-separation-calibration" id="toc-score-separation-calibration" class="nav-link" data-scroll-target="#score-separation-calibration">Score separation &amp; calibration</a></li>
-  <li><a href="#the-honest-cv-private-projection" id="toc-the-honest-cv-private-projection" class="nav-link" data-scroll-target="#the-honest-cv-private-projection">The honest CV → private projection</a></li>
+  <li><a href="#the-cv-private-projection" id="toc-the-cv-private-projection" class="nav-link" data-scroll-target="#the-cv-private-projection">The CV → private projection</a></li>
+  <li><a href="#leaderboard-context" id="toc-leaderboard-context" class="nav-link" data-scroll-target="#leaderboard-context">Leaderboard context</a></li>
   </ul>
 </nav>
     </div>
@@ -393,10 +394,14 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>All numbers are <strong>out-of-fold</strong> on the frozen patient-grouped folds (5 folds, SEED = 42), scored <strong>only</strong> by <code>src/cv.py</code> at <strong>80% TPR</strong>, and independently re-derived from the OOF parquet files by the <code>cv-guardian</code> agent. Figures come from <code>reports/frontier.py</code> and <code>reports/perf/make_perf.py</code>.</p>
+<p>All numbers are out-of-fold on the frozen patient-grouped folds (5 folds, SEED = 42), scored only by <code>src/cv.py</code> at 80% TPR, and independently re-derived from the OOF parquet files by the <code>cv-guardian</code> agent. Figures come from <code>reports/frontier.py</code> and <code>reports/perf/make_perf.py</code>.</p>
 <section id="headline-numbers" class="level2">
 <h2 class="anchored" data-anchor-id="headline-numbers">Headline numbers</h2>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 42%">
+<col style="width: 57%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Model</th>
@@ -418,17 +423,70 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<p>The stack reconstruction <code>rank-avg[gbdt, r224]</code> recomputes to <strong>0.17376</strong>, matching the canonical <code>stack_oof.parquet</code> exactly — the combiner is genuinely a 2-way rank average, with nothing hidden. Image and tabular make <strong>complementary errors</strong>, so the trivial rank-average buys <strong>+0.0049</strong> over tabular alone.</p>
+<p>The stack reconstruction <code>rank-avg[gbdt, r224]</code> recomputes to 0.17376, matching the canonical <code>stack_oof.parquet</code> exactly; the combiner is a 2-way rank average. Image and tabular make complementary errors, so the rank-average yields +0.0049 over tabular alone.</p>
+<section id="tabular-progression" class="level3">
+<h3 class="anchored" data-anchor-id="tabular-progression">Tabular progression</h3>
+<table class="acad-table">
+<caption>
+Table 1. Tabular LightGBM progression (out-of-fold, leak-verified).
+</caption>
+<thead>
+<tr>
+<th>
+Configuration
+</th>
+<th class="num">
+OOF pAUC@80%TPR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Step 0 — broken: is_unbalance + AUC early-stop
+</td>
+<td class="num">
+0.09941
+</td>
+</tr>
+<tr>
+<td>
+Step 1 — fixed early-stopping / objective
+</td>
+<td class="num">
+0.11826
+</td>
+</tr>
+<tr>
+<td>
+Step 2 — wide patient-relative ugly-duckling features
+</td>
+<td class="num">
+0.14420
+</td>
+</tr>
+<tr class="highlight">
+<td>
+Step 3 — greysky-bagged + cross feats + CatBoost ensemble
+</td>
+<td class="num">
+0.16890
+</td>
+</tr>
+</tbody>
+</table>
+<p>The tabular expert progresses from a broken baseline (0.09941) to the production LightGBM+CatBoost ensemble (0.16890); the patient-relative feature block is the single largest step (see <a href="./ablations.html#tabular">Ablations → Tabular</a>).</p>
+</section>
 </section>
 <section id="the-quality-vs-cost-frontier-three-axes" class="level2">
 <h2 class="anchored" data-anchor-id="the-quality-vs-cost-frontier-three-axes">The quality-vs-cost frontier (three axes)</h2>
-<p>A point is <strong>Pareto-optimal</strong> if no other model is both cheaper <em>and</em> more accurate. We draw the frontier against all three cost axes, because “cost” means different things in different deployments.</p>
+<p>A point is Pareto-optimal if no other model is both cheaper and more accurate. The frontier is drawn against all three cost axes, since cost means different things in different deployments.</p>
 <section id="combined-view" class="level3">
 <h3 class="anchored" data-anchor-id="combined-view">Combined view</h3>
 <div id="fig-frontier" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-frontier-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/frontier.png" class="img-fluid figure-img">
+<img src="figures/frontier.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-frontier-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: pAUC@80%TPR vs cost — the headline frontier.
@@ -441,7 +499,7 @@ Figure&nbsp;1: pAUC@80%TPR vs cost — the headline frontier.
 <div id="fig-frontier-params" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-frontier-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/frontier_params.png" class="img-fluid figure-img">
+<img src="figures/frontier_params.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-frontier-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: pAUC vs parameter count (model size / memory).
@@ -454,7 +512,7 @@ Figure&nbsp;2: pAUC vs parameter count (model size / memory).
 <div id="fig-frontier-gflops" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-frontier-gflops-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/frontier_gflops.png" class="img-fluid figure-img">
+<img src="figures/frontier_gflops.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-frontier-gflops-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: pAUC vs GFLOPs (compute per image).
@@ -467,7 +525,7 @@ Figure&nbsp;3: pAUC vs GFLOPs (compute per image).
 <div id="fig-frontier-cpu" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-frontier-cpu-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/frontier_cpu.png" class="img-fluid figure-img">
+<img src="figures/frontier_cpu.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-frontier-cpu-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: pAUC vs single-thread CPU latency (deployability).
@@ -475,85 +533,274 @@ Figure&nbsp;4: pAUC vs single-thread CPU latency (deployability).
 </figure>
 </div>
 </section>
-<section id="the-pareto-optimal-set" class="level3">
-<h3 class="anchored" data-anchor-id="the-pareto-optimal-set">The Pareto-optimal set</h3>
-<p>Reading across the three axes, the defensible frontier points are:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 13%">
-<col style="width: 18%">
-<col style="width: 18%">
-<col style="width: 18%">
-<col style="width: 18%">
-<col style="width: 13%">
-</colgroup>
+<section id="all-experiments-and-the-pareto-optimal-set" class="level3">
+<h3 class="anchored" data-anchor-id="all-experiments-and-the-pareto-optimal-set">All experiments and the Pareto-optimal set</h3>
+<table class="acad-table">
+<caption>
+Table 2. Quality–efficiency frontier across all experiments (out-of-fold pAUC; single-thread CPU cost).
+</caption>
 <thead>
-<tr class="header">
-<th>Frontier point</th>
-<th style="text-align: right;">pAUC</th>
-<th style="text-align: right;">Params (M)</th>
-<th style="text-align: right;">GFLOPs</th>
-<th style="text-align: right;">CPU ms/img</th>
-<th>Why it is on the frontier</th>
+<tr>
+<th>
+Model
+</th>
+<th class="num">
+OOF pAUC@80%TPR
+</th>
+<th class="num">
+Params (M)
+</th>
+<th class="num">
+GFLOPs
+</th>
+<th class="num">
+CPU latency (ms)
+</th>
+<th>
+Pareto-optimal
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td><code>mnv4_small</code> @128</td>
-<td style="text-align: right;">0.11242</td>
-<td style="text-align: right;">2.49</td>
-<td style="text-align: right;">0.062</td>
-<td style="text-align: right;"><strong>3.06</strong></td>
-<td>the cheapest usable point (latency floor)</td>
+<tr class="highlight">
+<td>
+Stack (rank-avg: GBDT + nano@224)
+</td>
+<td class="num">
+0.17376
+</td>
+<td class="num">
+15.84
+</td>
+<td class="num">
+2.4550
+</td>
+<td class="num">
+60.91
+</td>
+<td>
+Yes
+</td>
 </tr>
-<tr class="even">
-<td><code>effvit_b0</code> @128</td>
-<td style="text-align: right;">0.13706</td>
-<td style="text-align: right;"><strong>2.13</strong></td>
-<td style="text-align: right;"><strong>0.034</strong></td>
-<td style="text-align: right;">3.45</td>
-<td>most accuracy per FLOP/param</td>
+<tr>
+<td>
+Stack (GBDT + 3 images + ugly-duckling)
+</td>
+<td class="num">
+0.17117
+</td>
+<td class="num">
+23.84
+</td>
+<td class="num">
+1.2200
+</td>
+<td class="num">
+32.86
+</td>
+<td>
+Yes
+</td>
 </tr>
-<tr class="odd">
-<td><strong>GBDT</strong></td>
-<td style="text-align: right;">0.16890</td>
-<td style="text-align: right;">0.86</td>
-<td style="text-align: right;">~0</td>
-<td style="text-align: right;"><strong>0.02</strong></td>
-<td>dominates everything on cost — the anchor</td>
+<tr>
+<td>
+Tabular GBDT (LightGBM + CatBoost)
+</td>
+<td class="num">
+0.16890
+</td>
+<td class="num">
+0.86
+</td>
+<td class="num">
+0.0000
+</td>
+<td class="num">
+0.02
+</td>
+<td>
+Yes
+</td>
 </tr>
-<tr class="even">
-<td>Cheap stack <code>gbdt+3img+udk</code></td>
-<td style="text-align: right;">0.17117</td>
-<td style="text-align: right;">23.84</td>
-<td style="text-align: right;">1.22</td>
-<td style="text-align: right;">32.9</td>
-<td>second-best accuracy, ~half the latency of best</td>
+<tr>
+<td>
+ConvNeXtV2-tiny @224
+</td>
+<td class="num">
+0.15824
+</td>
+<td class="num">
+27.87
+</td>
+<td class="num">
+4.4697
+</td>
+<td class="num">
+104.14
+</td>
+<td>
+—
+</td>
 </tr>
-<tr class="odd">
-<td><strong>Stack <code>gbdt+nano@224</code></strong></td>
-<td style="text-align: right;"><strong>0.17376</strong></td>
-<td style="text-align: right;">15.84</td>
-<td style="text-align: right;">2.46</td>
-<td style="text-align: right;">60.9</td>
-<td><strong>best accuracy</strong> on the whole study</td>
+<tr>
+<td>
+ConvNeXtV2-nano @224
+</td>
+<td class="num">
+0.15821
+</td>
+<td class="num">
+14.98
+</td>
+<td class="num">
+2.4550
+</td>
+<td class="num">
+60.89
+</td>
+<td>
+—
+</td>
+</tr>
+<tr>
+<td>
+ConvNeXtV2-nano @128
+</td>
+<td class="num">
+0.15311
+</td>
+<td class="num">
+14.98
+</td>
+<td class="num">
+0.8016
+</td>
+<td class="num">
+21.61
+</td>
+<td>
+—
+</td>
+</tr>
+<tr>
+<td>
+EfficientViT-b0 @128
+</td>
+<td class="num">
+0.13706
+</td>
+<td class="num">
+2.13
+</td>
+<td class="num">
+0.0345
+</td>
+<td class="num">
+3.45
+</td>
+<td>
+—
+</td>
+</tr>
+<tr>
+<td>
+ViT-tiny @128
+</td>
+<td class="num">
+0.13654
+</td>
+<td class="num">
+5.50
+</td>
+<td class="num">
+0.3560
+</td>
+<td class="num">
+8.17
+</td>
+<td>
+—
+</td>
+</tr>
+<tr>
+<td>
+MobileNetV4-small @128
+</td>
+<td class="num">
+0.11242
+</td>
+<td class="num">
+2.49
+</td>
+<td class="num">
+0.0624
+</td>
+<td class="num">
+3.06
+</td>
+<td>
+—
+</td>
+</tr>
+<tr>
+<td>
+SwinV2-tiny @256
+</td>
+<td class="num">
+0.10422
+</td>
+<td class="num">
+27.58
+</td>
+<td class="num">
+5.9615
+</td>
+<td class="num">
+138.07
+</td>
+<td>
+—
+</td>
+</tr>
+<tr>
+<td>
+EVA-02-small @336
+</td>
+<td class="num">
+0.09984
+</td>
+<td class="num">
+21.74
+</td>
+<td class="num">
+12.4085
+</td>
+<td class="num">
+249.18
+</td>
+<td>
+—
+</td>
 </tr>
 </tbody>
 </table>
+<p class="note">
+CPU latency is single-thread, one image; GBDT GFLOPs reported as 0.0 (tree ensemble, not FLOP-comparable). Pareto-optimal on the pAUC-vs-latency axis.
+</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>How to read this
+<span class="screen-reader-only">Note</span>Reading the frontier
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>The <strong>GBDT alone</strong> is almost free and already at 0.169 — it dominates every image-only model on cost, and most on accuracy too. This is why the architecture is GBDT-first.</li>
-<li>The image expert only earns its place <strong>inside the stack</strong>: <code>+0.0049</code> pAUC for <code>+60 ms</code>. Whether that trade is worth it is a deployment decision — which is exactly why we report a frontier, not a single number.</li>
-<li>The heavy backbones (<code>mnv5_300m</code> at 294 M / 765 ms, <code>eva02_small</code>, <code>swinv2_tiny</code>) are <strong>far off the frontier</strong>: dominated on both axes. More capacity is actively harmful at 393 positives.</li>
+<li>The GBDT alone is near-free and already at 0.169; it dominates every image-only model on cost and most on accuracy. This motivates the GBDT-first architecture.</li>
+<li>The image expert earns its place only inside the stack: +0.0049 pAUC for +60 ms. Whether that trade is worthwhile is a deployment decision, which is why a frontier is reported, not a single number.</li>
+<li>The heavy backbones (<code>mnv5_300m</code> at 294 M / 765 ms, <code>eva02_small</code>, <code>swinv2_tiny</code>) are far off the frontier, dominated on both axes. Added capacity reduces the score at 393 positives.</li>
 </ul>
 </div>
 </div>
@@ -564,7 +811,7 @@ Figure&nbsp;4: pAUC vs single-thread CPU latency (deployability).
 <div id="fig-roc" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-roc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig1_roc_pauc.png" class="img-fluid figure-img">
+<img src="figures/perf_fig1_roc_pauc.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-roc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5: OOF ROC with the pAUC@80%TPR band shaded.
@@ -574,21 +821,21 @@ Figure&nbsp;5: OOF ROC with the pAUC@80%TPR band shaded.
 <div id="fig-roc-zoom" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-roc-zoom-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig1b_roc_pauc_zoom.png" class="img-fluid figure-img">
+<img src="figures/perf_fig1b_roc_pauc_zoom.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-roc-zoom-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Zoom on the high-sensitivity tail (TPR ≥ 0.80) that the metric actually integrates.
+Figure&nbsp;6: Zoom on the high-sensitivity tail (TPR ≥ 0.80) that the metric integrates.
 </figcaption>
 </figure>
 </div>
-<p>The shaded band is <strong>exactly what the metric integrates</strong> — the area under the ROC for TPR ≥ 0.80 (equivalently FPR ≤ 0.20). In that scored band the <strong>stack sits above both single experts</strong>: the visual confirmation that the +0.0049 lift is concentrated where it is scored, not smeared across useless low-sensitivity operating points.</p>
+<p>The shaded band is the region the metric integrates — the area under the ROC for TPR ≥ 0.80 (equivalently FPR ≤ 0.20). In that band the stack sits above both single experts: the +0.0049 lift is concentrated where it is scored, not in low-sensitivity operating points.</p>
 </section>
 <section id="per-fold-stability" class="level2">
 <h2 class="anchored" data-anchor-id="per-fold-stability">Per-fold stability</h2>
 <div id="fig-perfold" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-perfold-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig2_perfold_pauc.png" class="img-fluid figure-img">
+<img src="figures/perf_fig2_perfold_pauc.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-perfold-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7: Per-fold pAUC for tabular, best image, and stack.
@@ -655,27 +902,27 @@ Figure&nbsp;7: Per-fold pAUC for tabular, best image, and stack.
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Fold variance is the dominant uncertainty — and the stack tames it
+<span class="screen-reader-only">Important</span>Fold variance is the dominant uncertainty
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>At 393 positives, per-fold pAUC swings by ~0.025 (tabular ranges 0.154 → 0.180 across folds), so <strong>fold-to-fold variance is larger than the gap between models.</strong> This is why a single-fold number would be untrustworthy. The strongest evidence the +0.0049 is real and not a fluke: the <strong>stack has the lowest std (0.0073) and wins or ties on <em>every</em> fold</strong>. It is both the most accurate and the most stable estimator we have.</p>
+<p>At 393 positives, per-fold pAUC swings by ~0.025 (tabular ranges 0.154 → 0.180), so fold-to-fold variance exceeds the gap between models; a single-fold number would be untrustworthy. The stack has the lowest std (0.0073) and wins or ties on every fold — the strongest evidence the +0.0049 is real, and it is both the most accurate and the most stable estimator.</p>
 </div>
 </div>
 </section>
-<section id="feature-importance-where-the-signal-lives" class="level2">
-<h2 class="anchored" data-anchor-id="feature-importance-where-the-signal-lives">Feature importance — where the signal lives</h2>
+<section id="feature-importance" class="level2">
+<h2 class="anchored" data-anchor-id="feature-importance">Feature importance</h2>
 <div id="fig-featimp" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-featimp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig4_feature_importance.png" class="img-fluid figure-img">
+<img src="figures/perf_fig4_feature_importance.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-featimp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;8: Top-20 GBDT features by mean gain (25 LightGBM + 25 CatBoost boosters).
 </figcaption>
 </figure>
 </div>
-<p>Aggregated mean <strong>gain</strong> over 25 LightGBM + 25 CatBoost boosters (each booster normalized to sum = 1 so the two libraries are comparable, then averaged):</p>
+<p>Aggregated mean gain over 25 LightGBM + 25 CatBoost boosters (each booster normalized to sum = 1 for cross-library comparability, then averaged):</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -737,24 +984,24 @@ Figure&nbsp;8: Top-20 GBDT features by mean gain (25 LightGBM + 25 CatBoost boos
 </tr>
 </tbody>
 </table>
-<p><strong>Patient-relative ugly-duckling features</strong> (<code>pdev_</code> / <code>prank_</code> / <code>pxc_</code>) make up <strong>56% of top-20 gain and ~65% of total gain.</strong> A lesion’s deviation from its own patient’s distribution is the dominant signal — the quantitative vindication of the architecture’s tabular thesis.</p>
+<p>Patient-relative ugly-duckling features (<code>pdev_</code> / <code>prank_</code> / <code>pxc_</code>) make up 56% of top-20 gain and ~65% of total gain. A lesion’s deviation from its own patient’s distribution is the dominant signal, confirming the tabular architecture.</p>
 </section>
 <section id="score-separation-calibration" class="level2">
 <h2 class="anchored" data-anchor-id="score-separation-calibration">Score separation &amp; calibration</h2>
 <div id="fig-calib" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-calib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig5_calibration_separation.png" class="img-fluid figure-img">
+<img src="figures/perf_fig5_calibration_separation.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-calib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;9: Left: stack score histogram by class. Right: reliability curve.
 </figcaption>
 </figure>
 </div>
-<p>Malignant score-mass concentrates near 1.0 and benign mass near 0.0, with the mid-range overlap that the partial-AUC region penalizes. The reliability curve shows the model separates classes well <strong>by rank</strong> but is <strong>far from probability-calibrated</strong> (observed malignant fraction stays ≈0 even in the top bin). This is <strong>expected and fine</strong>: under 0.1% prevalence and a rank-based metric, calibration is irrelevant to pAUC. It is a feature of the design, not a defect.</p>
+<p>Malignant score-mass concentrates near 1.0 and benign mass near 0.0, with the mid-range overlap penalized by the partial-AUC region. The reliability curve shows the model separates classes well by rank but is far from probability-calibrated (observed malignant fraction stays ≈0 even in the top bin). Under 0.1% prevalence and a rank-based metric, calibration is irrelevant to pAUC.</p>
 </section>
-<section id="the-honest-cv-private-projection" class="level2">
-<h2 class="anchored" data-anchor-id="the-honest-cv-private-projection">The honest CV → private projection</h2>
+<section id="the-cv-private-projection" class="level2">
+<h2 class="anchored" data-anchor-id="the-cv-private-projection">The CV → private projection</h2>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -765,9 +1012,95 @@ Figure&nbsp;9: Left: stack score histogram by class. Right: reliability curve.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The field saw a roughly <strong>0.013–0.021 public→private drop</strong> on this task even with clean CV — driven by the 393-positive scale and (for the winners) heavy reliance on external/synthetic data. Our headline is <strong>OOF CV 0.1738 (stack) / 0.1689 (tabular)</strong>; a fair private-test projection is <strong>headline minus ~0.01–0.02</strong>. We state this openly. Because <strong>no part of our pipeline ever saw out-of-distribution data</strong>, our OOF number is, if anything, a <em>more</em> honest predictor of generalization than a leaderboard-tuned score.</p>
+<p>The field saw a ~0.013–0.021 public→private drop on this task even with clean CV, driven by the 393-positive scale and (for the winners) reliance on external/synthetic data. The headline is OOF CV 0.1738 (stack) / 0.1689 (tabular); a fair private-test projection is headline minus ~0.01–0.02. Because no part of the pipeline saw out-of-distribution data, the OOF number is a conservative predictor of generalization.</p>
 </div>
 </div>
+</section>
+<section id="leaderboard-context" class="level2">
+<h2 class="anchored" data-anchor-id="leaderboard-context">Leaderboard context</h2>
+<table class="acad-table">
+<caption>
+Table 3. Honest comparison to top Kaggle solutions (champion private-LB pAUC; ours is leak-audited cross-validation).
+</caption>
+<thead>
+<tr>
+<th>
+Solution
+</th>
+<th>
+External data?
+</th>
+<th>
+Synthetic data?
+</th>
+<th class="num">
+pAUC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+1st — Ilya Novoselskiy (EVA-02 + EdgeNeXt + GBDT)
+</td>
+<td>
+Yes
+</td>
+<td>
+Yes (~30k)
+</td>
+<td class="num">
+0.17264
+</td>
+</tr>
+<tr>
+<td>
+2nd — uchiyama33 (image + tabular ensemble)
+</td>
+<td>
+Yes
+</td>
+<td>
+Yes
+</td>
+<td class="num">
+—
+</td>
+</tr>
+<tr>
+<td>
+3rd — kyohei-123 (image + tabular blend)
+</td>
+<td>
+Yes
+</td>
+<td>
+Yes
+</td>
+<td class="num">
+—
+</td>
+</tr>
+<tr class="highlight">
+<td>
+Ours (single-dataset, no external, no synthetic)
+</td>
+<td>
+No
+</td>
+<td>
+No
+</td>
+<td class="num">
+CV 0.17376
+</td>
+</tr>
+</tbody>
+</table>
+<p class="note">
+Champions used external ISIC-archive dermoscopy and synthetic positives, both banned here; their own ablation reports the ~30k synthetic lesions added only +0.0007 pAUC. Ours is an out-of-fold CV number, not private LB.
+</p>
+<p>The constrained CV result (0.17376) sits in the same range as the unconstrained 1st-place private pAUC (0.17264), achieved without the external and synthetic data the champions relied on. The out-of-fold CV is not directly comparable to a private-LB number; see <a href="./submission.html">Submission</a> and <a href="./credits.html">Credits</a>.</p>
 <hr>
 <p><em>Continue to <a href="./ablations.html">Ablations →</a></em></p>
 

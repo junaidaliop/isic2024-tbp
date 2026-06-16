@@ -160,18 +160,18 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 <section id="the-problem" class="slide level2 smaller">
 <h2>The problem</h2>
 <ul>
-<li><strong>ISIC-2024 SLICE-3D</strong>: detect malignant skin lesions in 3D total-body-photography crops.</li>
+<li><strong>ISIC-2024 SLICE-3D</strong>: automated triage of malignant skin lesions in 3D total-body-photography crops.</li>
 <li><strong>401,059 crops · 1,042 patients · 393 malignant / 400,666 benign</strong> → a <strong>1,021:1</strong> imbalance.</li>
 <li>Metric: <strong>official pAUC above 80% TPR</strong>, range <code>[0, 0.20]</code> (random ≈ 0.02, perfect = 0.20).</li>
-<li>The whole problem is the imbalance: 393 positives is <em>not much</em> for a deep net alone.</li>
+<li>The defining difficulty is the imbalance: 393 positives is limited signal for a deep net alone.</li>
 </ul>
 </section>
-<section id="what-we-deliberately-ban" class="slide level2 smaller">
-<h2>What we deliberately ban</h2>
+<section id="banned-constraints" class="slide level2 smaller">
+<h2>Banned constraints</h2>
 <ul>
 <li><strong>No external data</strong> — ISIC-2024 SLICE-3D only (no ISIC-2019/2020, no PAD-UFES, no external dermoscopy).</li>
 <li><strong>No generative / synthetic positives</strong> — fabricating pathology breaks label validity.</li>
-<li>The winners’ ~0.173 used <strong>both</strong>; matching it is <strong>out of reach by construction</strong>.</li>
+<li>The winners’ ~0.173 used both; matching it is out of reach by construction.</li>
 </ul>
 <div class="fragment">
 <div class="callout callout-important callout-titled callout-style-default">
@@ -183,30 +183,30 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 <p><strong>Important</strong></p>
 </div>
 <div class="callout-content">
-<p>That impossibility <em>is the experiment.</em> So we change the question.</p>
+<p>That impossibility defines the experiment, so the question is changed.</p>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="the-question-we-actually-answer" class="slide level2">
-<h2>The question we actually answer</h2>
+<section id="the-question" class="slide level2">
+<h2>The question</h2>
 <blockquote>
-<p><strong>What is the best pAUC achievable per unit of inference cost — on SLICE-3D data alone?</strong></p>
+<p><strong>What is the best pAUC achievable per unit of inference cost on SLICE-3D data alone?</strong></p>
 </blockquote>
 <ul>
-<li>Not one private-LB number → a <strong>quality-vs-cost Pareto frontier</strong>.</li>
-<li>Axes: <strong>pAUC</strong> vs <strong>params · FLOPs · CPU latency</strong>.</li>
-<li>A model only counts if it <strong>earns its cost</strong>.</li>
+<li>Not one private-LB number → a quality-vs-cost Pareto frontier.</li>
+<li>Axes: pAUC vs params · FLOPs · CPU latency.</li>
+<li>A model counts only if it earns its cost.</li>
 </ul>
 </section>
-<section id="cv-discipline-the-whole-game" class="slide level2 smaller">
-<h2>CV discipline — the whole game</h2>
+<section id="cv-discipline" class="slide level2 smaller">
+<h2>CV discipline</h2>
 <ul>
-<li>Leaky CV sent teams <strong>~200 places down</strong> on the private split.</li>
-<li><strong>Patient-grouped, target-stratified</strong> folds (5, SEED 42), <strong>frozen once</strong> into <code>data/folds.parquet</code>.</li>
+<li>Leaky CV moved teams ~200 places on the private split.</li>
+<li><strong>Patient-grouped, target-stratified</strong> folds (5, SEED 42), frozen once into <code>data/folds.parquet</code>.</li>
 <li><strong>No patient straddles folds.</strong> One metric, one implementation (<code>src/cv.py</code>), == official scorer.</li>
-<li><code>cv-guardian</code> agent holds <strong>veto power</strong> over splits &amp; metric.</li>
+<li><code>cv-guardian</code> agent holds veto power over splits &amp; metric.</li>
 </ul>
 </section>
 <section id="the-pipeline" class="slide level2 smaller">
@@ -237,12 +237,12 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 <section id="where-the-signal-lives" class="slide level2 smaller">
 <h2>Where the signal lives</h2>
 <ul>
-<li>The dominant signal is the <strong>ugly-duckling sign</strong>: how anomalous a lesion is vs the <em>same patient’s</em> moles.</li>
-<li>Patient-relative features (<code>pdev_</code> / <code>prank_</code> / <code>pxc_</code>) = <strong>~65% of GBDT gain</strong>.</li>
+<li>The dominant signal is the ugly-duckling sign: how anomalous a lesion is vs the same patient’s moles.</li>
+<li>Patient-relative features (<code>pdev_</code> / <code>prank_</code> / <code>pxc_</code>) = ~65% of GBDT gain.</li>
 <li>Top features: <code>tbp_lv_H</code> (hue, univariate AUC 0.81), <code>pdev_tbp_lv_H</code>, <code>pdev_clin_size</code>.</li>
 </ul>
 
-<img data-src="figures/eda_fig9_ugly_duckling.png" style="width:70.0%" class="r-stretch"></section>
+<img data-src="figures/eda_fig9_ugly_duckling.svg" style="width:70.0%" class="r-stretch"></section>
 <section id="headline-results" class="slide level2 smaller">
 <h2>Headline results</h2>
 <table class="caption-top">
@@ -286,16 +286,16 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 </tr>
 </tbody>
 </table>
-<p>GBDT alone banks ~97% of the best score at ~free cost. The image expert earns <strong>+0.0049</strong> inside the stack.</p>
+<p>GBDT alone reaches ~97% of the best score at near-free cost. The image expert adds +0.0049 inside the stack.</p>
 </section>
 <section id="the-frontier" class="slide level2">
 <h2>The frontier</h2>
 
-<img data-src="figures/frontier.png" style="width:78.0%" class="r-stretch"></section>
+<img data-src="figures/frontier.svg" style="width:78.0%" class="r-stretch"></section>
 <section id="the-scored-region-pauc80tpr" class="slide level2">
 <h2>The scored region (pAUC@80%TPR)</h2>
 
-<img data-src="figures/perf_fig1_roc_pauc.png" style="width:70.0%" class="r-stretch"><p>The stack sits above both experts <strong>exactly where the metric integrates</strong>.</p>
+<img data-src="figures/perf_fig1_roc_pauc.svg" style="width:70.0%" class="r-stretch"><p>The stack sits above both experts where the metric integrates.</p>
 </section>
 <section id="per-fold-stability" class="slide level2 smaller">
 <h2>Per-fold stability</h2>
@@ -321,26 +321,26 @@ Pakistan.AI — Raja (M11217073) · Sultan (M11217078) · Hassan (M11217081)
 </tr>
 </tbody>
 </table>
-<p>Fold variance (~0.025) &gt; model gaps — yet the <strong>stack wins/ties every fold</strong> and has the lowest std.</p>
+<p>Fold variance (~0.025) exceeds model gaps, yet the stack wins/ties every fold and has the lowest std.</p>
 </section>
-<section id="every-complex-idea-lost" class="slide level2 smaller">
-<h2>Every complex idea lost</h2>
+<section id="complexity-reduces-the-score" class="slide level2 smaller">
+<h2>Complexity reduces the score</h2>
 
-<img data-src="figures/perf_fig6_negative_results.png" style="width:72.0%" class="r-stretch"><ul>
-<li>Learned MoE gate <strong>0.150</strong> — <em>below tabular alone.</em></li>
-<li>Meta-LGBM stacker 0.171 &lt; trivial 0.174. Image embeddings: hurt. Heavy transformers: collapse.</li>
+<img data-src="figures/perf_fig6_negative_results.svg" style="width:72.0%" class="r-stretch"><ul>
+<li>Learned MoE gate 0.150 — below tabular alone.</li>
+<li>Meta-LGBM stacker 0.171 &lt; rank-average 0.174. Image embeddings reduce. Heavy transformers collapse.</li>
 </ul>
 </section>
-<section id="why-simpler-won" class="slide level2">
-<h2>Why simpler won</h2>
+<section id="why-simpler-wins" class="slide level2">
+<h2>Why simpler wins</h2>
 <ul>
-<li>Every learned add-on must fit parameters from the <strong>same 393 positives</strong> the experts already used.</li>
-<li>A rank-average has <strong>zero parameters</strong> → cannot overfit the folds.</li>
-<li>At extreme imbalance: <strong>bias toward zero-parameter fusion + small backbones</strong> — <em>also</em> the cheapest.</li>
+<li>Every learned add-on must fit parameters from the same 393 positives the experts already used.</li>
+<li>A rank-average has zero parameters and cannot overfit the folds.</li>
+<li>At extreme imbalance: bias toward zero-parameter fusion + small backbones — also the cheapest.</li>
 </ul>
 </section>
-<section id="credit-where-due" class="slide level2 smaller">
-<h2>Credit where due</h2>
+<section id="credits" class="slide level2 smaller">
+<h2>Credits</h2>
 <ul>
 <li><strong>1st — Ilya Novoselskiy</strong> (EVA-02 + EdgeNeXt + GBDT, private 0.17264; external + ~30k synthetic — both banned here; synthetic added only <strong>+0.0007</strong> in their own ablation).</li>
 <li><strong>2nd — uchiyama33</strong>, <strong>3rd — kyohei-123</strong>.</li>

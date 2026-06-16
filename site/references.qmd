@@ -20,8 +20,8 @@ use it, you must cite **both** the dataset paper and the challenge release.
   [@isic2024challenge]
 - **Challenge recap** — Kurtansky, N. R. et al. *Automated triage of cancer-suspicious skin
   lesions with 3D total-body photography.* **npj Digital Medicine** (2025). PMC12639164.
-  Establishes the intra-patient-context result we deliberately do **not** use external data to
-  beat — useful framing for the no-external-data scope [@kurtansky2025npj].
+  Establishes the intra-patient-context result and frames the no-external-data scope
+  [@kurtansky2025npj].
 
 ## Metric
 
@@ -29,7 +29,7 @@ use it, you must cite **both** the dataset paper and the challenge release.
   TPR; scores in `[0, 0.20]`.
   [github.com/ISIC-Research/Challenge-2024-Metrics](https://github.com/ISIC-Research/Challenge-2024-Metrics)
   [@isicmetric2024]. *Note:* the repo README states 88% (`[0, 0.12]`); the live leaderboard used
-  **80%** — we pin 80%.
+  **80%**, which is pinned here.
 
 ## Gradient-boosted decision trees
 
@@ -39,7 +39,7 @@ use it, you must cite **both** the dataset paper and the challenge release.
 
 ## Image backbones (the frontier sweep)
 
-- **ConvNeXt-V2 + FCMAE** — Woo, S. et al. (2023) [@woo2023convnextv2] — our protagonist
+- **ConvNeXt-V2 + FCMAE** — Woo, S. et al. (2023) [@woo2023convnextv2] — the primary backbone
   (`convnextv2_nano`, MAE self-supervised init then in22k→in1k fine-tune).
 - **ViT / AugReg** — Dosovitskiy, A. et al. ICLR (2021) [@dosovitskiy2021vit]; Steiner, A. et al.
   (2021) [@steiner2021augreg].
@@ -64,14 +64,14 @@ use it, you must cite **both** the dataset paper and the challenge release.
 - **MAE** — He, K. et al. CVPR (2022) [@he2022mae].
 - **DINOv2** — Oquab, M. et al. TMLR (2024) [@oquab2024dinov2].
 
-These motivate the principled future-work direction: self-supervised pretraining on the 400k+
-**unlabeled** SLICE-3D crops, as the in-constraint substitute for the external data we banned.
+These motivate the future-work direction: self-supervised pretraining on the 400k+ unlabeled
+SLICE-3D crops, as the in-constraint substitute for the banned external data.
 
 ## Related ISIC-2024 solutions (positioning)
 
 - Hasan, M. Z. & Rifat, F. Y. *Hybrid Ensemble of Segmentation-Assisted Classification and GBDT.*
-  arXiv:2506.03420 (2025) [@hasan2025hybrid] — image + GBDT + **synthetic** augmentation,
-  explicitly the approach we reject; a clean contrast for the no-synthetic-data argument.
+  arXiv:2506.03420 (2025) [@hasan2025hybrid] — image + GBDT + synthetic augmentation; a contrast
+  for the no-synthetic-data argument.
 
 ## Cite this work {#cite-this-work}
 

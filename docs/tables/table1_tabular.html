@@ -1,0 +1,25 @@
+<table class="acad-table">
+  <caption>Table 1. Tabular LightGBM progression (out-of-fold, leak-verified).</caption>
+  <thead><tr>
+    <th>Configuration</th>
+    <th class="num">OOF pAUC@80%TPR</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>Step 0 — broken: is_unbalance + AUC early-stop</td>
+      <td class="num">0.09941</td>
+    </tr>
+    <tr>
+      <td>Step 1 — fixed early-stopping / objective</td>
+      <td class="num">0.11826</td>
+    </tr>
+    <tr>
+      <td>Step 2 — wide patient-relative ugly-duckling features</td>
+      <td class="num">0.14420</td>
+    </tr>
+    <tr class="highlight">
+      <td>Step 3 — greysky-bagged + cross feats + CatBoost ensemble</td>
+      <td class="num">0.16890</td>
+    </tr>
+  </tbody>
+</table>

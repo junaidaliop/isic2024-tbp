@@ -115,11 +115,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="Reproducibility – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta property="og:description" content="The exact environment, seeds, commands, and how every headline number was re-verified">
+<meta property="og:description" content="The environment, seeds, commands, and re-verification of each number">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta name="twitter:title" content="Reproducibility – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta name="twitter:description" content="The exact environment, seeds, commands, and how every headline number was re-verified">
+<meta name="twitter:description" content="The environment, seeds, commands, and re-verification of each number">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -383,9 +384,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#environment" id="toc-environment" class="nav-link active" data-scroll-target="#environment">Environment</a></li>
   <li><a href="#hardware" id="toc-hardware" class="nav-link" data-scroll-target="#hardware">Hardware</a></li>
-  <li><a href="#the-exact-recipe" id="toc-the-exact-recipe" class="nav-link" data-scroll-target="#the-exact-recipe">The exact recipe</a></li>
-  <li><a href="#how-each-headline-number-was-produced-and-re-verified" id="toc-how-each-headline-number-was-produced-and-re-verified" class="nav-link" data-scroll-target="#how-each-headline-number-was-produced-and-re-verified">How each headline number was produced and re-verified</a></li>
-  <li><a href="#determinism-caveats-honest" id="toc-determinism-caveats-honest" class="nav-link" data-scroll-target="#determinism-caveats-honest">Determinism caveats (honest)</a></li>
+  <li><a href="#the-recipe" id="toc-the-recipe" class="nav-link" data-scroll-target="#the-recipe">The recipe</a></li>
+  <li><a href="#production-and-re-verification-of-each-number" id="toc-production-and-re-verification-of-each-number" class="nav-link" data-scroll-target="#production-and-re-verification-of-each-number">Production and re-verification of each number</a></li>
+  <li><a href="#determinism-caveats" id="toc-determinism-caveats" class="nav-link" data-scroll-target="#determinism-caveats">Determinism caveats</a></li>
   </ul>
 </nav>
     </div>
@@ -396,7 +397,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Reproducibility</h1>
-<p class="subtitle lead">The exact environment, seeds, commands, and how every headline number was re-verified</p>
+<p class="subtitle lead">The environment, seeds, commands, and re-verification of each number</p>
 </div>
 
 
@@ -413,7 +414,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Every result on this site is config-driven, single-seeded, and re-runnable from disk. The <code>repro</code> and <code>cv-guardian</code> agents re-derived the headline numbers from the OOF parquet files; the spine test suite passes <strong>9/9</strong>.</p>
+<p>Every result is config-driven, single-seeded, and re-runnable from disk. The <code>repro</code> and <code>cv-guardian</code> agents re-derived the headline numbers from the OOF parquet files; the spine test suite passes 9/9.</p>
 <section id="environment" class="level2">
 <h2 class="anchored" data-anchor-id="environment">Environment</h2>
 <table class="caption-top table">
@@ -473,17 +474,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="hardware" class="level2">
 <h2 class="anchored" data-anchor-id="hardware">Hardware</h2>
-<p>A <strong>single NVIDIA RTX 4070 Ti SUPER (16 GB)</strong>. The whole study fits comfortably in the 2-day budget because of per-epoch negative undersampling:</p>
+<p>A single NVIDIA RTX 4070 Ti SUPER (16 GB). The study fits within the 2-day budget because of per-epoch negative undersampling:</p>
 <ul>
 <li>an “epoch” sees all 393 positives + a fresh ~equal sample of negatives → a few thousand images,</li>
 <li><strong>≈ 4.5 s / epoch</strong>,</li>
 <li>a <strong>full 5-fold backbone trains in ≈ 8 minutes</strong>.</li>
 </ul>
-<p>CPU latency on the frontier is measured <strong>single-threaded</strong> (<code>src/efficiency.py</code>) so the cost axis reflects a worst-case deployable setting.</p>
+<p>CPU latency on the frontier is measured single-threaded (<code>src/efficiency.py</code>) so the cost axis reflects a worst-case deployable setting.</p>
 </section>
-<section id="the-exact-recipe" class="level2">
-<h2 class="anchored" data-anchor-id="the-exact-recipe">The exact recipe</h2>
-<p>The whole pipeline is driven by <code>make</code> targets (each wraps a <code>python -m src.*</code> invocation). <strong><code>make folds</code> must run first</strong> — nothing trains until the no-leak guarantee passes.</p>
+<section id="the-recipe" class="level2">
+<h2 class="anchored" data-anchor-id="the-recipe">The recipe</h2>
+<p>The pipeline is driven by <code>make</code> targets (each wraps a <code>python -m src.*</code> invocation). <code>make folds</code> must run first; no model trains until the no-leak guarantee passes.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 0. fetch SLICE-3D into data/ (accept the comp rules on Kaggle once, else 403)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> data</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -507,8 +508,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> site</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Each run is logged under <code>experiments/</code> (one config + one CSV row per run, seeds fixed) and the frontier is appended to <code>reports/frontier.csv</code> / <code>reports/frontier_cost.csv</code>.</p>
 </section>
-<section id="how-each-headline-number-was-produced-and-re-verified" class="level2">
-<h2 class="anchored" data-anchor-id="how-each-headline-number-was-produced-and-re-verified">How each headline number was produced and re-verified</h2>
+<section id="production-and-re-verification-of-each-number" class="level2">
+<h2 class="anchored" data-anchor-id="production-and-re-verification-of-each-number">Production and re-verification of each number</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -561,22 +562,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Why these numbers are trustworthy
+<span class="screen-reader-only">Tip</span>Verification properties
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><strong>One split, one metric.</strong> Every model reads the same frozen <code>data/folds.parquet</code> and is scored by the same <code>src/cv.py</code>, which is unit-tested to match the official scorer.</li>
-<li><strong>No patient straddles folds.</strong> Verified by <code>cv-guardian</code>; this is the property that prevented the ~200-place private shake-up other teams suffered.</li>
+<li><strong>One split, one metric.</strong> Every model reads the same frozen <code>data/folds.parquet</code> and is scored by the same <code>src/cv.py</code>, unit-tested to match the official scorer.</li>
+<li><strong>No patient straddles folds.</strong> Verified by <code>cv-guardian</code>; this property prevents the ~200-place private shake-up other teams encountered.</li>
 <li><strong>Leak columns dropped.</strong> <code>iddx_*</code>, <code>mel_*</code>, <code>lesion_id</code>, <code>tbp_lv_dnn_lesion_confidence</code> never enter any model.</li>
-<li><strong>Recomputed from disk, not from logs.</strong> The headline pAUCs were re-derived from the OOF parquet files, not copied from training stdout.</li>
+<li><strong>Recomputed from disk.</strong> The headline pAUCs were re-derived from the OOF parquet files, not copied from training stdout.</li>
 </ul>
 </div>
 </div>
 </section>
-<section id="determinism-caveats-honest" class="level2">
-<h2 class="anchored" data-anchor-id="determinism-caveats-honest">Determinism caveats (honest)</h2>
-<p>Full bit-exact determinism across GPUs/driver versions is not guaranteed for deep-learning training (cuDNN nondeterminism, atomic reductions). We fix <code>SEED = 42</code>, log every config, and report OOF pAUC to 5 decimals; the <strong>GBDT and stack numbers are fully deterministic</strong> from the frozen folds, and the <strong>image numbers reproduce to within fold-variance</strong> (~±0.008 std, far smaller than the effects we report). This is stated plainly rather than overclaimed.</p>
+<section id="determinism-caveats" class="level2">
+<h2 class="anchored" data-anchor-id="determinism-caveats">Determinism caveats</h2>
+<p>Bit-exact determinism across GPUs and driver versions is not guaranteed for deep-learning training (cuDNN nondeterminism, atomic reductions). <code>SEED = 42</code> is fixed, every config is logged, and OOF pAUC is reported to 5 decimals. The GBDT and stack numbers are fully deterministic from the frozen folds; the image numbers reproduce to within fold-variance (~±0.008 std, far smaller than the reported effects).</p>
 <hr>
 <p><em>Continue to <a href="./credits.html">Credits →</a></em></p>
 

@@ -1,21 +1,20 @@
 ---
 title: "Ablations & Negative Results"
-subtitle: "Every complexity increase we tried — including the ones that lost"
+subtitle: "Every complexity increase tested, including those that reduced the score"
 toc: true
 ---
 
 ::: {.callout-important}
-## The thesis of this page
-We log negative results honestly; we never quietly drop a model that did not help. The headline
-finding of the entire study is visible here in one sentence: **almost every increase in model
-complexity lost.** At 393 positives, the efficient, trivial choices — a small backbone, a
-rank-average combiner, intrinsic tabular features — are not just cheaper, they are also *more
-accurate*. That negative result is the contribution.
+## Summary
+Negative results are logged; no model that failed to help is dropped silently. Across the study,
+nearly every increase in model complexity reduced the score. At 393 positives, the efficient,
+trivial choices — a small backbone, a rank-average combiner, intrinsic tabular features — are both
+cheaper and more accurate. That negative result is the contribution.
 :::
 
 ## Tabular GBDT progression {#tabular}
 
-![Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.](figures/perf_fig3a_ablation_tabular.png){#fig-abl-tab}
+![Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.](figures/perf_fig3a_ablation_tabular.svg){#fig-abl-tab}
 
 | Step | Change | OOF pAUC | Δ |
 |---|---|---:|---:|
@@ -24,74 +23,72 @@ accurate*. That negative result is the contribution.
 | 2 | Wide patient-relative ugly-duckling features (`pdev_` / `prank_` / `pxc_`) | 0.14420 | **+0.02594** |
 | 3 | Greysky-bagged LightGBM + `pxc_` + CatBoost rank-blend | **0.16890** | **+0.02470** |
 
-**Takeaways.** The broken config scored barely above 5× random — a reminder that on extreme
-imbalance the *training setup* dominates the *model*. The **patient-relative feature block
-(Step 2) is the single biggest jump (+0.026)**, confirming the ugly-duckling thesis. Bagging +
-CatBoost (Step 3) adds another +0.025 from variance reduction across seeds and families.
+The broken config scored barely above 5× random: on extreme imbalance the training setup
+dominates the model. The patient-relative feature block (Step 2) is the single largest jump
+(+0.026), confirming the ugly-duckling thesis. Bagging plus CatBoost (Step 3) adds +0.025 from
+variance reduction across seeds and families.
 
 ## Image expert — resolution & regularizer {#image}
 
-![Image-expert ablation: the small backbone wins; heavy ones collapse.](figures/perf_fig3b_ablation_image.png){#fig-abl-img}
+![Image-expert ablation: the small backbone wins; heavy ones collapse.](figures/perf_fig3b_ablation_image.svg){#fig-abl-img}
 
 | Config | OOF pAUC | Verdict |
 |---|---:|---|
 | `convnextv2_nano` &#64;128 | 0.15311 | baseline image point |
-| **`convnextv2_nano` &#64;224 + EMA0.995 + mixup** | **0.15821** | best image — the sweet spot |
-| ↳ same, EMA **0.999** | ~0.146 | **HURT** (over-smooths at ~23 steps/epoch) |
-| `convnextv2_tiny` &#64;224 | 0.15824 | slightly *worse* than nano, ~2× the cost |
-| `swinv2_tiny` &#64;256 | 0.10422 | **collapse** — near random |
-| `eva02_small` &#64;336 | 0.09984 | **collapse** — near random |
+| **`convnextv2_nano` &#64;224 + EMA0.995 + mixup** | **0.15821** | best image |
+| ↳ same, EMA **0.999** | ~0.146 | reduced (over-smooths at ~23 steps/epoch) |
+| `convnextv2_tiny` &#64;224 | 0.15824 | comparable to nano, ~2× the cost |
+| `swinv2_tiny` &#64;256 | 0.10422 | collapse — near random |
+| `eva02_small` &#64;336 | 0.09984 | collapse — near random |
 
-**Takeaways.** Resolution + light **EMA(0.995)** + mixup on the **small** nano backbone is the
-sweet spot. Stronger EMA (0.999) over-smooths because the undersampled epochs are tiny. Heavy
-transformers (Swin, EVA-02) **collapse to near-random** — textbook overfitting at 393 positives:
-more capacity, less signal. Even `convnextv2_tiny` (2× nano's params) is *worse* than nano.
+Resolution plus light EMA(0.995) and mixup on the small nano backbone is the optimum. Stronger
+EMA (0.999) over-smooths because the undersampled epochs are short. Heavy transformers (Swin,
+EVA-02) collapse to near-random — overfitting at 393 positives. `convnextv2_tiny` (2× nano's
+params) does not exceed nano.
 
 ## Stack combiners {#stack}
 
-![Stack-combiner ablation: the trivial rank-average wins.](figures/perf_fig3c_ablation_stack.png){#fig-abl-stack}
+![Stack-combiner ablation: the trivial rank-average wins.](figures/perf_fig3c_ablation_stack.svg){#fig-abl-stack}
 
 | Combiner | OOF pAUC | Verdict |
 |---|---:|---|
-| **rank-avg [GBDT, nano@224]** | **0.17376** | **WINNER** |
-| meta-LGBM stacker | 0.17108 | loses to trivial |
+| **rank-avg [GBDT, nano&#64;224]** | **0.17376** | winner |
+| meta-LGBM stacker | 0.17108 | loses to rank-average |
 | rank [+ weak images] | 0.16679 | dilutes |
-| learned per-lesion gate (MoE) | 0.15007 | **decisive loss** — below tabular 0.16890 |
-| + PCA image embeddings into GBDT | < 0.17376 | **hurts** |
+| learned per-lesion gate (MoE) | 0.15007 | loss — below tabular 0.16890 |
+| + PCA image embeddings into GBDT | < 0.17376 | reduces |
 
-**Takeaways.** The **trivial 2-way rank-average wins outright.** Every learned or heavier
-combiner loses, and the **MoE gate even falls *below the tabular expert alone*** (0.150 <
-0.169). Adding weak images, or stuffing PCA embeddings into the GBDT, dilutes rather than helps.
+The trivial 2-way rank-average wins. Every learned or heavier combiner loses, and the MoE gate
+falls below the tabular expert alone (0.150 < 0.169). Adding weak images, or PCA embeddings into
+the GBDT, dilutes.
 
 ::: {.callout-note appearance="simple"}
-**A note on reconstructions.** A recomputed rank-average over {GBDT + 4 image OOFs} scores
-0.16917; the logged "rank [+ weak images]" run (0.16679) used a different weak-image set and is
-kept as the authoritative logged number. Either way the conclusion holds — adding weak images
-dilutes. This is the kind of detail we surface rather than smooth over.
+**Reconstruction note.** A recomputed rank-average over {GBDT + 4 image OOFs} scores 0.16917; the
+logged "rank [+ weak images]" run (0.16679) used a different weak-image set and is kept as the
+authoritative logged number. The conclusion holds either way: adding weak images dilutes.
 :::
 
-## Negative results, in one figure {#negatives}
+## Negative results summary {#negatives}
 
-![Every idea that lost, and what beat it.](figures/perf_fig6_negative_results.png){#fig-neg}
+![Every idea that reduced the score, and what beat it.](figures/perf_fig6_negative_results.svg){#fig-neg}
 
-| Idea tried | Its pAUC | Beaten by | Honest finding |
+| Idea tried | Its pAUC | Beaten by | Finding |
 |---|---:|---|---|
-| Learned per-lesion gate (MoE) | 0.15007 | 0.16890 (tabular) | **loses to tabular alone** |
-| Meta-LGBM stacker | 0.17108 | 0.17376 (rank-avg) | loses to trivial rank-avg |
-| + PCA image embeddings into GBDT | < 0.1738 | 0.17376 | embeddings **hurt** |
-| Heavy backbones (SwinV2 / EVA-02) | 0.104 / 0.100 | 0.15821 (nano@224) | dominated — overfit at 393 pos |
-| EMA 0.999 (over-smoothing) | ~0.146 | 0.15821 (EMA0.995) | stronger EMA hurts |
+| Learned per-lesion gate (MoE) | 0.15007 | 0.16890 (tabular) | loses to tabular alone |
+| Meta-LGBM stacker | 0.17108 | 0.17376 (rank-avg) | loses to rank-average |
+| + PCA image embeddings into GBDT | < 0.1738 | 0.17376 | embeddings reduce |
+| Heavy backbones (SwinV2 / EVA-02) | 0.104 / 0.100 | 0.15821 (nano&#64;224) | dominated — overfit at 393 pos |
+| EMA 0.999 (over-smoothing) | ~0.146 | 0.15821 (EMA0.995) | stronger EMA reduces |
 
-## Why "everything complex lost" is the finding
+## Why complexity reduces the score
 
-There is a structural reason every learned add-on failed: each one must estimate its parameters
-from the **same 393 positives** the base experts already consumed. A rank-average has **zero
-parameters**, so it cannot overfit the validation folds; a meta-learner, a gate, or extra
-embedding dimensions all have parameters to fit and not enough fresh positive signal to fit them
-well. The result generalizes a classical lesson to the extreme-imbalance regime: **when positives
-are scarce, model selection should bias hard toward zero-parameter fusion and small backbones.**
-That is the defensible, reusable claim this study contributes — and it is *also* the cheapest
-option, which is why it sits on the efficiency frontier.
+Each learned add-on must estimate its parameters from the same 393 positives the base experts
+already consumed. A rank-average has zero parameters and cannot overfit the validation folds; a
+meta-learner, a gate, or extra embedding dimensions all have parameters to fit and insufficient
+fresh positive signal to fit them well. The result extends a classical lesson to the
+extreme-imbalance regime: when positives are scarce, model selection should bias toward
+zero-parameter fusion and small backbones. That choice is also the cheapest, which places it on
+the efficiency frontier.
 
 ---
 

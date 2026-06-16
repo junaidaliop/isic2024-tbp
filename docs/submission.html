@@ -118,11 +118,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="Submission &amp; Leaderboard · ISIC-2024 SLICE-3D">
-<meta property="og:description" content="What a Kaggle CODE competition actually lets you submit, what we produced, and where our constrained score sits">
+<meta property="og:description" content="What a Kaggle CODE competition submits, what was produced, and where the constrained score sits">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta name="twitter:title" content="Submission &amp; Leaderboard · ISIC-2024 SLICE-3D">
-<meta name="twitter:description" content="What a Kaggle CODE competition actually lets you submit, what we produced, and where our constrained score sits">
+<meta name="twitter:description" content="What a Kaggle CODE competition submits, what was produced, and where the constrained score sits">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -384,11 +385,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#how-scoring-works" id="toc-how-scoring-works" class="nav-link active" data-scroll-target="#how-scoring-works">How scoring actually works</a></li>
-  <li><a href="#what-we-produced" id="toc-what-we-produced" class="nav-link" data-scroll-target="#what-we-produced">What we produced today</a></li>
+  <li><a href="#how-scoring-works" id="toc-how-scoring-works" class="nav-link active" data-scroll-target="#how-scoring-works">How scoring works</a></li>
+  <li><a href="#what-we-produced" id="toc-what-we-produced" class="nav-link" data-scroll-target="#what-we-produced">What was produced</a></li>
   <li><a href="#estimated-position" id="toc-estimated-position" class="nav-link" data-scroll-target="#estimated-position">Estimated private position (from CV)</a></li>
   <li><a href="#leaderboard-context" id="toc-leaderboard-context" class="nav-link" data-scroll-target="#leaderboard-context">Leaderboard context (~2,700 teams)</a></li>
-  <li><a href="#honest-caveat" id="toc-honest-caveat" class="nav-link" data-scroll-target="#honest-caveat">Honest caveat: stack vs.&nbsp;tabular submission</a>
+  <li><a href="#honest-caveat" id="toc-honest-caveat" class="nav-link" data-scroll-target="#honest-caveat">Stack vs.&nbsp;tabular submission</a>
   <ul class="collapse">
   <li><a href="#late-submission-path" id="toc-late-submission-path" class="nav-link" data-scroll-target="#late-submission-path">The late-submission path</a></li>
   </ul></li>
@@ -402,7 +403,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Submission &amp; Leaderboard</h1>
-<p class="subtitle lead">What a Kaggle CODE competition actually lets you submit, what we produced, and where our constrained score sits</p>
+<p class="subtitle lead">What a Kaggle CODE competition submits, what was produced, and where the constrained score sits</p>
 </div>
 
 
@@ -420,10 +421,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <div class="lead">
-<p>ISIC-2024 was a <strong>Kaggle <em>CODE</em> competition</strong>: you do not upload a CSV of predictions — you submit a <strong>notebook</strong> that Kaggle re-runs on a <strong>hidden test set</strong>. The public test that shipped with the data is a <strong>3-row placeholder</strong>, so a true private score <strong>cannot be computed locally</strong>. This page lays that out honestly: what we <em>can</em> produce today, what the CV implies, and the exact path to a real late-submission score.</p>
+<p>ISIC-2024 was a Kaggle CODE competition: submission is a notebook that Kaggle re-runs on a hidden test set, not a CSV of predictions. The public test shipped with the data is a 3-row placeholder, so a private score cannot be computed locally. This page states what can be produced today, what the CV implies, and the path to a real late-submission score.</p>
 </div>
 <section id="how-scoring-works" class="level2">
-<h2 class="anchored" data-anchor-id="how-scoring-works">How scoring actually works</h2>
+<h2 class="anchored" data-anchor-id="how-scoring-works">How scoring works</h2>
 <div class="callout callout-style-default callout-important no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -435,13 +436,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>You attach a <strong>notebook</strong> to the competition. On submit, Kaggle executes it against the <strong>hidden test set</strong> (the real evaluation images), and scores the <code>submission.csv</code> it writes.</li>
-<li>The <code>test-image.hdf5</code> and <code>test-metadata.csv</code> shipped in the data bundle are a <strong>3-row placeholder</strong> — just enough to let your notebook run end-to-end without crashing.</li>
-<li>Therefore <strong>no honest private pAUC can be produced offline.</strong> Anyone reporting a “private score” computed on their own machine is reporting a number off three rows. We do not.</li>
+<li>A notebook is attached to the competition. On submit, Kaggle executes it against the hidden test set (the real evaluation images) and scores the <code>submission.csv</code> it writes.</li>
+<li>The <code>test-image.hdf5</code> and <code>test-metadata.csv</code> shipped in the data bundle are a 3-row placeholder, sufficient only to let the notebook run end-to-end.</li>
+<li>No private pAUC can be produced offline; a private score computed locally would be a number off three rows.</li>
 </ul>
 </div>
 </div>
-<p>The placeholder we hold on disk, verified directly:</p>
+<p>The placeholder held on disk, verified directly:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -451,19 +452,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <thead>
 <tr class="header">
 <th>Artifact</th>
-<th>What ships locally</th>
-<th>Reality on Kaggle</th>
+<th>Local</th>
+<th>On Kaggle</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><code>data/test-image.hdf5</code></td>
-<td><strong>≈ 11 KB</strong>, <strong>3 images</strong> (<code>ISIC_0015657</code>, <code>ISIC_0015729</code>, <code>ISIC_0015740</code>)</td>
+<td>≈ 11 KB, 3 images (<code>ISIC_0015657</code>, <code>ISIC_0015729</code>, <code>ISIC_0015740</code>)</td>
 <td>tens of thousands of hidden crops</td>
 </tr>
 <tr class="even">
 <td><code>data/test-metadata.csv</code></td>
-<td><strong>3 rows</strong> (header + 3)</td>
+<td>3 rows (header + 3)</td>
 <td>the full hidden cohort’s metadata</td>
 </tr>
 <tr class="odd">
@@ -473,13 +474,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<p>So the only thing a local run <em>can</em> prove is that the <strong>inference pipeline is wired correctly and emits a format-valid file</strong> — which is exactly what we did.</p>
+<p>A local run can therefore only confirm that the inference pipeline is wired correctly and emits a format-valid file.</p>
 </section>
 <section id="what-we-produced" class="level2">
-<h2 class="anchored" data-anchor-id="what-we-produced">What we produced today</h2>
-<p>We generated a <strong>format-valid <code>submission.csv</code></strong> from the saved <strong>bagged GBDT</strong> — <strong>50 boosters</strong> (5 folds × 5 LightGBM seeds + 5 CatBoost seeds, persisted in <code>experiments/gbdt_boosters.joblib</code>) — via a single command:</p>
+<h2 class="anchored" data-anchor-id="what-we-produced">What was produced</h2>
+<p>A format-valid <code>submission.csv</code> was generated from the saved bagged GBDT — 50 boosters (5 folds × 5 LightGBM seeds + 5 CatBoost seeds, persisted in <code>experiments/gbdt_boosters.joblib</code>) — via a single command:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> src.submit          <span class="co"># GBDT-only; reads experiments/gbdt_boosters.joblib</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Inference mirrors the leak-free training transform exactly: every booster carries its own <strong>per-fold feature state</strong>, <code>predict_gbdt</code> re-applies that state before predicting, and the per-fold scores are averaged. The output is the required <strong>two-column schema</strong>:</p>
+<p>Inference mirrors the leak-free training transform: every booster carries its own per-fold feature state, <code>predict_gbdt</code> re-applies that state before predicting, and the per-fold scores are averaged. The output is the required two-column schema:</p>
 <pre class="text"><code>isic_id,target
 ISIC_0015657,0.41827...
 ISIC_0015729,0.06913...
@@ -516,14 +517,14 @@ ISIC_0015740,0.22540...</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>What this validates — and what it does not.</strong> Running <code>python -m src.submit</code> on the 3-row placeholder confirms the <strong>inference path end-to-end</strong>: boosters load, the fold-local feature transform replays without leakage, and the writer emits a valid 2-column file. It does <strong>not</strong> produce a real score — that requires Kaggle to run this on the hidden test (a <strong>late submission</strong>, since the competition is closed).</p>
+<p><strong>Scope of the validation.</strong> Running <code>python -m src.submit</code> on the 3-row placeholder confirms the inference path end-to-end: boosters load, the fold-local feature transform replays without leakage, and the writer emits a valid 2-column file. It does not produce a real score, which requires Kaggle to run the notebook on the hidden test (a late submission, since the competition is closed).</p>
 </div>
 </div>
 </div>
 </section>
 <section id="estimated-position" class="level2">
 <h2 class="anchored" data-anchor-id="estimated-position">Estimated private position (from CV)</h2>
-<p>Because we cannot score the hidden set offline, we project from our <strong>out-of-fold CV</strong>, which — having never seen out-of-distribution data — is an unusually honest generalization estimate. The field’s observed <strong>CV → private drop</strong> on this task was roughly <strong>0.013–0.021</strong>.</p>
+<p>Because the hidden set cannot be scored offline, the projection is from the out-of-fold CV, which — having seen no out-of-distribution data — is a conservative generalization estimate. The field’s observed CV → private drop on this task was roughly 0.013–0.021.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -577,7 +578,7 @@ ISIC_0015740,0.22540...</code></pre>
 </table>
 </div>
 </div>
-<p>We report a <strong>range, not a rank</strong> — fold variance (~±0.008 std) and the unknown shake-up make any single claimed position dishonest. The range itself is the claim.</p>
+<p>A range is reported, not a rank: fold variance (~±0.008 std) and the unknown shake-up make any single claimed position unreliable.</p>
 </section>
 <section id="leaderboard-context" class="level2">
 <h2 class="anchored" data-anchor-id="leaderboard-context">Leaderboard context (~2,700 teams)</h2>
@@ -593,7 +594,7 @@ ISIC_0015740,0.22540...</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>1st place — private pAUC 0.17264.</strong> Used <strong>external ISIC-archive dermoscopy data</strong> <em>and</em> <strong>≈ 30,000 Stable-Diffusion-synthesized malignant lesions</strong> — <strong>both banned</strong> in this study. Their own ablation: the <strong>30k synthetic lesions added only +0.0007 pAUC</strong>. Fabricating positives bought almost nothing on a 393-positive task.</p>
+<p><strong>1st place — private pAUC 0.17264.</strong> Used external ISIC-archive dermoscopy data and ~30,000 Stable-Diffusion-synthesized malignant lesions, both banned here. Their own ablation: the 30k synthetic lesions added only +0.0007 pAUC.</p>
 </div>
 </div>
 </div>
@@ -608,7 +609,7 @@ ISIC_0015740,0.22540...</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Best <strong>no-external-data</strong> solutions sat around <strong>0.16 private</strong>; a clean <strong>tabular-only</strong> team reached <strong>0.162</strong>. That is the bracket our work actually competes in — and our estimated private <strong>≈ 0.155–0.165</strong> lands squarely inside it.</p>
+<p>Best no-external-data solutions sat around 0.16 private; a clean tabular-only team reached 0.162. This is the bracket the present work competes in, and the estimated private ≈ 0.155–0.165 lands inside it.</p>
 </div>
 </div>
 </div>
@@ -671,27 +672,27 @@ ISIC_0015740,0.22540...</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Our estimated private <strong>≈ 0.155–0.165</strong> is <strong>competitive silver/gold-zone</strong> and <strong>SOTA-class among no-external / no-synthetic / single-dataset solutions</strong> — which is precisely the class our hard rules define. We do <strong>not</strong> claim to beat the unconstrained 0.17264; that used the two ingredients we banned, and matching it is impossible by construction. See <a href="./index.html#scope-honesty">Scope honesty</a>.</p>
+<p>The estimated private ≈ 0.155–0.165 is competitive in the silver/gold zone and SOTA-class among no-external / no-synthetic / single-dataset solutions, the class the hard rules define. The unconstrained 0.17264 used the two banned ingredients and is impossible to match by construction. See <a href="./index.html#scope-honesty">Scope</a>.</p>
 </div>
 </div>
 </section>
 <section id="honest-caveat" class="level2">
-<h2 class="anchored" data-anchor-id="honest-caveat">Honest caveat: stack vs.&nbsp;tabular submission</h2>
-<p>The <strong>tabular GBDT submission is ready today</strong>. The <strong>full stack</strong> submission is not — and we say why plainly.</p>
+<h2 class="anchored" data-anchor-id="honest-caveat">Stack vs.&nbsp;tabular submission</h2>
+<p>The tabular GBDT submission is ready today; the full stack submission is not.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>What the stack needs that we do not yet persist
+<span class="screen-reader-only">Warning</span>What the stack requires that is not yet persisted
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A stack submission must run <strong>image inference on the hidden test set</strong>, which requires the <strong>trained per-fold image checkpoints</strong>. We persisted the image expert’s <strong>OOF probabilities and embeddings</strong> (enough to <em>score and ablate</em> the stack on CV), but <strong>not the per-fold model weights</strong>. So:</p>
+<p>A stack submission must run image inference on the hidden test set, which requires the trained per-fold image checkpoints. The image expert’s OOF probabilities and embeddings are persisted (enough to score and ablate the stack on CV), but the per-fold model weights are not. Therefore:</p>
 <ul>
-<li><strong>Ready now:</strong> GBDT-only <code>submission.csv</code> (<code>python -m src.submit</code>) — validates the full inference path on the placeholder.</li>
-<li><strong>Documented next step:</strong> a stack notebook that loads saved image checkpoints, scores the hidden test, and rank-blends with the GBDT. <code>src/submit.py</code> already exposes the hook (<code>--image-scores ... --image-weight ...</code>); it is intentionally <strong>unwired</strong> rather than fabricating image predictions until the checkpoints exist.</li>
+<li><strong>Ready now:</strong> GBDT-only <code>submission.csv</code> (<code>python -m src.submit</code>), validating the full inference path on the placeholder.</li>
+<li><strong>Next step:</strong> a stack notebook that loads saved image checkpoints, scores the hidden test, and rank-blends with the GBDT. <code>src/submit.py</code> exposes the hook (<code>--image-scores ... --image-weight ...</code>); it is left unwired rather than fabricating image predictions until the checkpoints exist.</li>
 </ul>
 </div>
 </div>
@@ -716,18 +717,18 @@ ISIC_0015740,0.22540...</code></pre>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-late-sub-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: The documented path to a real private score via a Kaggle late submission. Steps 1–3 are done today (GBDT-only); the dashed image branch is the persisted next step.
+Figure&nbsp;1: The path to a real private score via a Kaggle late submission. Steps 1–3 are done today (GBDT-only); the dashed image branch is the next step.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Concretely, to obtain a genuine private score:</p>
+<p>To obtain a genuine private score:</p>
 <ol type="1">
 <li><strong>Train + persist per-fold image checkpoints</strong> (<code>src/vision/train.py</code>) — the only missing artifact; OOF probs/embeddings already exist.</li>
-<li><strong>Upload the trained models</strong> (GBDT joblib + image checkpoints) as a <strong>private Kaggle dataset</strong>.</li>
-<li><strong>Author an inference notebook</strong> that attaches the competition data + the model dataset, runs <code>predict_test(...)</code> with <code>--image-scores</code>, and writes the 2-column <code>submission.csv</code>.</li>
-<li><strong>Submit it as a late submission</strong> — Kaggle runs it on the hidden test and returns the real private pAUC, which we expect to land in the <strong>0.155–0.165</strong> band projected above.</li>
+<li><strong>Upload the trained models</strong> (GBDT joblib + image checkpoints) as a private Kaggle dataset.</li>
+<li><strong>Author an inference notebook</strong> that attaches the competition data plus the model dataset, runs <code>predict_test(...)</code> with <code>--image-scores</code>, and writes the 2-column <code>submission.csv</code>.</li>
+<li><strong>Submit as a late submission</strong> — Kaggle runs it on the hidden test and returns the private pAUC, projected to land in the 0.155–0.165 band.</li>
 </ol>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
@@ -735,7 +736,7 @@ Figure&nbsp;1: The documented path to a real private score via a Kaggle late sub
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p>The tabular-only path (steps 2–4 without the image branch) is runnable immediately and is the honest, ready-today deliverable; the stack path is a clean, fully-specified follow-up rather than a hidden gap.</p>
+<p>The tabular-only path (steps 2–4 without the image branch) is runnable immediately and is the ready-today deliverable; the stack path is a fully-specified follow-up.</p>
 </div>
 </div>
 </div>

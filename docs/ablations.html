@@ -80,17 +80,14 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="Ablations &amp; Negative Results – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta property="og:description" content="Every complexity increase we tried — including the ones that lost">
-<meta property="og:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig3a_ablation_tabular.png">
+<meta property="og:description" content="Every complexity increase tested, including those that reduced the score">
+<meta property="og:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig3a_ablation_tabular.svg">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta property="og:image:height" content="385">
-<meta property="og:image:width" content="1405">
 <meta name="twitter:title" content="Ablations &amp; Negative Results – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta name="twitter:description" content="Every complexity increase we tried — including the ones that lost">
-<meta name="twitter:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig3a_ablation_tabular.png">
-<meta name="twitter:image-height" content="385">
-<meta name="twitter:image-width" content="1405">
+<meta name="twitter:description" content="Every complexity increase tested, including those that reduced the score">
+<meta name="twitter:image" content="https://junaidaliop.github.io/isic2024-tbp/figures/perf_fig3a_ablation_tabular.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -355,8 +352,8 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#tabular" id="toc-tabular" class="nav-link active" data-scroll-target="#tabular">Tabular GBDT progression</a></li>
   <li><a href="#image" id="toc-image" class="nav-link" data-scroll-target="#image">Image expert — resolution &amp; regularizer</a></li>
   <li><a href="#stack" id="toc-stack" class="nav-link" data-scroll-target="#stack">Stack combiners</a></li>
-  <li><a href="#negatives" id="toc-negatives" class="nav-link" data-scroll-target="#negatives">Negative results, in one figure</a></li>
-  <li><a href="#why-everything-complex-lost-is-the-finding" id="toc-why-everything-complex-lost-is-the-finding" class="nav-link" data-scroll-target="#why-everything-complex-lost-is-the-finding">Why “everything complex lost” is the finding</a></li>
+  <li><a href="#negatives" id="toc-negatives" class="nav-link" data-scroll-target="#negatives">Negative results summary</a></li>
+  <li><a href="#why-complexity-reduces-the-score" id="toc-why-complexity-reduces-the-score" class="nav-link" data-scroll-target="#why-complexity-reduces-the-score">Why complexity reduces the score</a></li>
   </ul>
 </nav>
     </div>
@@ -367,7 +364,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Ablations &amp; Negative Results</h1>
-<p class="subtitle lead">Every complexity increase we tried — including the ones that lost</p>
+<p class="subtitle lead">Every complexity increase tested, including those that reduced the score</p>
 </div>
 
 
@@ -390,11 +387,11 @@ ul.task-list li input[type="checkbox"] {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>The thesis of this page
+<span class="screen-reader-only">Important</span>Summary
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>We log negative results honestly; we never quietly drop a model that did not help. The headline finding of the entire study is visible here in one sentence: <strong>almost every increase in model complexity lost.</strong> At 393 positives, the efficient, trivial choices — a small backbone, a rank-average combiner, intrinsic tabular features — are not just cheaper, they are also <em>more accurate</em>. That negative result is the contribution.</p>
+<p>Negative results are logged; no model that failed to help is dropped silently. Across the study, nearly every increase in model complexity reduced the score. At 393 positives, the efficient, trivial choices — a small backbone, a rank-average combiner, intrinsic tabular features — are both cheaper and more accurate. That negative result is the contribution.</p>
 </div>
 </div>
 <section id="tabular" class="level2">
@@ -402,7 +399,7 @@ ul.task-list li input[type="checkbox"] {
 <div id="fig-abl-tab" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-abl-tab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig3a_ablation_tabular.png" class="img-fluid figure-img">
+<img src="figures/perf_fig3a_ablation_tabular.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-abl-tab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.
@@ -451,14 +448,14 @@ Figure&nbsp;1: Tabular GBDT ablation: 0.099 → 0.118 → 0.144 → 0.169.
 </tr>
 </tbody>
 </table>
-<p><strong>Takeaways.</strong> The broken config scored barely above 5× random — a reminder that on extreme imbalance the <em>training setup</em> dominates the <em>model</em>. The <strong>patient-relative feature block (Step 2) is the single biggest jump (+0.026)</strong>, confirming the ugly-duckling thesis. Bagging + CatBoost (Step 3) adds another +0.025 from variance reduction across seeds and families.</p>
+<p>The broken config scored barely above 5× random: on extreme imbalance the training setup dominates the model. The patient-relative feature block (Step 2) is the single largest jump (+0.026), confirming the ugly-duckling thesis. Bagging plus CatBoost (Step 3) adds +0.025 from variance reduction across seeds and families.</p>
 </section>
 <section id="image" class="level2">
 <h2 class="anchored" data-anchor-id="image">Image expert — resolution &amp; regularizer</h2>
 <div id="fig-abl-img" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-abl-img-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig3b_ablation_image.png" class="img-fluid figure-img">
+<img src="figures/perf_fig3b_ablation_image.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-abl-img-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Image-expert ablation: the small backbone wins; heavy ones collapse.
@@ -487,38 +484,38 @@ Figure&nbsp;2: Image-expert ablation: the small backbone wins; heavy ones collap
 <tr class="even">
 <td><strong><code>convnextv2_nano</code> @224 + EMA0.995 + mixup</strong></td>
 <td style="text-align: right;"><strong>0.15821</strong></td>
-<td>best image — the sweet spot</td>
+<td>best image</td>
 </tr>
 <tr class="odd">
 <td>↳ same, EMA <strong>0.999</strong></td>
 <td style="text-align: right;">~0.146</td>
-<td><strong>HURT</strong> (over-smooths at ~23 steps/epoch)</td>
+<td>reduced (over-smooths at ~23 steps/epoch)</td>
 </tr>
 <tr class="even">
 <td><code>convnextv2_tiny</code> @224</td>
 <td style="text-align: right;">0.15824</td>
-<td>slightly <em>worse</em> than nano, ~2× the cost</td>
+<td>comparable to nano, ~2× the cost</td>
 </tr>
 <tr class="odd">
 <td><code>swinv2_tiny</code> @256</td>
 <td style="text-align: right;">0.10422</td>
-<td><strong>collapse</strong> — near random</td>
+<td>collapse — near random</td>
 </tr>
 <tr class="even">
 <td><code>eva02_small</code> @336</td>
 <td style="text-align: right;">0.09984</td>
-<td><strong>collapse</strong> — near random</td>
+<td>collapse — near random</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Takeaways.</strong> Resolution + light <strong>EMA(0.995)</strong> + mixup on the <strong>small</strong> nano backbone is the sweet spot. Stronger EMA (0.999) over-smooths because the undersampled epochs are tiny. Heavy transformers (Swin, EVA-02) <strong>collapse to near-random</strong> — textbook overfitting at 393 positives: more capacity, less signal. Even <code>convnextv2_tiny</code> (2× nano’s params) is <em>worse</em> than nano.</p>
+<p>Resolution plus light EMA(0.995) and mixup on the small nano backbone is the optimum. Stronger EMA (0.999) over-smooths because the undersampled epochs are short. Heavy transformers (Swin, EVA-02) collapse to near-random — overfitting at 393 positives. <code>convnextv2_tiny</code> (2× nano’s params) does not exceed nano.</p>
 </section>
 <section id="stack" class="level2">
 <h2 class="anchored" data-anchor-id="stack">Stack combiners</h2>
 <div id="fig-abl-stack" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-abl-stack-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig3c_ablation_stack.png" class="img-fluid figure-img">
+<img src="figures/perf_fig3c_ablation_stack.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-abl-stack-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Stack-combiner ablation: the trivial rank-average wins.
@@ -542,12 +539,12 @@ Figure&nbsp;3: Stack-combiner ablation: the trivial rank-average wins.
 <tr class="odd">
 <td><strong>rank-avg [GBDT, nano@224]</strong></td>
 <td style="text-align: right;"><strong>0.17376</strong></td>
-<td><strong>WINNER</strong></td>
+<td>winner</td>
 </tr>
 <tr class="even">
 <td>meta-LGBM stacker</td>
 <td style="text-align: right;">0.17108</td>
-<td>loses to trivial</td>
+<td>loses to rank-average</td>
 </tr>
 <tr class="odd">
 <td>rank [+ weak images]</td>
@@ -557,36 +554,36 @@ Figure&nbsp;3: Stack-combiner ablation: the trivial rank-average wins.
 <tr class="even">
 <td>learned per-lesion gate (MoE)</td>
 <td style="text-align: right;">0.15007</td>
-<td><strong>decisive loss</strong> — below tabular 0.16890</td>
+<td>loss — below tabular 0.16890</td>
 </tr>
 <tr class="odd">
 <td>+ PCA image embeddings into GBDT</td>
 <td style="text-align: right;">&lt; 0.17376</td>
-<td><strong>hurts</strong></td>
+<td>reduces</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Takeaways.</strong> The <strong>trivial 2-way rank-average wins outright.</strong> Every learned or heavier combiner loses, and the <strong>MoE gate even falls <em>below the tabular expert alone</em></strong> (0.150 &lt; 0.169). Adding weak images, or stuffing PCA embeddings into the GBDT, dilutes rather than helps.</p>
+<p>The trivial 2-way rank-average wins. Every learned or heavier combiner loses, and the MoE gate falls below the tabular expert alone (0.150 &lt; 0.169). Adding weak images, or PCA embeddings into the GBDT, dilutes.</p>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>A note on reconstructions.</strong> A recomputed rank-average over {GBDT + 4 image OOFs} scores 0.16917; the logged “rank [+ weak images]” run (0.16679) used a different weak-image set and is kept as the authoritative logged number. Either way the conclusion holds — adding weak images dilutes. This is the kind of detail we surface rather than smooth over.</p>
+<p><strong>Reconstruction note.</strong> A recomputed rank-average over {GBDT + 4 image OOFs} scores 0.16917; the logged “rank [+ weak images]” run (0.16679) used a different weak-image set and is kept as the authoritative logged number. The conclusion holds either way: adding weak images dilutes.</p>
 </div>
 </div>
 </div>
 </section>
 <section id="negatives" class="level2">
-<h2 class="anchored" data-anchor-id="negatives">Negative results, in one figure</h2>
+<h2 class="anchored" data-anchor-id="negatives">Negative results summary</h2>
 <div id="fig-neg" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-neg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/perf_fig6_negative_results.png" class="img-fluid figure-img">
+<img src="figures/perf_fig6_negative_results.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-neg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Every idea that lost, and what beat it.
+Figure&nbsp;4: Every idea that reduced the score, and what beat it.
 </figcaption>
 </figure>
 </div>
@@ -602,7 +599,7 @@ Figure&nbsp;4: Every idea that lost, and what beat it.
 <th>Idea tried</th>
 <th style="text-align: right;">Its pAUC</th>
 <th>Beaten by</th>
-<th>Honest finding</th>
+<th>Finding</th>
 </tr>
 </thead>
 <tbody>
@@ -610,19 +607,19 @@ Figure&nbsp;4: Every idea that lost, and what beat it.
 <td>Learned per-lesion gate (MoE)</td>
 <td style="text-align: right;">0.15007</td>
 <td>0.16890 (tabular)</td>
-<td><strong>loses to tabular alone</strong></td>
+<td>loses to tabular alone</td>
 </tr>
 <tr class="even">
 <td>Meta-LGBM stacker</td>
 <td style="text-align: right;">0.17108</td>
 <td>0.17376 (rank-avg)</td>
-<td>loses to trivial rank-avg</td>
+<td>loses to rank-average</td>
 </tr>
 <tr class="odd">
 <td>+ PCA image embeddings into GBDT</td>
 <td style="text-align: right;">&lt; 0.1738</td>
 <td>0.17376</td>
-<td>embeddings <strong>hurt</strong></td>
+<td>embeddings reduce</td>
 </tr>
 <tr class="even">
 <td>Heavy backbones (SwinV2 / EVA-02)</td>
@@ -634,14 +631,14 @@ Figure&nbsp;4: Every idea that lost, and what beat it.
 <td>EMA 0.999 (over-smoothing)</td>
 <td style="text-align: right;">~0.146</td>
 <td>0.15821 (EMA0.995)</td>
-<td>stronger EMA hurts</td>
+<td>stronger EMA reduces</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="why-everything-complex-lost-is-the-finding" class="level2">
-<h2 class="anchored" data-anchor-id="why-everything-complex-lost-is-the-finding">Why “everything complex lost” is the finding</h2>
-<p>There is a structural reason every learned add-on failed: each one must estimate its parameters from the <strong>same 393 positives</strong> the base experts already consumed. A rank-average has <strong>zero parameters</strong>, so it cannot overfit the validation folds; a meta-learner, a gate, or extra embedding dimensions all have parameters to fit and not enough fresh positive signal to fit them well. The result generalizes a classical lesson to the extreme-imbalance regime: <strong>when positives are scarce, model selection should bias hard toward zero-parameter fusion and small backbones.</strong> That is the defensible, reusable claim this study contributes — and it is <em>also</em> the cheapest option, which is why it sits on the efficiency frontier.</p>
+<section id="why-complexity-reduces-the-score" class="level2">
+<h2 class="anchored" data-anchor-id="why-complexity-reduces-the-score">Why complexity reduces the score</h2>
+<p>Each learned add-on must estimate its parameters from the same 393 positives the base experts already consumed. A rank-average has zero parameters and cannot overfit the validation folds; a meta-learner, a gate, or extra embedding dimensions all have parameters to fit and insufficient fresh positive signal to fit them well. The result extends a classical lesson to the extreme-imbalance regime: when positives are scarce, model selection should bias toward zero-parameter fusion and small backbones. That choice is also the cheapest, which places it on the efficiency frontier.</p>
 <hr>
 <p><em>Continue to <a href="./reproducibility.html">Reproducibility →</a></em></p>
 

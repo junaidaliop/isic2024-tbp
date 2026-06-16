@@ -1,0 +1,36 @@
+<table class="acad-table">
+  <caption>Table 3. Honest comparison to top Kaggle solutions (champion private-LB pAUC; ours is leak-audited cross-validation).</caption>
+  <thead><tr>
+    <th>Solution</th>
+    <th>External data?</th>
+    <th>Synthetic data?</th>
+    <th class="num">pAUC</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>1st — Ilya Novoselskiy (EVA-02 + EdgeNeXt + GBDT)</td>
+      <td>Yes</td>
+      <td>Yes (~30k)</td>
+      <td class="num">0.17264</td>
+    </tr>
+    <tr>
+      <td>2nd — uchiyama33 (image + tabular ensemble)</td>
+      <td>Yes</td>
+      <td>Yes</td>
+      <td class="num">—</td>
+    </tr>
+    <tr>
+      <td>3rd — kyohei-123 (image + tabular blend)</td>
+      <td>Yes</td>
+      <td>Yes</td>
+      <td class="num">—</td>
+    </tr>
+    <tr class="highlight">
+      <td>Ours (single-dataset, no external, no synthetic)</td>
+      <td>No</td>
+      <td>No</td>
+      <td class="num">CV 0.17376</td>
+    </tr>
+  </tbody>
+</table>
+<p class="note">Champions used external ISIC-archive dermoscopy and synthetic positives, both banned here; their own ablation reports the ~30k synthetic lesions added only +0.0007 pAUC. Ours is an out-of-fold CV number, not private LB.</p>

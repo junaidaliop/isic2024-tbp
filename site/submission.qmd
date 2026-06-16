@@ -1,44 +1,43 @@
 ---
 title: "Submission & Leaderboard"
-subtitle: "What a Kaggle CODE competition actually lets you submit, what we produced, and where our constrained score sits"
+subtitle: "What a Kaggle CODE competition submits, what was produced, and where the constrained score sits"
 pagetitle: "Submission & Leaderboard · ISIC-2024 SLICE-3D"
 toc: true
 ---
 
 ::: {.lead}
-ISIC-2024 was a **Kaggle *CODE* competition**: you do not upload a CSV of predictions — you
-submit a **notebook** that Kaggle re-runs on a **hidden test set**. The public test that shipped
-with the data is a **3-row placeholder**, so a true private score **cannot be computed locally**.
-This page lays that out honestly: what we *can* produce today, what the CV implies, and the exact
-path to a real late-submission score.
+ISIC-2024 was a Kaggle CODE competition: submission is a notebook that Kaggle re-runs on a hidden
+test set, not a CSV of predictions. The public test shipped with the data is a 3-row placeholder,
+so a private score cannot be computed locally. This page states what can be produced today, what
+the CV implies, and the path to a real late-submission score.
 :::
 
-## How scoring actually works {#how-scoring-works}
+## How scoring works {#how-scoring-works}
 
 ::: {.callout-important icon=false}
 ## A CODE competition scores a notebook, not a file
-- You attach a **notebook** to the competition. On submit, Kaggle executes it against the **hidden
-  test set** (the real evaluation images), and scores the `submission.csv` it writes.
-- The `test-image.hdf5` and `test-metadata.csv` shipped in the data bundle are a **3-row
-  placeholder** — just enough to let your notebook run end-to-end without crashing.
-- Therefore **no honest private pAUC can be produced offline.** Anyone reporting a "private score"
-  computed on their own machine is reporting a number off three rows. We do not.
+- A notebook is attached to the competition. On submit, Kaggle executes it against the hidden test
+  set (the real evaluation images) and scores the `submission.csv` it writes.
+- The `test-image.hdf5` and `test-metadata.csv` shipped in the data bundle are a 3-row placeholder,
+  sufficient only to let the notebook run end-to-end.
+- No private pAUC can be produced offline; a private score computed locally would be a number off
+  three rows.
 :::
 
-The placeholder we hold on disk, verified directly:
+The placeholder held on disk, verified directly:
 
-| Artifact | What ships locally | Reality on Kaggle |
+| Artifact | Local | On Kaggle |
 |---|---|---|
-| `data/test-image.hdf5` | **≈ 11 KB**, **3 images** (`ISIC_0015657`, `ISIC_0015729`, `ISIC_0015740`) | tens of thousands of hidden crops |
-| `data/test-metadata.csv` | **3 rows** (header + 3) | the full hidden cohort's metadata |
+| `data/test-image.hdf5` | ≈ 11 KB, 3 images (`ISIC_0015657`, `ISIC_0015729`, `ISIC_0015740`) | tens of thousands of hidden crops |
+| `data/test-metadata.csv` | 3 rows (header + 3) | the full hidden cohort's metadata |
 | `data/sample_submission.csv` | 3 rows, constant `target = 0.3` | format template only |
 
-So the only thing a local run *can* prove is that the **inference pipeline is wired correctly and
-emits a format-valid file** — which is exactly what we did.
+A local run can therefore only confirm that the inference pipeline is wired correctly and emits a
+format-valid file.
 
-## What we produced today {#what-we-produced}
+## What was produced {#what-we-produced}
 
-We generated a **format-valid `submission.csv`** from the saved **bagged GBDT** — **50 boosters**
+A format-valid `submission.csv` was generated from the saved bagged GBDT — 50 boosters
 (5 folds × 5 LightGBM seeds + 5 CatBoost seeds, persisted in
 `experiments/gbdt_boosters.joblib`) — via a single command:
 
@@ -46,9 +45,9 @@ We generated a **format-valid `submission.csv`** from the saved **bagged GBDT** 
 python -m src.submit          # GBDT-only; reads experiments/gbdt_boosters.joblib
 ```
 
-Inference mirrors the leak-free training transform exactly: every booster carries its own
-**per-fold feature state**, `predict_gbdt` re-applies that state before predicting, and the
-per-fold scores are averaged. The output is the required **two-column schema**:
+Inference mirrors the leak-free training transform: every booster carries its own per-fold feature
+state, `predict_gbdt` re-applies that state before predicting, and the per-fold scores are
+averaged. The output is the required two-column schema:
 
 ```text
 isic_id,target
@@ -63,18 +62,17 @@ ISIC_0015740,0.22540...
 | `target` | float | predicted malignancy score (rank-comparable; pAUC is rank-based, so calibration is irrelevant) |
 
 ::: {.callout-note appearance="simple"}
-**What this validates — and what it does not.** Running `python -m src.submit` on the 3-row
-placeholder confirms the **inference path end-to-end**: boosters load, the fold-local feature
-transform replays without leakage, and the writer emits a valid 2-column file. It does **not**
-produce a real score — that requires Kaggle to run this on the hidden test (a **late submission**,
-since the competition is closed).
+**Scope of the validation.** Running `python -m src.submit` on the 3-row placeholder confirms the
+inference path end-to-end: boosters load, the fold-local feature transform replays without leakage,
+and the writer emits a valid 2-column file. It does not produce a real score, which requires Kaggle
+to run the notebook on the hidden test (a late submission, since the competition is closed).
 :::
 
 ## Estimated private position (from CV) {#estimated-position}
 
-Because we cannot score the hidden set offline, we project from our **out-of-fold CV**, which —
-having never seen out-of-distribution data — is an unusually honest generalization estimate. The
-field's observed **CV → private drop** on this task was roughly **0.013–0.021**.
+Because the hidden set cannot be scored offline, the projection is from the out-of-fold CV, which —
+having seen no out-of-distribution data — is a conservative generalization estimate. The field's
+observed CV → private drop on this task was roughly 0.013–0.021.
 
 ::: {.callout-tip icon=false}
 ## CV → estimated private
@@ -87,8 +85,8 @@ field's observed **CV → private drop** on this task was roughly **0.013–0.02
 | Estimated private (tabular-only, ready today) | **≈ 0.148 – 0.156** | 0.1689 − drop |
 :::
 
-We report a **range, not a rank** — fold variance (~±0.008 std) and the unknown shake-up make any
-single claimed position dishonest. The range itself is the claim.
+A range is reported, not a rank: fold variance (~±0.008 std) and the unknown shake-up make any
+single claimed position unreliable.
 
 ## Leaderboard context (~2,700 teams) {#leaderboard-context}
 
@@ -96,18 +94,17 @@ single claimed position dishonest. The range itself is the claim.
 ::: {.g-col-12 .g-col-md-6}
 ::: {.callout-note appearance="simple"}
 ## The unconstrained ceiling
-**1st place — private pAUC 0.17264.** Used **external ISIC-archive dermoscopy data** *and*
-**≈ 30,000 Stable-Diffusion-synthesized malignant lesions** — **both banned** in this study.
-Their own ablation: the **30k synthetic lesions added only +0.0007 pAUC**. Fabricating positives
-bought almost nothing on a 393-positive task.
+**1st place — private pAUC 0.17264.** Used external ISIC-archive dermoscopy data and ~30,000
+Stable-Diffusion-synthesized malignant lesions, both banned here. Their own ablation: the 30k
+synthetic lesions added only +0.0007 pAUC.
 :::
 :::
 ::: {.g-col-12 .g-col-md-6}
 ::: {.callout-note appearance="simple"}
 ## The constrained ceiling
-Best **no-external-data** solutions sat around **0.16 private**; a clean **tabular-only** team
-reached **0.162**. That is the bracket our work actually competes in — and our estimated private
-**≈ 0.155–0.165** lands squarely inside it.
+Best no-external-data solutions sat around 0.16 private; a clean tabular-only team reached 0.162.
+This is the bracket the present work competes in, and the estimated private ≈ 0.155–0.165 lands
+inside it.
 :::
 :::
 :::
@@ -122,38 +119,34 @@ reached **0.162**. That is the bracket our work actually competes in — and our
 
 ::: {.callout-important}
 ## The claim, restated
-Our estimated private **≈ 0.155–0.165** is **competitive silver/gold-zone** and **SOTA-class among
-no-external / no-synthetic / single-dataset solutions** — which is precisely the class our hard
-rules define. We do **not** claim to beat the unconstrained 0.17264; that used the two ingredients
-we banned, and matching it is impossible by construction. See
-[Scope honesty](index.qmd#scope-honesty).
+The estimated private ≈ 0.155–0.165 is competitive in the silver/gold zone and SOTA-class among
+no-external / no-synthetic / single-dataset solutions, the class the hard rules define. The
+unconstrained 0.17264 used the two banned ingredients and is impossible to match by construction.
+See [Scope](index.qmd#scope-honesty).
 :::
 
-## Honest caveat: stack vs. tabular submission {#honest-caveat}
+## Stack vs. tabular submission {#honest-caveat}
 
-The **tabular GBDT submission is ready today**. The **full stack** submission is not — and we say
-why plainly.
+The tabular GBDT submission is ready today; the full stack submission is not.
 
 ::: {.callout-warning}
-## What the stack needs that we do not yet persist
-A stack submission must run **image inference on the hidden test set**, which requires the
-**trained per-fold image checkpoints**. We persisted the image expert's **OOF probabilities and
-embeddings** (enough to *score and ablate* the stack on CV), but **not the per-fold model
-weights**. So:
+## What the stack requires that is not yet persisted
+A stack submission must run image inference on the hidden test set, which requires the trained
+per-fold image checkpoints. The image expert's OOF probabilities and embeddings are persisted
+(enough to score and ablate the stack on CV), but the per-fold model weights are not. Therefore:
 
-- **Ready now:** GBDT-only `submission.csv` (`python -m src.submit`) — validates the full
-  inference path on the placeholder.
-- **Documented next step:** a stack notebook that loads saved image checkpoints, scores the hidden
-  test, and rank-blends with the GBDT. `src/submit.py` already exposes the hook
-  (`--image-scores ... --image-weight ...`); it is intentionally **unwired** rather than
-  fabricating image predictions until the checkpoints exist.
+- **Ready now:** GBDT-only `submission.csv` (`python -m src.submit`), validating the full inference
+  path on the placeholder.
+- **Next step:** a stack notebook that loads saved image checkpoints, scores the hidden test, and
+  rank-blends with the GBDT. `src/submit.py` exposes the hook (`--image-scores ... --image-weight
+  ...`); it is left unwired rather than fabricating image predictions until the checkpoints exist.
 :::
 
 ### The late-submission path {#late-submission-path}
 
 ```{mermaid}
 %%| label: fig-late-sub
-%%| fig-cap: "The documented path to a real private score via a Kaggle late submission. Steps 1–3 are done today (GBDT-only); the dashed image branch is the persisted next step."
+%%| fig-cap: "The path to a real private score via a Kaggle late submission. Steps 1–3 are done today (GBDT-only); the dashed image branch is the next step."
 flowchart LR
     A["Trained models<br/>GBDT boosters (done)<br/>+ per-fold image ckpts (next)"] --> B
     B["Upload as a<br/>Kaggle Dataset"] --> C
@@ -165,20 +158,19 @@ flowchart LR
     style E fill:#1e8449,color:#fff
 ```
 
-Concretely, to obtain a genuine private score:
+To obtain a genuine private score:
 
 1. **Train + persist per-fold image checkpoints** (`src/vision/train.py`) — the only missing
    artifact; OOF probs/embeddings already exist.
-2. **Upload the trained models** (GBDT joblib + image checkpoints) as a **private Kaggle dataset**.
-3. **Author an inference notebook** that attaches the competition data + the model dataset, runs
+2. **Upload the trained models** (GBDT joblib + image checkpoints) as a private Kaggle dataset.
+3. **Author an inference notebook** that attaches the competition data plus the model dataset, runs
    `predict_test(...)` with `--image-scores`, and writes the 2-column `submission.csv`.
-4. **Submit it as a late submission** — Kaggle runs it on the hidden test and returns the real
-   private pAUC, which we expect to land in the **0.155–0.165** band projected above.
+4. **Submit as a late submission** — Kaggle runs it on the hidden test and returns the private
+   pAUC, projected to land in the 0.155–0.165 band.
 
 ::: {.callout-note appearance="simple"}
 The tabular-only path (steps 2–4 without the image branch) is runnable immediately and is the
-honest, ready-today deliverable; the stack path is a clean, fully-specified follow-up rather than
-a hidden gap.
+ready-today deliverable; the stack path is a fully-specified follow-up.
 :::
 
 ---

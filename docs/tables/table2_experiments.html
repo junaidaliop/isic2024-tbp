@@ -1,0 +1,102 @@
+<table class="acad-table">
+  <caption>Table 2. Quality–efficiency frontier across all experiments (out-of-fold pAUC; single-thread CPU cost).</caption>
+  <thead><tr>
+    <th>Model</th>
+    <th class="num">OOF pAUC@80%TPR</th>
+    <th class="num">Params (M)</th>
+    <th class="num">GFLOPs</th>
+    <th class="num">CPU latency (ms)</th>
+    <th>Pareto-optimal</th>
+  </tr></thead>
+  <tbody>
+    <tr class="highlight">
+      <td>Stack (rank-avg: GBDT + nano&#64;224)</td>
+      <td class="num">0.17376</td>
+      <td class="num">15.84</td>
+      <td class="num">2.4550</td>
+      <td class="num">60.91</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>Stack (GBDT + 3 images + ugly-duckling)</td>
+      <td class="num">0.17117</td>
+      <td class="num">23.84</td>
+      <td class="num">1.2200</td>
+      <td class="num">32.86</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>Tabular GBDT (LightGBM + CatBoost)</td>
+      <td class="num">0.16890</td>
+      <td class="num">0.86</td>
+      <td class="num">0.0000</td>
+      <td class="num">0.02</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>ConvNeXtV2-tiny &#64;224</td>
+      <td class="num">0.15824</td>
+      <td class="num">27.87</td>
+      <td class="num">4.4697</td>
+      <td class="num">104.14</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>ConvNeXtV2-nano &#64;224</td>
+      <td class="num">0.15821</td>
+      <td class="num">14.98</td>
+      <td class="num">2.4550</td>
+      <td class="num">60.89</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>ConvNeXtV2-nano &#64;128</td>
+      <td class="num">0.15311</td>
+      <td class="num">14.98</td>
+      <td class="num">0.8016</td>
+      <td class="num">21.61</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>EfficientViT-b0 &#64;128</td>
+      <td class="num">0.13706</td>
+      <td class="num">2.13</td>
+      <td class="num">0.0345</td>
+      <td class="num">3.45</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>ViT-tiny &#64;128</td>
+      <td class="num">0.13654</td>
+      <td class="num">5.50</td>
+      <td class="num">0.3560</td>
+      <td class="num">8.17</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>MobileNetV4-small &#64;128</td>
+      <td class="num">0.11242</td>
+      <td class="num">2.49</td>
+      <td class="num">0.0624</td>
+      <td class="num">3.06</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>SwinV2-tiny &#64;256</td>
+      <td class="num">0.10422</td>
+      <td class="num">27.58</td>
+      <td class="num">5.9615</td>
+      <td class="num">138.07</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>EVA-02-small &#64;336</td>
+      <td class="num">0.09984</td>
+      <td class="num">21.74</td>
+      <td class="num">12.4085</td>
+      <td class="num">249.18</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
+<p class="note">CPU latency is single-thread, one image; GBDT GFLOPs reported as 0.0 (tree ensemble, not FLOP-comparable). Pareto-optimal on the pAUC-vs-latency axis.</p>

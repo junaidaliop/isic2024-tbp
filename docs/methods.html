@@ -109,11 +109,12 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="figures/site.css">
+<link rel="stylesheet" href="tables/tables.css">
 <meta property="og:title" content="Methods – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta property="og:description" content="From the most basic to the most complex — the metric, the CV spine, the features, the GBDT, the image experts, and the stack">
+<meta property="og:description" content="The metric, the CV spine, the features, the GBDT, the image experts, and the stack">
 <meta property="og:site_name" content="ISIC-2024 SLICE-3D · Pakistan.AI">
 <meta name="twitter:title" content="Methods – ISIC-2024 SLICE-3D · Pakistan.AI">
-<meta name="twitter:description" content="From the most basic to the most complex — the metric, the CV spine, the features, the GBDT, the image experts, and the stack">
+<meta name="twitter:description" content="The metric, the CV spine, the features, the GBDT, the image experts, and the stack">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -377,22 +378,25 @@ window.Quarto = {
   <ul>
   <li><a href="#the-metric" id="toc-the-metric" class="nav-link active" data-scroll-target="#the-metric">The metric: partial AUC above 80% TPR</a>
   <ul class="collapse">
-  <li><a href="#why-not-accuracy-and-why-not-plain-auc" id="toc-why-not-accuracy-and-why-not-plain-auc" class="nav-link" data-scroll-target="#why-not-accuracy-and-why-not-plain-auc">Why not accuracy, and why not plain AUC?</a></li>
-  <li><a href="#the-definition" id="toc-the-definition" class="nav-link" data-scroll-target="#the-definition">The definition</a></li>
-  <li><a href="#two-pitfalls-we-pinned-down-up-front" id="toc-two-pitfalls-we-pinned-down-up-front" class="nav-link" data-scroll-target="#two-pitfalls-we-pinned-down-up-front">Two pitfalls we pinned down up front</a></li>
+  <li><a href="#why-not-accuracy-or-plain-auc" id="toc-why-not-accuracy-or-plain-auc" class="nav-link" data-scroll-target="#why-not-accuracy-or-plain-auc">Why not accuracy or plain AUC</a></li>
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
+  <li><a href="#two-pinned-conventions" id="toc-two-pinned-conventions" class="nav-link" data-scroll-target="#two-pinned-conventions">Two pinned conventions</a></li>
   </ul></li>
-  <li><a href="#cv-spine" id="toc-cv-spine" class="nav-link" data-scroll-target="#cv-spine">The CV spine: the whole game</a></li>
-  <li><a href="#tabular-fe" id="toc-tabular-fe" class="nav-link" data-scroll-target="#tabular-fe">Tabular feature engineering</a></li>
+  <li><a href="#cv-spine" id="toc-cv-spine" class="nav-link" data-scroll-target="#cv-spine">The CV spine</a></li>
+  <li><a href="#tabular-fe" id="toc-tabular-fe" class="nav-link" data-scroll-target="#tabular-fe">Tabular feature engineering</a>
+  <ul class="collapse">
+  <li><a href="#how-the-tabular-metadata-predicts-the-class" id="toc-how-the-tabular-metadata-predicts-the-class" class="nav-link" data-scroll-target="#how-the-tabular-metadata-predicts-the-class">How the tabular metadata predicts the class</a></li>
+  </ul></li>
   <li><a href="#gbdt" id="toc-gbdt" class="nav-link" data-scroll-target="#gbdt">The GBDT expert</a>
   <ul class="collapse">
-  <li><a href="#the-underfit-bug-and-the-fix" id="toc-the-underfit-bug-and-the-fix" class="nav-link" data-scroll-target="#the-underfit-bug-and-the-fix">The underfit bug (and the fix)</a></li>
-  <li><a href="#the-production-recipe" id="toc-the-production-recipe" class="nav-link" data-scroll-target="#the-production-recipe">The production recipe</a></li>
+  <li><a href="#the-underfit-bug-and-the-fix" id="toc-the-underfit-bug-and-the-fix" class="nav-link" data-scroll-target="#the-underfit-bug-and-the-fix">The underfit bug and the fix</a></li>
+  <li><a href="#production-recipe" id="toc-production-recipe" class="nav-link" data-scroll-target="#production-recipe">Production recipe</a></li>
   </ul></li>
   <li><a href="#image-experts" id="toc-image-experts" class="nav-link" data-scroll-target="#image-experts">The image experts</a>
   <ul class="collapse">
-  <li><a href="#the-recipe-shared-across-backbones" id="toc-the-recipe-shared-across-backbones" class="nav-link" data-scroll-target="#the-recipe-shared-across-backbones">The recipe (shared across backbones)</a></li>
+  <li><a href="#recipe-shared-across-backbones" id="toc-recipe-shared-across-backbones" class="nav-link" data-scroll-target="#recipe-shared-across-backbones">Recipe (shared across backbones)</a></li>
   <li><a href="#the-12-backbone-frontier-sweep" id="toc-the-12-backbone-frontier-sweep" class="nav-link" data-scroll-target="#the-12-backbone-frontier-sweep">The 12-backbone frontier sweep</a></li>
-  <li><a href="#self-supervised-pretraining-the-principled-one-up-future-work" id="toc-self-supervised-pretraining-the-principled-one-up-future-work" class="nav-link" data-scroll-target="#self-supervised-pretraining-the-principled-one-up-future-work">Self-supervised pretraining — the principled “one-up” (future work)</a></li>
+  <li><a href="#self-supervised-pretraining-future-work" id="toc-self-supervised-pretraining-future-work" class="nav-link" data-scroll-target="#self-supervised-pretraining-future-work">Self-supervised pretraining (future work)</a></li>
   </ul></li>
   <li><a href="#stack" id="toc-stack" class="nav-link" data-scroll-target="#stack">The stack (combiner)</a></li>
   <li><a href="#efficiency-as-a-first-class-axis" id="toc-efficiency-as-a-first-class-axis" class="nav-link" data-scroll-target="#efficiency-as-a-first-class-axis">Efficiency as a first-class axis</a></li>
@@ -406,7 +410,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Methods</h1>
-<p class="subtitle lead">From the most basic to the most complex — the metric, the CV spine, the features, the GBDT, the image experts, and the stack</p>
+<p class="subtitle lead">The metric, the CV spine, the features, the GBDT, the image experts, and the stack</p>
 </div>
 
 
@@ -423,58 +427,55 @@ window.Quarto = {
 </header>
 
 
-<p>This page is deliberately verbose and bottom-up. We start with the single most important and most misunderstood thing — the metric — and build up to the full hybrid pipeline.</p>
+<p>The pipeline is presented bottom-up: the metric, then the cross-validation spine, the tabular features, the GBDT expert, the image experts, and the combiner.</p>
 <section id="the-metric" class="level2">
 <h2 class="anchored" data-anchor-id="the-metric">The metric: partial AUC above 80% TPR</h2>
-<section id="why-not-accuracy-and-why-not-plain-auc" class="level3">
-<h3 class="anchored" data-anchor-id="why-not-accuracy-and-why-not-plain-auc">Why not accuracy, and why not plain AUC?</h3>
-<p>At 0.098% prevalence, <strong>accuracy is meaningless</strong> (predict “benign” always → 99.9% accurate, zero malignant caught). Plain <strong>ROC-AUC</strong> is better — it is threshold-free and prevalence-robust — but it averages performance over <em>all</em> operating points, including useless low-sensitivity ones. A clinical triage tool only matters where it <strong>catches almost every cancer</strong>: the high-sensitivity tail.</p>
+<section id="why-not-accuracy-or-plain-auc" class="level3">
+<h3 class="anchored" data-anchor-id="why-not-accuracy-or-plain-auc">Why not accuracy or plain AUC</h3>
+<p>At 0.098% prevalence, accuracy is uninformative: a constant “benign” predictor scores 99.9% and catches zero malignancies. Plain ROC-AUC is threshold-free and prevalence-robust but averages over all operating points, including low-sensitivity ones irrelevant to clinical triage, where only the high-sensitivity tail matters.</p>
 </section>
-<section id="the-definition" class="level3">
-<h3 class="anchored" data-anchor-id="the-definition">The definition</h3>
-<p>The official ISIC-2024 metric is the <strong>partial area under the ROC curve, restricted to the region where the true-positive rate (sensitivity) is at least 80%</strong>:</p>
+<section id="definition" class="level3">
+<h3 class="anchored" data-anchor-id="definition">Definition</h3>
+<p>The official ISIC-2024 metric is the partial area under the ROC curve restricted to the region where the true-positive rate (sensitivity) is at least 80%:</p>
 <p><span class="math display">\[
 \text{pAUC}_{80} \;=\; \int_{\text{TPR}=0.80}^{1.0} \text{TPR}\; d(\text{FPR})
 \]</span></p>
-<p>Equivalently: integrate the ROC curve only over the band TPR ∈ [0.80, 1.0] (FPR ≤ 0.20), then report the area in <strong>TPR-units × FPR-units</strong>. Because the band is 0.20 tall, the score is bounded in <strong><code>[0, 0.20]</code></strong>:</p>
+<p>The ROC is integrated over the band TPR ∈ [0.80, 1.0] (FPR ≤ 0.20) and reported in TPR-units × FPR-units. Because the band is 0.20 tall, the score is bounded in <strong><code>[0, 0.20]</code></strong>:</p>
 <ul>
-<li><strong>random</strong> classifier ≈ <strong>0.02</strong>,</li>
-<li><strong>perfect</strong> classifier = <strong>0.20</strong>.</li>
+<li>random classifier ≈ <strong>0.02</strong>,</li>
+<li>perfect classifier = <strong>0.20</strong>.</li>
 </ul>
-<p>A move from 0.169 → 0.174 is therefore a <strong>+2.9% relative</strong> gain on a small absolute scale — small absolute moves are large relative moves, and we phrase improvements that way throughout.</p>
+<p>A move from 0.169 → 0.174 is a +2.9% relative gain; improvements are stated in relative terms throughout.</p>
 </section>
-<section id="two-pitfalls-we-pinned-down-up-front" class="level3">
-<h3 class="anchored" data-anchor-id="two-pitfalls-we-pinned-down-up-front">Two pitfalls we pinned down up front</h3>
+<section id="two-pinned-conventions" class="level3">
+<h3 class="anchored" data-anchor-id="two-pinned-conventions">Two pinned conventions</h3>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>The 80% vs 88% trap
+<span class="screen-reader-only">Warning</span>80% vs 88% TPR
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The public ISIC metrics repository’s README mentions a <strong>88% TPR</strong> threshold (which would bound the score in <code>[0, 0.12]</code>), but the <strong>live competition used 80%</strong>. Mixing the two makes any number incomparable. We <strong>pin 80%</strong> for every leaderboard-comparable claim, and our scorer is hard-coded to it.</p>
+<p>The public ISIC metrics repository README mentions an 88% TPR threshold (which bounds the score in <code>[0, 0.12]</code>), but the live competition used 80%. Mixing the two makes numbers incomparable. This study pins 80% for every leaderboard-comparable claim, and the scorer is hard-coded to it.</p>
 </div>
 </div>
-<p>We do not re-implement the metric loosely. <code>src/cv.py:pauc_above_tpr</code> is the <strong>only</strong> function allowed to compute it, and it is proven <strong>numerically identical</strong> to the vendored official scorer (<code>src/metric_official.py</code>, © 2024 N. R. Kurtansky, MSKCC) by a unit test (<code>tests/test_cv.py</code>, part of the 9/9 passing suite).</p>
+<p><code>src/cv.py:pauc_above_tpr</code> is the only function permitted to compute the metric. It is proven numerically identical to the vendored official scorer (<code>src/metric_official.py</code>, © 2024 N. R. Kurtansky, MSKCC) by a unit test (<code>tests/test_cv.py</code>, part of the 9/9 passing suite).</p>
 </section>
 </section>
 <section id="cv-spine" class="level2">
-<h2 class="anchored" data-anchor-id="cv-spine">The CV spine: the whole game</h2>
-<p>In ISIC-2024, <strong>leaky cross-validation sent teams ~200 places down</strong> on the private split. Validation is not a step here — it is the spine everything hangs on.</p>
+<h2 class="anchored" data-anchor-id="cv-spine">The CV spine</h2>
+<p>Leaky cross-validation moved teams ~200 places on the private split in ISIC-2024. Validation is the foundation of every reported number.</p>
 <ul>
-<li><strong>Patient-grouped, target-stratified folds.</strong> We use <code>StratifiedGroupKFold</code> (5 folds, SEED =
-<ol start="42" type="1">
-<li>with the <strong>patient</strong> as the group and the <strong>malignant label</strong> as the stratification target.</li>
-</ol>
+<li><strong>Patient-grouped, target-stratified folds.</strong> <code>StratifiedGroupKFold</code> (5 folds, SEED = 42) with the patient as the group and the malignant label as the stratification target.
 <ul>
-<li><em>Grouped</em> → <strong>no patient straddles folds</strong> (a patient’s lesions are correlated; a single straddling patient leaks).</li>
+<li><em>Grouped</em> → no patient straddles folds; a patient’s lesions are correlated, so a single straddling patient leaks.</li>
 <li><em>Stratified</em> → each fold holds 77–83 of the 393 positives, so no fold is starved of signal.</li>
 </ul></li>
-<li><strong>Frozen once.</strong> The split is written to <code>data/folds.parquet</code> and read, <strong>unchanged</strong>, by every expert and by the stack. There is exactly one split in the entire project.</li>
-<li><strong>Hard no-leak guarantee + veto.</strong> The <code>cv-guardian</code> agent has <strong>veto power</strong> over anything touching the split or the metric: if a change would leak patients across folds, recompute the metric independently, or compare models on mismatched splits, it must block. This is the anti-shakeup discipline that makes our OOF number trustworthy.</li>
+<li><strong>Frozen once.</strong> The split is written to <code>data/folds.parquet</code> and read unchanged by every expert and by the stack. There is exactly one split in the project.</li>
+<li><strong>No-leak guarantee and veto.</strong> The <code>cv-guardian</code> agent holds veto power over any change to the split or the metric; a change that would leak patients across folds, recompute the metric independently, or compare models on mismatched splits is blocked.</li>
 </ul>
 <div class="callout callout-style-simple callout-tip">
 <div class="callout-body d-flex">
@@ -482,28 +483,31 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>Out-of-fold (OOF) predictions.</strong> For each fold we train on the other four and predict on the held-out fold; concatenating the five held-out predictions gives one prediction per row, none of which ever saw its own row in training. We score pAUC <strong>once</strong> on this full OOF vector. Because pAUC is non-additive across folds, the full-OOF number (0.17376) differs trivially from the mean of per-fold pAUCs (0.17487) — both are reported.</p>
+<p><strong>Out-of-fold (OOF) predictions.</strong> For each fold, the model trains on the other four and predicts on the held-out fold; concatenating the five held-out predictions gives one prediction per row, none of which saw its own row in training. pAUC is scored once on this full OOF vector. Because pAUC is non-additive across folds, the full-OOF number (0.17376) differs slightly from the mean of per-fold pAUCs (0.17487); both are reported.</p>
 </div>
 </div>
 </div>
 </section>
 <section id="tabular-fe" class="level2">
 <h2 class="anchored" data-anchor-id="tabular-fe">Tabular feature engineering</h2>
-<p>The predictive signal lives largely in the <strong>tabular metadata</strong>. <code>src/features.py</code> builds, from ISIC-2024 columns only (no external data, every feature leak-checked):</p>
+<p>The predictive signal lives largely in the tabular metadata. <code>src/features.py</code> builds, from ISIC-2024 columns only (no external data, each feature leak-checked):</p>
 <ul>
-<li><strong>Geometry &amp; size ratios</strong> — normalized lesion size, perimeter, area, eccentricity, axis ratios, border composites; raw size is strong, ratios make it scale-robust.</li>
+<li><strong>Geometry &amp; size ratios</strong> — normalized lesion size, perimeter, area, eccentricity, axis ratios, border composites; ratios make raw size scale-robust.</li>
 <li><strong>Color / hue / luminance contrasts</strong> — <code>tbp_lv_H</code> (hue angle), lesion-vs-skin contrast, color uniformity, ΔA/ΔB color deltas. Hue alone reaches univariate AUC 0.81.</li>
 <li><strong>Border &amp; shape composites</strong> — irregularity and asymmetry combinations.</li>
-<li><strong>3D position</strong> — the lesion’s location on the body surface (TBP gives true 3D coordinates).</li>
-<li><strong>Patient-relative “ugly-duckling” deviations — the decisive block.</strong> For each lesion and each base feature, how anomalous is it <em>relative to the same patient’s other lesions</em>?
+<li><strong>3D position</strong> — the lesion’s location on the body surface (TBP provides true 3D coordinates).</li>
+<li><strong>Patient-relative “ugly-duckling” deviations</strong> — for each lesion and each base feature, how anomalous it is relative to the same patient’s other lesions:
 <ul>
-<li><code>pdev_*</code> — deviation (signed/standardized distance from the patient’s own mean),</li>
+<li><code>pdev_*</code> — signed/standardized distance from the patient’s own mean,</li>
 <li><code>prank_*</code> — within-patient percentile rank,</li>
 <li><code>pxc_*</code> — patient × category interactions (e.g.&nbsp;hue × body location).</li>
-<li>These encode the clinical “ugly-duckling sign” directly. They turn out to be <strong>~65% of total GBDT gain</strong> (see <a href="./results.html">Results</a> and <a href="./ablations.html">Ablations</a>).</li>
-</ul></li>
-<li><strong>Per-fold smoothed target encoding</strong> — for high-cardinality categoricals (e.g.&nbsp;location), computed <strong>inside each fold’s training data only</strong> and applied to the held-out fold, with smoothing toward the global mean.</li>
 </ul>
+These encode the clinical ugly-duckling sign directly and account for ~65% of total GBDT gain (see <a href="./results.html">Results</a> and <a href="./ablations.html">Ablations</a>).</li>
+<li><strong>Per-fold smoothed target encoding</strong> — for high-cardinality categoricals (e.g.&nbsp;location), computed inside each fold’s training data only and applied to the held-out fold, smoothed toward the global mean.</li>
+</ul>
+<section id="how-the-tabular-metadata-predicts-the-class" class="level3">
+<h3 class="anchored" data-anchor-id="how-the-tabular-metadata-predicts-the-class">How the tabular metadata predicts the class</h3>
+<p>The metadata are per-lesion numeric measurements derived by the TBP system: lesion size in mm, L*/A*/B* and hue color coordinates, lesion-to-skin color contrast, border irregularity, eccentricity, and 3D body position. Malignancy shifts the marginal distributions of these measurements — malignant lesions are roughly twice as large, higher-contrast, more border-irregular, and concentrated in particular hue ranges and body sites. The engineered patient-relative deviations (<code>pdev_</code>, <code>prank_</code>, <code>pxc_</code>) re-express each measurement as a deviation from the same patient’s own lesions, capturing the ugly-duckling sign: the lesion that stands out from a patient’s normal moles. A gradient-boosted tree ensemble fits these signals directly: each split thresholds a measurement, and successive trees compose <strong>non-linear threshold interactions</strong> (e.g.&nbsp;large size <em>and</em> high hue deviation <em>and</em> head/neck location), producing a malignancy score without any image pixels.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -514,60 +518,60 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Every patient-relative statistic and every target encoding is computed <strong>fold-locally</strong> (from training rows only) and applied to held-out rows — so no held-out information ever flows into a feature. The <code>cv-guardian</code> audits this. Patient-relative deviations are safe because they use the <em>patient’s own benign moles</em>, which are in the same fold by construction (patients don’t straddle folds).</p>
+<p>Every patient-relative statistic and every target encoding is computed fold-locally (training rows only) and applied to held-out rows; no held-out information flows into a feature. The <code>cv-guardian</code> audits this. Patient-relative deviations are safe because they use the patient’s own benign moles, which sit in the same fold by construction.</p>
 </div>
 </div>
+</section>
 </section>
 <section id="gbdt" class="level2">
 <h2 class="anchored" data-anchor-id="gbdt">The GBDT expert</h2>
-<p><code>src/gbdt.py</code> trains the tabular expert. Two stories matter here — one cautionary, one constructive.</p>
+<p><code>src/gbdt.py</code> trains the tabular expert.</p>
 <section id="the-underfit-bug-and-the-fix" class="level3">
-<h3 class="anchored" data-anchor-id="the-underfit-bug-and-the-fix">The underfit bug (and the fix)</h3>
-<p>Our first GBDT scored <strong>0.09941</strong> — barely 5× random. The cause was a classic imbalance foot-gun: <code>is_unbalance=True</code> <strong>up-weighted the 393 positives ~1000×</strong>, and the LightGBM early-stopping was driven by <strong>built-in AUC</strong>, which under that weighting peaked at <strong><code>best_iter = 1</code></strong> — the model essentially never trained.</p>
-<p>The fix, in two parts:</p>
+<h3 class="anchored" data-anchor-id="the-underfit-bug-and-the-fix">The underfit bug and the fix</h3>
+<p>The initial GBDT scored <strong>0.09941</strong>, barely 5× random. The cause was an imbalance foot-gun: <code>is_unbalance=True</code> up-weighted the 393 positives ~1000×, and LightGBM early-stopping was driven by built-in AUC, which under that weighting peaked at <code>best_iter = 1</code> — the model effectively never trained. The fix is twofold:</p>
 <ol type="1">
-<li><strong>Drop <code>is_unbalance</code></strong> — let undersampling (below) handle the imbalance instead of extreme instance weights.</li>
-<li><strong>Early-stop on the official pAUC</strong> — a custom <code>feval</code> in <code>src/gbdt.py</code> evaluates pAUC@80%TPR directly, so early stopping optimizes the metric we are actually scored on.</li>
+<li><strong>Drop <code>is_unbalance</code></strong> — undersampling (below) handles the imbalance instead of extreme instance weights.</li>
+<li><strong>Early-stop on the official pAUC</strong> — a custom <code>feval</code> in <code>src/gbdt.py</code> evaluates pAUC@80%TPR directly, so early stopping optimizes the scored metric.</li>
 </ol>
-<p>This single change took the model from 0.09941 → 0.11826 (+0.019). See <a href="./ablations.html#tabular">Ablations → Tabular</a>.</p>
+<p>This change moved the model from 0.09941 → 0.11826 (+0.019); see <a href="./ablations.html#tabular">Ablations → Tabular</a>.</p>
 </section>
-<section id="the-production-recipe" class="level3">
-<h3 class="anchored" data-anchor-id="the-production-recipe">The production recipe</h3>
-<p>The final tabular expert (greysky-lineage hyperparameters; see <a href="./credits.html">Credits</a>) is a <strong>bagged ensemble</strong>:</p>
+<section id="production-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="production-recipe">Production recipe</h3>
+<p>The final tabular expert (greysky-lineage hyperparameters; see <a href="./credits.html">Credits</a>) is a bagged ensemble:</p>
 <ul>
-<li><strong>Manual undersampling</strong> to ~1% (<code>neg_ratio = 0.01</code> → ~100 negatives per positive, ~4k rows per fold/seed) so each booster trains fast and is not drowned by benigns.</li>
+<li><strong>Manual undersampling</strong> to ~1% (<code>neg_ratio = 0.01</code> → ~100 negatives per positive, ~4k rows per fold/seed) so each booster trains quickly and is not dominated by benigns.</li>
 <li><strong>5-seed bagging</strong> (seeds 12/22/32/42/52) of LightGBM, averaged on rank.</li>
-<li><strong>CatBoost rank-blend</strong> — a second GBDT family bagged the same way; the final tabular OOF is <code>0.8·rank(LightGBM-bag) + 0.2·rank(CatBoost-bag)</code>. CatBoost is the weaker family here, so an equal 0.5 blend dilutes (0.16809); 0.2 is the swept optimum (<strong>0.16890</strong>).</li>
+<li><strong>CatBoost rank-blend</strong> — a second GBDT family bagged identically; the final tabular OOF is <code>0.8·rank(LightGBM-bag) + 0.2·rank(CatBoost-bag)</code>. CatBoost is the weaker family here, so an equal 0.5 blend dilutes (0.16809); 0.2 is the swept optimum (<strong>0.16890</strong>).</li>
 </ul>
-<p>Result: <strong>OOF pAUC 0.16890</strong> at essentially zero inference cost (0.86 M “params” of trees, ~0 GFLOPs, 0.02 ms/img). This is the <strong>efficient anchor</strong> of the whole frontier.</p>
+<p>Result: OOF pAUC <strong>0.16890</strong> at near-zero inference cost (0.86 M tree “params”, ~0 GFLOPs, 0.02 ms/img) — the efficient anchor of the frontier.</p>
 </section>
 </section>
 <section id="image-experts" class="level2">
 <h2 class="anchored" data-anchor-id="image-experts">The image experts</h2>
-<p><code>src/vision/*</code> trains the deep protagonist. Each backbone is one point on the efficiency frontier, measured by the <code>efficiency-auditor</code>.</p>
-<section id="the-recipe-shared-across-backbones" class="level3">
-<h3 class="anchored" data-anchor-id="the-recipe-shared-across-backbones">The recipe (shared across backbones)</h3>
+<p><code>src/vision/*</code> trains the image expert. Each backbone is one point on the efficiency frontier, measured by the <code>efficiency-auditor</code>.</p>
+<section id="recipe-shared-across-backbones" class="level3">
+<h3 class="anchored" data-anchor-id="recipe-shared-across-backbones">Recipe (shared across backbones)</h3>
 <ul>
-<li><strong>Small, natural-image-pretrained backbones</strong> at <strong>128 px</strong> (and 224 px for the resolution axis). Pretraining is ImageNet / FCMAE only — <strong>no skin-cancer labels</strong>, so the no-external-<em>data</em> claim survives (pretrained <em>weights</em> are allowed; external <em>training data</em> is not).</li>
-<li><strong>Per-epoch negative undersampling to ~1:1</strong> (<code>neg_ratio</code>, <code>pos_mult</code>). Each epoch sees all positives + a fresh random ~equal sample of negatives, so an “epoch” is only a few thousand images and runs in <strong>~4.5 s</strong>. A full 5-fold backbone trains in <strong>~8 minutes</strong>. Re-sampling the negatives each epoch means the model still sees the whole benign distribution over time.</li>
-<li><strong>Loss:</strong> BCE with <strong>label smoothing 0.05</strong> (softens the 393 hard positives).</li>
-<li><strong>Augmentation:</strong> the <code>transV2</code> policy (flips, rotations, color jitter within reason — classical only, <strong>no generative augmentation</strong>).</li>
-<li><strong>EMA(0.995) + mixup(α=0.2).</strong> Weight EMA stabilizes the noisy undersampled updates; mixup regularizes. <strong>EMA decay matters:</strong> at ~23 steps/epoch, decay 0.999 (time-constant ~1000 steps) <em>lags</em> the weights and <strong>hurts</strong> (fold-0: 0.146 vs 0.156); <strong>0.995 + warmup helps</strong> (0.163). Pinned at 0.995.</li>
-<li><strong>Resolution as a frontier axis.</strong> We keep both <code>convnextv2_nano@128</code> (0.15311) and <code>@224</code> (0.15821) as distinct points, because resolution trades accuracy for cost.</li>
+<li><strong>Small natural-image-pretrained backbones</strong> at 128 px (and 224 px for the resolution axis). Pretraining is ImageNet / FCMAE only — no skin-cancer labels, so the no-external-<em>data</em> claim holds (pretrained weights are allowed; external training data is not).</li>
+<li><strong>Per-epoch negative undersampling to ~1:1</strong> (<code>neg_ratio</code>, <code>pos_mult</code>). Each epoch sees all positives plus a fresh random ~equal sample of negatives, so an epoch is a few thousand images (~4.5 s); a full 5-fold backbone trains in ~8 minutes. Re-sampling negatives each epoch exposes the whole benign distribution over time.</li>
+<li><strong>Loss:</strong> BCE with label smoothing 0.05.</li>
+<li><strong>Augmentation:</strong> the <code>transV2</code> policy (flips, rotations, color jitter) — classical only, no generative augmentation.</li>
+<li><strong>EMA(0.995) + mixup(α=0.2).</strong> Weight EMA stabilizes the noisy undersampled updates; mixup regularizes. EMA decay is consequential: at ~23 steps/epoch, decay 0.999 (time-constant ~1000 steps) lags the weights and reduces the score (fold-0: 0.146 vs 0.156); 0.995 with warmup is retained (0.163).</li>
+<li><strong>Resolution as a frontier axis.</strong> Both <code>convnextv2_nano@128</code> (0.15311) and <code>@224</code> (0.15821) are kept as distinct points, trading accuracy for cost.</li>
 </ul>
 </section>
 <section id="the-12-backbone-frontier-sweep" class="level3">
 <h3 class="anchored" data-anchor-id="the-12-backbone-frontier-sweep">The 12-backbone frontier sweep</h3>
-<p>We swept a family spanning the cost axis from ~2.5 M to ~294 M params: <code>mnv4_small</code>, <code>effvit_b0</code>, <code>starnet_s1</code>, <code>fastvit_t8</code>, <code>effnetv2_b0</code>, <code>ghostnetv3</code>, <code>vit_tiny</code>, <code>vit_small</code>, <code>convnextv2_nano</code> (128 px and 224 px), <code>convnextv2_tiny</code>, <code>swinv2_tiny</code>, <code>eva02_small</code>, and the heavy anchor <code>mnv5_300m</code>. The clear lesson (see <a href="./results.html">Results</a> and <a href="./ablations.html">Ablations</a>): <strong>heavy transformers collapse to near-random</strong> at 393 positives (SwinV2 @256 → 0.104, EVA-02 @336 → 0.100), while the <strong>small</strong> <code>convnextv2_nano</code> is the sweet spot.</p>
+<p>The sweep spans the cost axis from ~2.5 M to ~294 M params: <code>mnv4_small</code>, <code>effvit_b0</code>, <code>starnet_s1</code>, <code>fastvit_t8</code>, <code>effnetv2_b0</code>, <code>ghostnetv3</code>, <code>vit_tiny</code>, <code>vit_small</code>, <code>convnextv2_nano</code> (128 px and 224 px), <code>convnextv2_tiny</code>, <code>swinv2_tiny</code>, <code>eva02_small</code>, and the heavy anchor <code>mnv5_300m</code>. Heavy transformers collapse to near-random at 393 positives (SwinV2@256 → 0.104, EVA-02@336 → 0.100); the small <code>convnextv2_nano</code> is the optimum (see <a href="./results.html">Results</a>, <a href="./ablations.html">Ablations</a>).</p>
 </section>
-<section id="self-supervised-pretraining-the-principled-one-up-future-work" class="level3">
-<h3 class="anchored" data-anchor-id="self-supervised-pretraining-the-principled-one-up-future-work">Self-supervised pretraining — the principled “one-up” (future work)</h3>
-<p>The cleanest in-constraint way to exploit the 400k+ <strong>unlabeled</strong> crops — without importing external data or fabricating positives — is <strong>self-supervised pretraining</strong> (MAE / DINOv2-style) on the crops themselves, then fine-tuning on the 393 labels. This substitutes <em>our own unlabeled data</em> for the external data we banned, and stays fully inside the rules. We present it as the principled next step rather than a completed result; it is the most promising lever we did not exhaust in the 2-day budget.</p>
+<section id="self-supervised-pretraining-future-work" class="level3">
+<h3 class="anchored" data-anchor-id="self-supervised-pretraining-future-work">Self-supervised pretraining (future work)</h3>
+<p>The in-constraint way to exploit the 400k+ unlabeled crops without external data or fabricated positives is self-supervised pretraining (MAE / DINOv2-style) on the crops themselves, then fine-tuning on the 393 labels. This substitutes the project’s own unlabeled data for the banned external data and remains inside the rules. It is presented as the next step, not a completed result; it is the most promising lever not exhausted in the 2-day budget.</p>
 </section>
 </section>
 <section id="stack" class="level2">
 <h2 class="anchored" data-anchor-id="stack">The stack (combiner)</h2>
-<p><code>src/stack.py</code> fuses the experts. We compared three combiners on the same OOF vectors:</p>
+<p><code>src/stack.py</code> fuses the experts. Three combiners were compared on the same OOF vectors:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 30%">
@@ -577,14 +581,14 @@ window.Quarto = {
 <thead>
 <tr class="header">
 <th>Combiner</th>
-<th>What it does</th>
+<th>Mechanism</th>
 <th style="text-align: right;">OOF pAUC</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Rank-average</strong></td>
-<td>average the percentile ranks of GBDT and image OOF — <strong>param-free</strong></td>
+<td>average the percentile ranks of GBDT and image OOF — param-free</td>
 <td style="text-align: right;"><strong>0.17376</strong></td>
 </tr>
 <tr class="even">
@@ -594,12 +598,12 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td>Learned per-lesion gate (MoE)</td>
-<td>a network picks expert weights per lesion</td>
+<td>a network selects expert weights per lesion</td>
 <td style="text-align: right;">0.15007</td>
 </tr>
 </tbody>
 </table>
-<p>We also tried adding the <strong>image embedding</strong> (PCA components) and an <strong>image-space ugly-duckling</strong> feature into the GBDT; both <strong>hurt</strong> (&lt; 0.1738).</p>
+<p>Adding the image embedding (PCA components) and an image-space ugly-duckling feature into the GBDT both reduced the score (&lt; 0.1738).</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -610,13 +614,13 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A rank-average has <strong>zero parameters to fit</strong>, so it cannot overfit the validation folds. Every learned combiner has to estimate its parameters from the <em>same 393 positives</em> the experts already used — there is simply not enough positive signal left to learn a better fusion than “average the ranks.” The learned gate even falls <strong>below the tabular expert alone</strong> (0.150 &lt; 0.169). This is the project’s recurring theme, and it is a <em>result</em>, not a disappointment: <strong>at this scale, simpler is both cheaper and more accurate.</strong> Full numbers in <a href="./ablations.html">Ablations</a>.</p>
+<p>A rank-average has zero parameters to fit and cannot overfit the validation folds. Every learned combiner must estimate its parameters from the same 393 positives the experts already used; there is insufficient positive signal to learn a better fusion than averaging ranks. The learned gate falls below the tabular expert alone (0.150 &lt; 0.169). At this scale, the simpler combiner is both cheaper and more accurate. Full numbers in <a href="./ablations.html">Ablations</a>.</p>
 </div>
 </div>
 </section>
 <section id="efficiency-as-a-first-class-axis" class="level2">
 <h2 class="anchored" data-anchor-id="efficiency-as-a-first-class-axis">Efficiency as a first-class axis</h2>
-<p>Every reported model logs <strong>params, FLOPs, and single-thread CPU latency</strong> (<code>src/efficiency.py</code>) alongside its pAUC, so each model is one point on a <strong>quality-vs-cost plane</strong>. The Pareto-optimal set — points that no other model beats on <em>both</em> axes — is the headline figure. A model that does not earn its cost does not stay in the pipeline. See <a href="./results.html">Results</a>.</p>
+<p>Every reported model logs parameters, FLOPs, and single-thread CPU latency (<code>src/efficiency.py</code>) alongside its pAUC, placing each model as one point on a quality-vs-cost plane. The Pareto-optimal set — points no other model beats on both axes — is the headline figure. A model that does not earn its cost is not retained. See <a href="./results.html">Results</a>.</p>
 <hr>
 <p><em>Continue to <a href="./results.html">Results →</a></em></p>
 

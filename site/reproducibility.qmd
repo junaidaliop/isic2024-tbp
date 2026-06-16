@@ -1,12 +1,12 @@
 ---
 title: "Reproducibility"
-subtitle: "The exact environment, seeds, commands, and how every headline number was re-verified"
+subtitle: "The environment, seeds, commands, and re-verification of each number"
 toc: true
 ---
 
-Every result on this site is config-driven, single-seeded, and re-runnable from disk. The
-`repro` and `cv-guardian` agents re-derived the headline numbers from the OOF parquet files;
-the spine test suite passes **9/9**.
+Every result is config-driven, single-seeded, and re-runnable from disk. The `repro` and
+`cv-guardian` agents re-derived the headline numbers from the OOF parquet files; the spine test
+suite passes 9/9.
 
 ## Environment
 
@@ -34,20 +34,20 @@ pip install -e ".[dev]"
 
 ## Hardware
 
-A **single NVIDIA RTX 4070 Ti SUPER (16 GB)**. The whole study fits comfortably in the 2-day
-budget because of per-epoch negative undersampling:
+A single NVIDIA RTX 4070 Ti SUPER (16 GB). The study fits within the 2-day budget because of
+per-epoch negative undersampling:
 
 - an "epoch" sees all 393 positives + a fresh ~equal sample of negatives → a few thousand images,
 - **≈ 4.5 s / epoch**,
 - a **full 5-fold backbone trains in ≈ 8 minutes**.
 
-CPU latency on the frontier is measured **single-threaded** (`src/efficiency.py`) so the cost
-axis reflects a worst-case deployable setting.
+CPU latency on the frontier is measured single-threaded (`src/efficiency.py`) so the cost axis
+reflects a worst-case deployable setting.
 
-## The exact recipe
+## The recipe
 
-The whole pipeline is driven by `make` targets (each wraps a `python -m src.*` invocation).
-**`make folds` must run first** — nothing trains until the no-leak guarantee passes.
+The pipeline is driven by `make` targets (each wraps a `python -m src.*` invocation). `make folds`
+must run first; no model trains until the no-leak guarantee passes.
 
 ```bash
 # 0. fetch SLICE-3D into data/ (accept the comp rules on Kaggle once, else 403)
@@ -76,7 +76,7 @@ make site
 Each run is logged under `experiments/` (one config + one CSV row per run, seeds fixed) and the
 frontier is appended to `reports/frontier.csv` / `reports/frontier_cost.csv`.
 
-## How each headline number was produced and re-verified
+## Production and re-verification of each number
 
 | Number | Produced by | Re-verified |
 |---|---|---|
@@ -88,24 +88,24 @@ frontier is appended to `reports/frontier.csv` / `reports/frontier_cost.csv`.
 | Costs (params/FLOPs/ms) | `src/efficiency.py` | `reports/frontier_cost.csv` (authoritative) |
 
 ::: {.callout-tip}
-## Why these numbers are trustworthy
+## Verification properties
 - **One split, one metric.** Every model reads the same frozen `data/folds.parquet` and is scored
-  by the same `src/cv.py`, which is unit-tested to match the official scorer.
-- **No patient straddles folds.** Verified by `cv-guardian`; this is the property that prevented
-  the ~200-place private shake-up other teams suffered.
+  by the same `src/cv.py`, unit-tested to match the official scorer.
+- **No patient straddles folds.** Verified by `cv-guardian`; this property prevents the
+  ~200-place private shake-up other teams encountered.
 - **Leak columns dropped.** `iddx_*`, `mel_*`, `lesion_id`, `tbp_lv_dnn_lesion_confidence` never
   enter any model.
-- **Recomputed from disk, not from logs.** The headline pAUCs were re-derived from the OOF
-  parquet files, not copied from training stdout.
+- **Recomputed from disk.** The headline pAUCs were re-derived from the OOF parquet files, not
+  copied from training stdout.
 :::
 
-## Determinism caveats (honest)
+## Determinism caveats
 
-Full bit-exact determinism across GPUs/driver versions is not guaranteed for deep-learning
-training (cuDNN nondeterminism, atomic reductions). We fix `SEED = 42`, log every config, and
-report OOF pAUC to 5 decimals; the **GBDT and stack numbers are fully deterministic** from the
-frozen folds, and the **image numbers reproduce to within fold-variance** (~±0.008 std, far
-smaller than the effects we report). This is stated plainly rather than overclaimed.
+Bit-exact determinism across GPUs and driver versions is not guaranteed for deep-learning training
+(cuDNN nondeterminism, atomic reductions). `SEED = 42` is fixed, every config is logged, and OOF
+pAUC is reported to 5 decimals. The GBDT and stack numbers are fully deterministic from the frozen
+folds; the image numbers reproduce to within fold-variance (~±0.008 std, far smaller than the
+reported effects).
 
 ---
 

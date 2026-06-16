@@ -21,37 +21,37 @@ bibliography: references.bib
 
 ## The problem {.smaller}
 
-- **ISIC-2024 SLICE-3D**: detect malignant skin lesions in 3D total-body-photography crops.
+- **ISIC-2024 SLICE-3D**: automated triage of malignant skin lesions in 3D total-body-photography crops.
 - **401,059 crops · 1,042 patients · 393 malignant / 400,666 benign** → a **1,021:1** imbalance.
 - Metric: **official pAUC above 80% TPR**, range `[0, 0.20]` (random ≈ 0.02, perfect = 0.20).
-- The whole problem is the imbalance: 393 positives is *not much* for a deep net alone.
+- The defining difficulty is the imbalance: 393 positives is limited signal for a deep net alone.
 
-## What we deliberately ban {.smaller}
+## Banned constraints {.smaller}
 
 - **No external data** — ISIC-2024 SLICE-3D only (no ISIC-2019/2020, no PAD-UFES, no external dermoscopy).
 - **No generative / synthetic positives** — fabricating pathology breaks label validity.
-- The winners' ~0.173 used **both**; matching it is **out of reach by construction**.
+- The winners' ~0.173 used both; matching it is out of reach by construction.
 
 . . .
 
 ::: {.callout-important}
-That impossibility *is the experiment.* So we change the question.
+That impossibility defines the experiment, so the question is changed.
 :::
 
-## The question we actually answer
+## The question
 
-> **What is the best pAUC achievable per unit of inference cost — on SLICE-3D data alone?**
+> **What is the best pAUC achievable per unit of inference cost on SLICE-3D data alone?**
 
-- Not one private-LB number → a **quality-vs-cost Pareto frontier**.
-- Axes: **pAUC** vs **params · FLOPs · CPU latency**.
-- A model only counts if it **earns its cost**.
+- Not one private-LB number → a quality-vs-cost Pareto frontier.
+- Axes: pAUC vs params · FLOPs · CPU latency.
+- A model counts only if it earns its cost.
 
-## CV discipline — the whole game {.smaller}
+## CV discipline {.smaller}
 
-- Leaky CV sent teams **~200 places down** on the private split.
-- **Patient-grouped, target-stratified** folds (5, SEED 42), **frozen once** into `data/folds.parquet`.
+- Leaky CV moved teams ~200 places on the private split.
+- **Patient-grouped, target-stratified** folds (5, SEED 42), frozen once into `data/folds.parquet`.
 - **No patient straddles folds.** One metric, one implementation (`src/cv.py`), == official scorer.
-- `cv-guardian` agent holds **veto power** over splits & metric.
+- `cv-guardian` agent holds veto power over splits & metric.
 
 ## The pipeline {.smaller}
 
@@ -71,11 +71,11 @@ flowchart LR
 
 ## Where the signal lives {.smaller}
 
-- The dominant signal is the **ugly-duckling sign**: how anomalous a lesion is vs the *same patient's* moles.
-- Patient-relative features (`pdev_` / `prank_` / `pxc_`) = **~65% of GBDT gain**.
+- The dominant signal is the ugly-duckling sign: how anomalous a lesion is vs the same patient's moles.
+- Patient-relative features (`pdev_` / `prank_` / `pxc_`) = ~65% of GBDT gain.
 - Top features: `tbp_lv_H` (hue, univariate AUC 0.81), `pdev_tbp_lv_H`, `pdev_clin_size`.
 
-![](figures/eda_fig9_ugly_duckling.png){width=70%}
+![](figures/eda_fig9_ugly_duckling.svg){width=70%}
 
 ## Headline results {.smaller}
 
@@ -86,17 +86,17 @@ flowchart LR
 | **Stack (rank-avg)** | **0.17376** | 15.84 M | 2.46 | 60.9 |
 | Cheap stack | 0.17117 | 23.84 M | 1.22 | 32.9 |
 
-GBDT alone banks ~97% of the best score at ~free cost. The image expert earns **+0.0049** inside the stack.
+GBDT alone reaches ~97% of the best score at near-free cost. The image expert adds +0.0049 inside the stack.
 
 ## The frontier
 
-![](figures/frontier.png){width=78%}
+![](figures/frontier.svg){width=78%}
 
 ## The scored region (pAUC@80%TPR)
 
-![](figures/perf_fig1_roc_pauc.png){width=70%}
+![](figures/perf_fig1_roc_pauc.svg){width=70%}
 
-The stack sits above both experts **exactly where the metric integrates**.
+The stack sits above both experts where the metric integrates.
 
 ## Per-fold stability {.smaller}
 
@@ -106,22 +106,22 @@ The stack sits above both experts **exactly where the metric integrates**.
 | Best image | 0.1591 ± 0.0091 |
 | **Stack** | **0.1747 ± 0.0073** |
 
-Fold variance (~0.025) > model gaps — yet the **stack wins/ties every fold** and has the lowest std.
+Fold variance (~0.025) exceeds model gaps, yet the stack wins/ties every fold and has the lowest std.
 
-## Every complex idea lost {.smaller}
+## Complexity reduces the score {.smaller}
 
-![](figures/perf_fig6_negative_results.png){width=72%}
+![](figures/perf_fig6_negative_results.svg){width=72%}
 
-- Learned MoE gate **0.150** — *below tabular alone.*
-- Meta-LGBM stacker 0.171 < trivial 0.174. Image embeddings: hurt. Heavy transformers: collapse.
+- Learned MoE gate 0.150 — below tabular alone.
+- Meta-LGBM stacker 0.171 < rank-average 0.174. Image embeddings reduce. Heavy transformers collapse.
 
-## Why simpler won
+## Why simpler wins
 
-- Every learned add-on must fit parameters from the **same 393 positives** the experts already used.
-- A rank-average has **zero parameters** → cannot overfit the folds.
-- At extreme imbalance: **bias toward zero-parameter fusion + small backbones** — *also* the cheapest.
+- Every learned add-on must fit parameters from the same 393 positives the experts already used.
+- A rank-average has zero parameters and cannot overfit the folds.
+- At extreme imbalance: bias toward zero-parameter fusion + small backbones — also the cheapest.
 
-## Credit where due {.smaller}
+## Credits {.smaller}
 
 - **1st — Ilya Novoselskiy** (EVA-02 + EdgeNeXt + GBDT, private 0.17264; external + ~30k synthetic — both banned here; synthetic added only **+0.0007** in their own ablation).
 - **2nd — uchiyama33**, **3rd — kyohei-123**.
