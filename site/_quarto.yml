@@ -17,6 +17,7 @@ project:
     - "figures/**"
     - "tables/**"
     - "ISIC2024-slides.pdf"
+    - "deck/**"
 
 website:
   title: "ISIC-2024 SLICE-3D · Pakistan.AI"

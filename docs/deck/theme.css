@@ -1,0 +1,421 @@
+/* ============================================================
+   ACADEMIC PRESENTATION DESIGN SYSTEM  ·  theme.css
+   Bespoke 16:9 HTML slide framework — print-to-PDF via Chromium.
+   Replicates the author's house style (white canvas, geometric-sans
+   underlined headings, signature accent, type-only highlighting)
+   and refines it (token-driven recolor, emphasis discipline,
+   density caps, real captions).
+
+   PER-DECK USAGE: override ONLY the --accent* tokens in an inline
+   <style> block in the deck file. Everything else stays fixed.
+   ============================================================ */
+
+/* vendored fonts — fully offline, no CDN. Bricolage Grotesque (display) + Inter (body);
+   mono falls back to the universal system monospace stack. */
+@import url('vendor/fonts/fonts.css');
+
+/* ---------- DESIGN TOKENS ---------- */
+:root {
+  /* Per-deck accent — OVERRIDE THESE ONLY. Default = signature purple. */
+  --accent:        #6B30D8;   /* headers, kickers, page no., structural emphasis */
+  --accent-ink:    #4A1E97;   /* darker accent for small text / links on white   */
+  --accent-soft:   #EFE9FB;   /* callout / recall-box fill                        */
+  --accent-line:   #D6C8F2;   /* hairline borders, underline rule, table head     */
+
+  /* Fixed across every deck */
+  --ink:        #1A1A2E;   /* slide titles + bold keywords (emphasis tier 1) */
+  --body:       #26263A;   /* body copy */
+  --muted:      #6C6C80;   /* captions, footnotes, footer */
+  --critical:   #E8392B;   /* tier-3: the ONE key claim / warning per slide  */
+  --annot-2:    #2563EB;   /* second diagram-annotation colour ONLY          */
+  --paper:      #FFFFFF;
+  --panel:      #F6F7F9;   /* alternate panel / code background */
+  --rule:       #E4E6EC;  /* neutral hairline */
+
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-body:    'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+
+  --slide-w: 1280px;
+  --slide-h: 720px;
+  --pad-x: 72px;   /* left/right safe margin */
+  --pad-y: 52px;   /* top/bottom safe margin */
+}
+
+/* ---------- RESET ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #4a4a55; }
+body { font-family: var(--font-body); color: var(--body); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+/* ---------- DECK + SLIDE FRAME ---------- */
+.deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 28px 0; }
+
+.slide {
+  position: relative;
+  width: var(--slide-w);
+  height: var(--slide-h);
+  flex: 0 0 auto;
+  background: var(--paper);
+  color: var(--body);
+  overflow: hidden;
+  padding: var(--pad-y) var(--pad-x);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0,0,0,.35);
+}
+
+/* ---------- SLIDE HEADER ---------- */
+.kicker {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.slide-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 43px;
+  line-height: 1.15;
+  color: var(--ink);
+  padding-bottom: 0;
+  margin-bottom: 22px;
+}
+/* header band — kicker + title, separated by ONE subtle full-width hairline.
+   No stubby accent stub; refined, professional. */
+.kicker + .slide-title { margin-bottom: 14px; }
+.kicker + .slide-title {
+  border-bottom: 1px solid rgba(20,20,20,.08);
+  padding-bottom: 16px;
+}
+.slide-title .lead { color: var(--accent); }   /* coloured acronym/initial letters */
+
+/* running wordmark bar variant (method slides) */
+.runbar {
+  display: flex; align-items: baseline; gap: 14px;
+  border-bottom: 1px solid rgba(20,20,20,.08);
+  padding-bottom: 12px; margin-bottom: 20px;
+}
+.runbar .mark { font-family: var(--font-display); font-weight: 800; color: var(--accent); font-size: 20px; letter-spacing: .02em; }
+.runbar .ctx  { font-size: 15px; color: var(--muted); }
+
+/* ---------- SLIDE BODY ---------- */
+.slide-body { flex: 1 1 auto; min-height: 0; }
+/* vcenter — balances slides whose content is shorter than the body,
+   so whitespace splits evenly instead of pooling at the bottom */
+.slide-body.vcenter { display: flex; flex-direction: column; justify-content: center; }
+
+p { font-size: 24px; line-height: 1.5; color: var(--body); margin-bottom: 12px; }
+.lead-text { font-size: 26px; line-height: 1.45; }
+.small { font-size: 19px; }
+
+ul, ol { list-style: none; }
+.bullets > li {
+  position: relative;
+  font-size: 24px; line-height: 1.45;
+  padding-left: 28px; margin-bottom: 14px;
+  color: var(--body);
+}
+.bullets > li::before {
+  content: ""; position: absolute; left: 4px; top: 11px;
+  width: 9px; height: 9px; border-radius: 2px;
+  background: var(--accent);
+}
+.bullets ul > li {            /* sub-bullets */
+  position: relative; font-size: 20px; line-height: 1.4;
+  padding-left: 24px; margin: 8px 0 0 0; color: var(--muted);
+}
+.bullets ul > li::before {
+  content: ""; position: absolute; left: 2px; top: 9px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: transparent; border: 2px solid var(--accent-line);
+}
+
+/* ---------- EMPHASIS SYSTEM (3 tiers — use sparingly) ---------- */
+/* Tier 1: key term. Tier 2: structural/accent. Tier 3: the one critical claim. */
+.kw       { font-weight: 700; color: var(--ink); }                 /* tier 1 */
+.hl       { font-weight: 600; color: var(--accent-ink); }          /* tier 2 */
+.hl-soft  { background: var(--accent-line); color: var(--ink); font-weight: 600;
+            padding: .07em .24em; border-radius: 6px;
+            -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.crit     { font-weight: 700; color: var(--critical); }            /* tier 3 — max ONE phrase/slide */
+
+/* ---------- LAYOUT HELPERS ---------- */
+.cols { display: grid; gap: 32px; height: 100%; }
+.cols-2 { grid-template-columns: 1fr 1fr; }
+.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cols-5-7 { grid-template-columns: 5fr 7fr; }
+.cols-7-5 { grid-template-columns: 7fr 5fr; }
+.col { min-width: 0; display: flex; flex-direction: column; }
+.v-center { justify-content: center; }
+.divider-v { border-left: 2px solid var(--rule); }
+
+/* ---------- CARDS / CALLOUTS ---------- */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+.card .card-title { font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
+
+/* "Remember (Abstract Sentence N)" recall box — token-driven so recolor is total */
+.recall {
+  background: var(--accent-soft);
+  border: 1.5px solid var(--accent-line);
+  border-left: 5px solid var(--accent);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.recall .recall-tag {
+  font-family: var(--font-display); font-weight: 700; font-size: 13px;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+  display: block; margin-bottom: 4px;
+}
+.recall p { font-size: 20px; margin: 0; color: var(--body); }
+
+.callout {
+  border-left: 5px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 20px;
+}
+.callout.is-critical { border-left-color: var(--critical); background: #FDECEA; }
+
+/* stat / number highlight */
+.stat-row { display: flex; gap: 28px; }
+.stat { flex: 1; }
+.stat .num { font-family: var(--font-display); font-weight: 800; font-size: 52px; color: var(--accent); line-height: 1; }
+.stat .lbl { font-size: 16px; color: var(--muted); margin-top: 6px; }
+
+/* ---------- FIGURES ---------- */
+.figure { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.figure img, .figure video { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+.figure.framed img { border: 1px solid var(--rule); background: #fff; padding: 8px; }
+.figcaption {
+  font-size: 15px; color: var(--accent-ink); font-weight: 600;
+  text-align: center; line-height: 1.35;
+}
+.figcaption .src { color: var(--muted); font-weight: 400; }
+.fig-mini-label {       /* short coloured phrase above a figure */
+  font-family: var(--font-display); font-weight: 600; font-size: 16px;
+  color: var(--accent); margin-bottom: 6px;
+}
+
+/* diagram annotation overlays — only --critical and --annot-2 allowed */
+.annot { position: absolute; border: 2.5px dashed var(--critical); border-radius: 8px; }
+.annot.alt { border-color: var(--annot-2); }
+.annot-note { font-size: 14px; font-weight: 600; color: var(--critical); }
+.annot-note.alt { color: var(--annot-2); }
+
+/* ---------- TABLES ---------- */
+table.t { border-collapse: collapse; width: 100%; font-size: 19px; }
+table.t th {
+  background: var(--accent); color: #fff;
+  font-family: var(--font-display); font-weight: 600;
+  text-align: left; padding: 9px 12px;
+}
+table.t td { padding: 8px 12px; border-bottom: 1px solid var(--rule); }
+table.t tr:nth-child(even) td { background: var(--panel); }
+
+/* ---------- EQUATIONS ---------- */
+.eq { margin: 14px 0; text-align: center; }
+.eq.boxed {
+  background: var(--panel); border: 1px solid var(--rule);
+  border-radius: 10px; padding: 16px 20px;
+}
+.katex { font-size: 1.04em; }
+
+/* ---------- CODE / ALGORITHM ---------- */
+pre.algo {
+  font-family: var(--font-mono); font-size: 15px; line-height: 1.5;
+  background: var(--panel); border: 1px solid var(--rule);
+  border-radius: 10px; padding: 16px 20px; color: var(--ink);
+  white-space: pre-wrap;
+}
+
+/* ---------- FOOTER ---------- */
+.slide-foot {
+  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 22px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: var(--body);
+}
+.slide-foot .pg { font-family: var(--font-display); font-weight: 600; color: var(--accent); }
+.refnote { font-size: 13px; color: var(--body); }
+.refnote b { color: var(--ink); font-weight: 600; }
+
+/* ============================================================
+   SPECIAL SLIDE TYPES
+   ============================================================ */
+
+/* --- TITLE SLIDE (centered, large, academic) --- */
+.slide--title { padding: 0; }
+.slide--title .title-inner {
+  position: relative; height: 100%;
+  padding: 64px var(--pad-x);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+}
+.t-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.t-brand .mark { display: flex; }
+.t-brand .pk {
+  font-family: var(--font-display); font-weight: 700; font-size: 24px;
+  letter-spacing: .04em; color: var(--accent);
+}
+.t-title {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 74px; line-height: 1.06; letter-spacing: -.02em;
+  color: var(--ink); margin: 28px 0 0;
+}
+.t-title .lead { color: var(--accent); }
+.t-occasion {
+  font-family: var(--font-display); font-weight: 600; font-size: 25px;
+  color: var(--muted); margin-top: 24px; letter-spacing: .01em;
+}
+.t-meta { margin-top: 30px; display: flex; flex-direction: column; gap: 14px; }
+.t-row { font-size: 24px; color: var(--body); line-height: 1.3; }
+.t-row .lbl {
+  font-family: var(--font-display); font-weight: 700; color: var(--muted);
+  letter-spacing: .12em; text-transform: uppercase; font-size: 15px; margin-right: 12px;
+}
+.t-row strong { color: var(--accent-ink); font-weight: 800; }
+.t-rule { width: 420px; height: 2px; background: var(--accent); opacity: .85; margin: 34px 0 0; }
+.t-affil { margin-top: 18px; font-size: 19px; color: var(--muted); line-height: 1.45; }
+.slide--title .slide-foot { position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 30px; }
+.slide--title .slide-foot .pg { color: var(--accent); }
+
+/* --- SECTION DIVIDER --- */
+.slide--section { background: var(--ink); color: #fff; justify-content: center; }
+.slide--section .sec-no {
+  font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  color: var(--accent); letter-spacing: .1em;
+}
+.slide--section .sec-title {
+  font-family: var(--font-display); font-weight: 800; font-size: 54px;
+  line-height: 1.1; margin-top: 10px;
+}
+.slide--section .sec-title::after {
+  content:""; display:block; width:120px; height:5px; border-radius:3px;
+  background: var(--accent); margin-top: 22px;
+}
+.slide--section .sec-pre { color: #B9B9C8; font-size: 19px; margin-top: 20px; max-width: 60%; }
+
+/* --- TABLE OF CONTENTS --- */
+.toc { display: flex; flex-direction: column; gap: 14px; }
+.toc-item { display: flex; align-items: baseline; gap: 18px; }
+.toc-item .n {
+  font-family: var(--font-display); font-weight: 800; font-size: 26px;
+  color: var(--accent); width: 44px;
+}
+.toc-item .t { font-family: var(--font-display); font-weight: 600; font-size: 26px; color: var(--ink); }
+.toc-item .d { font-size: 19px; color: var(--muted); }
+
+/* --- CLOSING --- */
+.slide--closing { justify-content: center; align-items: flex-start; }
+.slide--closing .close-mark { display:flex; align-items:center; gap:14px; margin-bottom: 26px; }
+.slide--closing .close-mark .pk {
+  font-family: var(--font-display); font-weight: 700; font-size: 20px;
+  letter-spacing: .04em; color: var(--accent);
+}
+.slide--closing .thanks {
+  font-family: var(--font-display); font-weight: 800; font-size: 76px;
+  line-height: 1.02; color: var(--ink); letter-spacing: -.01em;
+}
+.slide--closing .close-sub { margin-top: 22px; font-size: 26px; color: var(--body); }
+.slide--closing .close-sub a { color: var(--accent-ink); font-weight: 600; text-decoration: none; }
+.slide--closing .close-q {
+  margin-top: 14px; font-family: var(--font-display); font-weight: 600;
+  font-size: 26px; color: var(--accent);
+}
+
+/* progress dots counter, e.g. Results (3/8) */
+.counter { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--muted); }
+.counter b { color: var(--accent); }
+
+/* ============================================================
+   SCREEN vs PRINT
+   ============================================================ */
+@media screen {
+  /* fit-to-width review without zooming the browser */
+  body.fit .deck { gap: 0; padding: 0; }
+}
+
+@media print {
+  html, body { background: #fff; }
+  .deck { gap: 0; padding: 0; }
+  .slide {
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+  }
+  .slide:last-child { page-break-after: auto; }
+}
+@page { size: 1280px 720px; margin: 0; }
+
+/* ============================================================
+   PRESENTATION RUNTIME (v3) — review + present modes, responsive.
+   Driven by deck.js. Print/PDF is fully neutralised below.
+   ============================================================ */
+@keyframes deckRise {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* on-screen furniture */
+.deck-progress {
+  display: none; position: fixed; left: 0; bottom: 0; height: 3px; width: 0;
+  background: var(--accent); z-index: 60; transition: width .4s ease;
+}
+.deck-hint {
+  position: fixed; right: 18px; bottom: 16px; z-index: 60; cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; font-weight: 500; color: #fff;
+  background: rgba(18,18,26,.86); padding: 8px 14px; border-radius: 8px;
+  letter-spacing: .03em; transition: opacity .5s ease;
+}
+
+/* ---- PRESENT MODE: one slide, scaled to fit any screen ---- */
+body.present { overflow: hidden; background: #0b0b10; }
+body.present .deck { display: block; gap: 0; padding: 0; }
+body.present .slide {
+  position: fixed; top: 50%; left: 50%; margin: 0;
+  transform: translate(-50%, -50%) scale(var(--scale, 1));
+  opacity: 0; pointer-events: none; transition: opacity .4s ease;
+}
+body.present .slide.active { opacity: 1; pointer-events: auto; }
+body.present .deck-progress { display: block; }
+body.present.blanked .slide.active { opacity: 0; }
+
+/* within-slide build: deck.js tags content as .frag and reveals it
+   one step per advance. Fragments have NO transition by default, so
+   arriving at a slide snaps its content to the built state with no
+   flash; only the freshly revealed fragment gets .anim and animates. */
+body.present .slide .frag { opacity: 0; transform: translateY(20px); }
+body.present .slide .frag.shown { opacity: 1; transform: none; }
+body.present .slide .frag.anim {
+  transition: opacity .45s ease, transform .45s cubic-bezier(.2,.7,.2,1);
+}
+/* while switching into/out of present mode, kill all transitions so the
+   mode change snaps cleanly — no burst of the review layout fading out */
+body.no-anim .slide,
+body.no-anim .slide .frag,
+body.no-anim .slide .frag.anim { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  body.present .slide, body.present .slide .frag {
+    animation: none !important; transition: none !important;
+  }
+}
+
+/* ---- print: neutralise the runtime so the PDF stays static ---- */
+@media print {
+  .deck-progress, .deck-hint { display: none !important; }
+  .deck { zoom: 1 !important; }
+  body.present { overflow: visible; background: #fff; }
+  body.present .deck { display: flex; }
+  body.present .slide {
+    position: relative; top: auto; left: auto;
+    transform: none !important; opacity: 1 !important;
+  }
+  body.present .slide .frag { opacity: 1 !important; transform: none !important; }
+}

@@ -1,0 +1,22 @@
+/* Vendored web fonts — v4: Bricolage Grotesque (display) + Inter (body).
+   Both OFL (open) fonts. Fully offline: no Google Fonts CDN dependency. */
+
+/* ---- display face: Bricolage Grotesque (expressive grotesque) ---- */
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:400;font-display:swap;
+  src:url('bricolage-grotesque-latin-400-normal.woff2') format('woff2');}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:600;font-display:swap;
+  src:url('bricolage-grotesque-latin-600-normal.woff2') format('woff2');}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:700;font-display:swap;
+  src:url('bricolage-grotesque-latin-700-normal.woff2') format('woff2');}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:800;font-display:swap;
+  src:url('bricolage-grotesque-latin-800-normal.woff2') format('woff2');}
+
+/* ---- body face: Inter ---- */
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;
+  src:url('inter-latin-400-normal.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;
+  src:url('inter-latin-500-normal.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;
+  src:url('inter-latin-600-normal.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;
+  src:url('inter-latin-700-normal.woff2') format('woff2');}
