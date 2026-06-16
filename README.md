@@ -1,128 +1,150 @@
-# ISIC-2024 SLICE-3D — efficiency-frontier skin-lesion classification
+<div align="center">
+
+# ISIC-2024 SLICE-3D — Skin-Cancer Detection on a Quality–Cost Frontier
+
+**A single-dataset, no-external-data, no-synthetic study of melanoma triage from 3D total-body photography.**
 
 [![ci](https://github.com/junaidaliop/isic2024-tbp/actions/workflows/ci.yml/badge.svg)](https://github.com/junaidaliop/isic2024-tbp/actions/workflows/ci.yml)
-[![python](https://img.shields.io/badge/python-3.12-blue.svg)](pyproject.toml)
-[![license](https://img.shields.io/badge/code-MIT-green.svg)](LICENSE)
+[![python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](pyproject.toml)
+[![code: MIT](https://img.shields.io/badge/code-MIT-046A38.svg)](LICENSE)
 [![data: CC BY-NC 4.0](https://img.shields.io/badge/data-CC%20BY--NC%204.0-lightgrey.svg)](docs/CITATIONS.md)
+<br>
+[![OOF pAUC@80%TPR](https://img.shields.io/badge/OOF%20pAUC%4080%25TPR-0.17376-046A38.svg)](https://junaidaliop.github.io/isic2024-tbp/results.html)
+[![constraint](https://img.shields.io/badge/no%20external%20%C2%B7%20no%20synthetic-single--dataset-034425.svg)](#the-question)
+[![validation](https://img.shields.io/badge/CV-patient--grouped%20%C2%B7%20leak--audited-046A38.svg)](#why-the-numbers-are-trustworthy)
 
-A single-dataset, **no-external-data, no-synthetic** study of the ISIC-2024 SLICE-3D skin-cancer
-task. Instead of chasing the unconstrained private-leaderboard number — the winners reached
-~0.173 only with external dermoscopy data **and** ~30k diffusion-synthesised positives, both
-deliberately banned here — this project maps the **quality-vs-cost Pareto frontier**: the best
-pAUC@80%TPR per unit of inference cost, on ISIC-2024 data alone.
+**[Companion site](https://junaidaliop.github.io/isic2024-tbp/)** · **[Interactive slides](https://junaidaliop.github.io/isic2024-tbp/slides.html)** · **[Methods](https://junaidaliop.github.io/isic2024-tbp/methods.html)** · **[Results](https://junaidaliop.github.io/isic2024-tbp/results.html)** · **[Ablations](https://junaidaliop.github.io/isic2024-tbp/ablations.html)**
 
-> **Claim:** state of the art *among single-dataset, no-external, no-synthetic* solutions,
-> reported on a quality–efficiency frontier. The unconstrained ~0.173 is out of reach by
-> construction — and quantifying that gap honestly is the point.
+</div>
 
-**Companion website:** <https://junaidaliop.github.io/isic2024-tbp/>
-([slide deck (PDF)](docs/ISIC2024-slides.pdf))
+---
 
-## Results (out-of-fold, official pAUC@80%TPR ∈ [0, 0.20])
+## TL;DR
 
-| model | pAUC@80%TPR | params (M) | GFLOPs | CPU ms* |
-|---|---|---|---|---|
-| LightGBM + CatBoost (tabular, bagged) | **0.1689** | — | ~0 | ~0 |
-| best image expert (ConvNeXt-V2-nano @224) | 0.1582 | 15.0 | 2.46 | 61 |
-| **stack** — rank-avg(tabular, image) | **0.1738** | 15.8 | 2.46 | 61 |
-| cheapest image (EfficientViT-b0 @128) | 0.1371 | 2.1 | 0.034 | 3.5 |
+The ISIC-2024 winners reached pAUC@80%TPR ≈ 0.173 — but only by importing external dermoscopy
+archives **and** ~30,000 diffusion-synthesised malignant lesions. We ban both and ask a sharper
+question: **how much pAUC can you buy per unit of inference cost using SLICE-3D alone?** The answer
+is a leak-audited **quality–cost Pareto frontier** whose headline point, a parameter-free
+rank-average of a bagged-GBDT tabular expert and a small ConvNeXt-V2 image expert, reaches
+**out-of-fold pAUC@80%TPR = 0.17376** at 15.8 M params / 2.46 GFLOPs / 61 ms single-thread CPU.
 
-\* median single-image latency, 1 thread. Patient-grouped 5-fold CV; every number is
-re-scored only by `src/cv.py` and was reproduced from disk during review.
+> **Claim.** State of the art *among single-dataset, no-external, no-synthetic* solutions, reported
+> on a transparent quality–efficiency frontier rather than a single number. The unconstrained
+> ~0.173 is out of reach by construction; quantifying that gap honestly is the contribution.
 
-Key findings: the patient-relative "ugly-duckling" features carry ~65% of the GBDT's gain;
-the image branch adds a real but modest +0.005 over tabular alone; and the **trivial
-rank-average combiner beats** the meta-learner and a learned gate at 393 positives (the
-negative results are reported, not hidden).
+## The question
+
+ISIC-2024 SLICE-3D is melanoma **triage**: rank 401,059 lesion crops from 3D total-body photography
+(393 malignant, 0.098 % prevalence, ~1,042 patients) so the highest-risk are reviewed first, scored
+by the official **partial AUC above 80 % TPR** (range `[0, 0.20]`; random ≈ 0.02, perfect = 0.20).
+We impose three rules and report what they cost:
+
+- **One dataset.** SLICE-3D only — no ISIC-2019/2020, no PAD-UFES, no external dermoscopy.
+- **No synthetic pathology.** No diffusion/GAN-fabricated lesions; classical augmentation only.
+- **Efficiency is a first-class axis.** Every model logs params, FLOPs, and CPU latency, so each is
+  a measured point on a Pareto frontier — not just an accuracy number.
+
+ImageNet-pretrained encoders are allowed (they carry no skin-cancer labels, so the no-external-*data*
+claim survives); external *training data* is not.
+
+## Headline results
+
+All numbers are **out-of-fold** on the frozen patient-grouped folds, scored only by `src/cv.py`, and
+independently re-derived from disk.
+
+| Model | pAUC@80%TPR | Params (M) | GFLOPs | CPU ms* | Role |
+|---|---:|---:|---:|---:|---|
+| Tabular — LightGBM + CatBoost (bagged) | **0.16890** | 0.86 | ~0 | 0.02 | near-free anchor |
+| Image — ConvNeXt-V2-nano @224 | 0.15821 | 14.98 | 2.46 | 60.9 | primary backbone |
+| **Stack — rank-avg(tabular, image)** | **0.17376** | 15.84 | 2.46 | 60.9 | **best; Pareto-optimal** |
+| Cheap stack — gbdt + 3 images + ugly-duckling | 0.17117 | 23.84 | 1.22 | 32.9 | cheaper frontier point |
+| EfficientViT-b0 @128 | 0.13706 | 2.13 | 0.034 | 3.5 | most accuracy per ms |
+
+\* median single-image latency, one thread.
 
 ![Quality–cost Pareto frontier: OOF pAUC@80%TPR vs parameters, GFLOPs, and single-thread CPU latency.](docs/figures/frontier.png)
 
+## What this project shows
+
+- **A no-external/no-synthetic frontier, not a point.** Twelve backbones plus the tabular and
+  stacked models are each measured on three cost axes, drawing the achievable quality-vs-cost curve.
+- **The signal is patient-relative.** Engineered *ugly-duckling* deviations — how a lesion departs
+  from the **same patient's** other moles — account for **~65 %** of the GBDT's gain. Hue alone
+  reaches univariate AUC 0.81.
+- **Trivial fusion wins at 393 positives.** A zero-parameter rank-average beats a meta-LightGBM
+  stacker, a learned per-lesion gate, and embedding injection — a clean, reportable result about the
+  small-positive regime, not a footnote.
+- **Leak-audited from the spine outward.** One frozen split, one metric function proven identical to
+  the official scorer, a `cv-guardian` with veto power, and a 9/9 test suite.
+
+## Honest negative results
+
+Nearly every increase in model complexity *reduced* the score. We log them rather than hide them.
+
+| Idea tried | Its pAUC | Beaten by | Finding |
+|---|---:|---|---|
+| Learned per-lesion gate (MoE) | 0.15007 | 0.16890 (tabular) | loses to the tabular expert alone |
+| Meta-LightGBM stacker | 0.17108 | 0.17376 (rank-avg) | loses to the trivial rank-average |
+| PCA image embeddings into the GBDT | < 0.17376 | 0.17376 | extra dimensions overfit and dilute |
+| Heavy transformers (SwinV2 / EVA-02) | 0.104 / 0.100 | 0.15821 (nano@224) | collapse to near-random at 393 positives |
+| Stronger weight EMA (0.999) | ~0.146 | 0.15821 (EMA 0.995) | over-smooths the short undersampled epochs |
+
 ## Method
 
-Two experts and a trivial combiner, all sharing one frozen validation split.
+Two experts and a deliberately trivial combiner, all reading one frozen validation split.
 
-- **Metric & validation.** The official score is partial AUC above 80% TPR (pAUC@80, range
-  `[0, 0.20]`; random ≈ 0.02, perfect = 0.20), computed only by `src/cv.py`. Folds are
-  patient-grouped, target-stratified 5-fold (SEED 42) so no patient straddles folds;
-  out-of-fold (OOF) predictions are scored once on the full vector.
 - **Tabular expert** (`src/features.py`, `src/gbdt.py`). From ISIC-2024 metadata only: lesion
-  geometry and size ratios, L\*/A\*/B\* colour and lesion-vs-skin contrast, border/shape
-  composites, 3D body position, and patient-relative *ugly-duckling* deviations
-  (`pdev_`/`prank_`/`pxc_`) with fold-local target encoding. A bagged LightGBM + CatBoost
-  ensemble (manual undersampling, pAUC early-stopping) reaches OOF **0.1689**; the
-  patient-relative block alone is ~65% of the gain.
-- **Image expert** (`src/vision/`). Small ImageNet-pretrained backbones (ConvNeXt-V2-nano is the
-  optimum) at 128–224 px. Recipe: AdamW (1e-4, weight decay 1e-3), cosine schedule, 30 epochs,
-  batch 128; per-epoch negative undersampling (~1:1); BCE + label smoothing 0.05; classical
-  `transV2` augmentation (flips/transpose, brightness/contrast, blur/noise, optical/grid/elastic
-  distortion, CLAHE, hue–saturation, shift–scale–rotate, coarse-dropout — **no generative
-  augmentation**); weight EMA (0.995) and mixup (α = 0.2). Each backbone emits an OOF malignancy
-  probability and an embedding. Best image OOF: **0.1582**.
-- **Combiner** (`src/stack.py`). A parameter-free rank-average of the two OOF probabilities →
-  **0.1738**. At 393 positives this beats a meta-LightGBM stacker, a learned per-lesion gate, and
-  PCA-embedding injection — all reported as negative results.
+  geometry and size ratios, L\*/A\*/B\* colour and lesion-vs-skin contrast, border/shape composites,
+  3D body position, and patient-relative deviations (`pdev_`/`prank_`/`pxc_`) with fold-local target
+  encoding. Bagged LightGBM (5 seeds) + CatBoost, manual undersampling, pAUC early-stopping → **0.16890**.
+- **Image expert** (`src/vision/`). Small ImageNet-pretrained backbones (ConvNeXt-V2-nano the
+  optimum) at 128–224 px. AdamW (1e-4, wd 1e-3), cosine schedule, 30 epochs, batch 128; per-epoch
+  negative undersampling (~1:1); BCE + label smoothing 0.05; classical `transV2` augmentation (flips,
+  brightness/contrast, blur/noise, optical/grid/elastic distortion, CLAHE, hue–saturation,
+  shift–scale–rotate, coarse-dropout; **no generative augmentation**); weight EMA 0.995 and mixup
+  α = 0.2. Emits an OOF probability + embedding → **0.15821**.
+- **Combiner** (`src/stack.py`). A parameter-free rank-average of the two OOF probabilities → **0.17376**.
 
-## Design
+## Why the numbers are trustworthy
 
-- **Validation is the whole game.** `src/cv.py` is the single source of truth for the official
-  metric (pAUC above 80% TPR) and for patient-grouped, target-stratified folds with a hard
-  no-leak guarantee; `tests/test_cv.py` proves it is numerically identical to the vendored
-  official scorer (`src/metric_official.py`, © 2024 N. R. Kurtansky, MSKCC). Every model reads
-  the same frozen `data/folds.parquet`.
-- **Tabular GBDT first; the image model earns its place.** The signal lives in the metadata
-  (geometry, colour contrast, size, patient-relative deviations). A bagged LightGBM+CatBoost is
-  the efficient anchor; small ImageNet-pretrained image experts contribute an OOF probability
-  (and embeddings) that are stacked in only if cross-validation lifts pAUC.
-- **Efficiency is a first-class axis.** Every model logs params, FLOPs, and CPU latency, so each
-  is a point on the Pareto frontier (`reports/frontier.py`).
+Leaky cross-validation moved teams ~200 places on the private split in this competition, so
+validation is the foundation here, not an afterthought.
 
-## Quickstart
+- `src/cv.py` is the single source of truth for the metric and the **patient-grouped,
+  target-stratified** 5-fold split (SEED 42); no patient straddles folds.
+- `tests/test_cv.py` proves `src/cv.py` is numerically identical to the vendored official scorer
+  (`src/metric_official.py`, © 2024 N. R. Kurtansky, MSKCC).
+- Every model reads the same frozen `data/folds.parquet`; every patient-relative statistic and target
+  encoding is computed fold-locally. Tabular and folds reproduce bit-exact.
+
+## Reproduce
 
 ```bash
 conda create -y -n isic2024 python=3.12 && conda activate isic2024
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128   # CUDA 12.8
-pip install -e ".[dev]"                                                            # + kaggle, pre-commit
-# CPU-only: swap the index for https://download.pytorch.org/whl/cpu
-# exact pins: pip install -r requirements-lock.txt
+pip install -e ".[dev]"                                                            # (CPU: use .../whl/cpu)
 
-make data       # download SLICE-3D into data/ (accept the Kaggle competition rules first)
-make folds      # freeze patient-grouped folds + metric sanity — ALWAYS first
+make data       # download SLICE-3D into data/ (accept the Kaggle rules first)
+make folds      # freeze patient-grouped folds + metric sanity — run this first
 make test       # spine tests: metric anchors, no-leak, official-equivalence
-make gbdt       # bagged tabular model -> OOF + pAUC  (0.1689)
-make vision CFG=configs/vision/convnextv2_nano_r224.yaml   # an image expert -> OOF + embeddings
-python experiments/run_stack.py    # combine -> stack OOF (0.1738) + frontier row
+make gbdt       # bagged tabular model            -> OOF + pAUC  (0.16890)
+make vision CFG=configs/vision/convnextv2_nano_r224.yaml   # image expert -> OOF + embeddings (0.15821)
+python experiments/run_stack.py    # rank-average -> stack OOF (0.17376) + frontier row
 make frontier   # Pareto figures (pAUC vs params / GFLOPs / CPU ms)
 make site       # render the companion website -> docs/
 ```
 
-## Reproducibility
-
-Single seed (42) everywhere; every run is config-driven (`configs/`) and logged; the env is
-pinned via `requirements-lock.txt` / `environment.yml`. Full step-by-step instructions and the
-grader command sequence are in [`REPRODUCE.md`](REPRODUCE.md). Tabular and folds are bit-exact;
-image retrains match to run-to-run noise (cuDNN). Negative results are kept, not deleted.
+Single seed (42) everywhere; runs are config-driven (`configs/`) and logged; the environment is
+pinned (`requirements-lock.txt` / `environment.yml`). Full grader sequence in [`REPRODUCE.md`](REPRODUCE.md).
 
 ## Submission (closed competition)
 
-ISIC-2024 was a Kaggle *code* competition: the private score comes only from a notebook run on
-the hidden test set (the public test shipped with the data is a 3-row placeholder). `src/submit.py`
-builds a format-valid `submission.csv` from the saved tabular models; the estimated private score
-from CV is ~0.155–0.165, competitive with the best no-external/no-synthetic entries. See the
-[Submission page](https://junaidaliop.github.io/isic2024-tbp/submission.html) for the
-late-submission procedure.
+ISIC-2024 was a Kaggle *code* competition: the private score comes only from a notebook run on the
+hidden test set. `src/submit.py` builds a format-valid `submission.csv` from the saved tabular models;
+the CV-estimated private score is ~0.155–0.165, competitive with the best no-external/no-synthetic
+entries. See the [submission page](https://junaidaliop.github.io/isic2024-tbp/submission.html).
 
-## Team — Pakistan.AI
-
-Neural Networks course project, National Yunlin University of Science and Technology.
-Instructor: Prof. Hsuan-Ting Chang.
-
-| Member | Student ID |
-|---|---|
-| Raja, Muhammad Junaid Ali Asif ([ORCID 0009-0008-9249-9983](https://orcid.org/0009-0008-9249-9983)) | M11217073 |
-| Sultan, Adil | M11217078 |
-| Hassan, Shahzaib Ahmed | M11217081 |
-
-## Repository layout
+## Repository
 
 ```
 src/cv.py            validation spine: official pAUC + frozen patient-grouped folds
@@ -133,19 +155,25 @@ src/vision/          small pretrained image experts + OOF/embeddings
 src/efficiency.py    params / FLOPs / CPU latency
 src/stack.py         combiner + frontier logging
 src/submit.py        submission builder
-experiments/run_stack.py   the stack ablation + headline OOF
+experiments/         the stack ablation + headline OOF (run_stack.py)
 reports/             frontier + EDA + performance figure generators
-site/                Quarto companion website (renders to docs/)
-docs/                rendered website + slides PDF
+site/  ·  docs/      Quarto companion website (source · rendered for GitHub Pages)
 ```
 
-## Citing
+## Team — Pakistan.AI
 
-See [`CITATION.cff`](CITATION.cff) (GitHub renders a "Cite this repository" button). Please also
-cite the SLICE-3D dataset and the official metric — details in [`docs/CITATIONS.md`](docs/CITATIONS.md).
+Neural Networks course project, National Yunlin University of Science and Technology.
+Instructor: **Prof. Hsuan-Ting Chang**.
 
-## License
+| Member | Student ID |
+|---|---|
+| Raja, Muhammad Junaid Ali Asif ([ORCID 0009-0008-9249-9983](https://orcid.org/0009-0008-9249-9983)) | M11217073 |
+| Sultan, Adil | M11217078 |
+| Hassan, Shahzaib Ahmed | M11217081 |
 
-Code: MIT ([`LICENSE`](LICENSE)). Data is **not** included and not MIT — ISIC-2024 SLICE-3D is
-CC BY-NC 4.0; obtain and attribute it separately (`docs/CITATIONS.md`).
-</content>
+## Citing & license
+
+Cite via [`CITATION.cff`](CITATION.cff) (GitHub renders a "Cite this repository" button); please also
+cite the SLICE-3D dataset and the official metric ([`docs/CITATIONS.md`](docs/CITATIONS.md)). Code is
+MIT ([`LICENSE`](LICENSE)); the data is **not** included and is CC BY-NC 4.0 — obtain and attribute it
+separately.
