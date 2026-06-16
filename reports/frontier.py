@@ -41,6 +41,8 @@ import yaml
 matplotlib.use("Agg")  # headless: run in CI / on a box with no display
 import matplotlib.pyplot as plt  # noqa: E402
 
+from reports import _style  # noqa: E402
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COST_CSV = os.path.join(REPO, "reports", "frontier_cost.csv")
 PAUC_CSV = os.path.join(REPO, "reports", "frontier.csv")
@@ -314,19 +316,41 @@ def load_joined() -> tuple[pd.DataFrame, float | None]:
 # --------------------------------------------------------------------------- #
 # 4) plotting
 # --------------------------------------------------------------------------- #
-_AXLABEL = {"params_m": "params (M)", "gflops": "GFLOPs",
+DPI = 300
+_style.apply(plt, dpi=DPI)
+_AXLABEL = {"params_m": "Parameters (M)", "gflops": "GFLOPs",
             "cpu_ms": "CPU latency (ms, single-thread)"}
+C_IMG = _style.CB["blue"]
+C_STK = _style.CB["orange"]
+C_PAR = _style.CB["red"]
+C_GBD = _style.CB["green"]
+
+
+# Per-model leader-line label placement (dx, dy in points; ha, va), tuned so no
+# label overlaps a marker, the GBDT line, the legend, or another label.
+_LABEL_POS = {
+    "mnv4_small": (0, -20, "center", "top"),
+    "effvit_b0": (0, 18, "center", "bottom"),
+    "vit_tiny": (0, 20, "center", "bottom"),
+    "convnextv2_nano": (-46, 18, "right", "bottom"),
+    "convnextv2_nano_r224": (0, -20, "center", "top"),
+    "convnextv2_tiny": (46, 6, "left", "center"),
+    "swinv2_tiny": (0, 18, "center", "bottom"),
+    "eva02_small": (0, 18, "center", "bottom"),
+    "stack_best": (-10, 22, "right", "bottom"),
+    "stack_gbdt+3img+udk": (40, -16, "left", "top"),
+}
+_DEFAULT_POS = (0, 18, "center", "bottom")
 
 
 def _plot_axis(ax, df: pd.DataFrame, cost: str, gbdt_pauc: float | None,
                annotate: bool = True):
-    """One panel: pAUC vs `cost`, Pareto front ringed, GBDT reference line."""
     plottable = df[(df[cost] > 0) & np.isfinite(df[cost]) & df["pauc"].notna()].copy()
     dropped = df[~df.index.isin(plottable.index)]
 
     if gbdt_pauc is not None:
-        ax.axhline(gbdt_pauc, ls="--", lw=1.4, color="darkgreen", alpha=0.9,
-                   label=f"LightGBM (tabular): {gbdt_pauc:.4f}")
+        ax.axhline(gbdt_pauc, ls="--", lw=1.6, color=C_GBD, alpha=0.95,
+                   label=f"LightGBM tabular: {gbdt_pauc:.4f}")
 
     if len(plottable):
         ax.set_xscale("log")
@@ -336,67 +360,68 @@ def _plot_axis(ax, df: pd.DataFrame, cost: str, gbdt_pauc: float | None,
         front = pareto_front(plottable, cost)
 
         if len(single):
-            ax.scatter(single[cost], single["pauc"], s=48, alpha=0.7,
-                       color="steelblue", label="image expert", zorder=2)
+            ax.scatter(single[cost], single["pauc"], s=70, alpha=0.85,
+                       color=C_IMG, label="image expert", zorder=2)
         if len(stacks):
-            ax.scatter(stacks[cost], stacks["pauc"], s=90, alpha=0.85,
-                       marker="D", color="darkorange",
-                       label="stacked ensemble", zorder=3)
-        ax.plot(front[cost], front["pauc"], "-", color="crimson", lw=1.8,
+            ax.scatter(stacks[cost], stacks["pauc"], s=120, alpha=0.9,
+                       marker="D", color=C_STK, label="stacked ensemble", zorder=3)
+        ax.plot(front[cost], front["pauc"], "-", color=C_PAR, lw=2.0,
                 zorder=4, label="Pareto front")
         po = plottable[pareto_mask]
-        ax.scatter(po[cost], po["pauc"], s=150, facecolors="none",
-                   edgecolors="crimson", linewidths=1.8, zorder=5)
+        ax.scatter(po[cost], po["pauc"], s=200, facecolors="none",
+                   edgecolors=C_PAR, linewidths=2.0, zorder=5)
 
         if annotate:
             for _, r in plottable.iterrows():
-                ax.annotate(str(r["model"]), (r[cost], r["pauc"]),
-                            fontsize=6.5, alpha=0.85,
-                            xytext=(4, 3), textcoords="offset points")
+                dx, dy, ha, va = _LABEL_POS.get(str(r["model"]), _DEFAULT_POS)
+                ax.annotate(
+                    str(r["model"]), (r[cost], r["pauc"]),
+                    fontsize=11, zorder=6,
+                    xytext=(dx, dy), textcoords="offset points",
+                    ha=ha, va=va,
+                    arrowprops=dict(arrowstyle="-", color="#888", lw=0.7,
+                                    shrinkA=0, shrinkB=3))
     else:
         ax.text(0.5, 0.5, "no costed runs for this axis",
                 ha="center", va="center", transform=ax.transAxes,
-                fontsize=10, color="gray")
+                fontsize=13, color="gray")
 
-    ax.set_xlabel(_AXLABEL.get(cost, cost) + "  (log)")
+    ax.set_xlabel(_AXLABEL.get(cost, cost) + " (log scale)")
     ax.set_ylabel("OOF pAUC @ 80% TPR")
-    ax.grid(True, which="both", ls=":", alpha=0.4)
-    ax.legend(loc="lower right", fontsize=7)
+    ax.margins(y=0.22)
+    ax.grid(True, which="both", ls=":", alpha=0.35)
+    ax.legend(loc="upper left", framealpha=0.92)
     return plottable, dropped
 
 
 def make_figures():
     df, gbdt_pauc = load_joined()
     axes_files = {
-        "params_m": os.path.join(REPO, "reports", "frontier_params.png"),
-        "gflops": os.path.join(REPO, "reports", "frontier_gflops.png"),
-        "cpu_ms": os.path.join(REPO, "reports", "frontier_cpu.png"),
+        "params_m": os.path.join(REPO, "reports", "frontier_params"),
+        "gflops": os.path.join(REPO, "reports", "frontier_gflops"),
+        "cpu_ms": os.path.join(REPO, "reports", "frontier_cpu"),
     }
 
-    # individual panels
-    for cost, path in axes_files.items():
-        fig, ax = plt.subplots(figsize=(7.0, 5.0))
+    for cost, base in axes_files.items():
+        fig, ax = plt.subplots(figsize=(9.0, 6.6), constrained_layout=True)
         _plot_axis(ax, df, cost, gbdt_pauc)
         ax.set_title(f"SLICE-3D: pAUC vs {_AXLABEL.get(cost, cost)}\n"
                      "(single-dataset, no external data)")
-        fig.tight_layout()
-        fig.savefig(path, dpi=150)
+        _style.save_vector(fig, base, dpi=DPI)
         plt.close(fig)
-        print(f"wrote {path}")
+        print(f"wrote {base}.{{svg,png}}")
 
-    # combined 1x3
-    combined = os.path.join(REPO, "reports", "frontier.png")
-    fig, axs = plt.subplots(1, 3, figsize=(18, 5.2))
-    for ax, cost in zip(axs, ("params_m", "gflops", "cpu_ms")):
+    combined = os.path.join(REPO, "reports", "frontier")
+    fig, axs = plt.subplots(1, 3, figsize=(21, 6.8), constrained_layout=True)
+    for k, (ax, cost) in enumerate(zip(axs, ("params_m", "gflops", "cpu_ms"))):
         _plot_axis(ax, df, cost, gbdt_pauc, annotate=True)
         ax.set_title(_AXLABEL.get(cost, cost))
+        _style.panel_label(ax, "abc"[k])
     fig.suptitle("ISIC-2024 SLICE-3D quality-vs-cost frontier "
-                 "(authoritative cost; CPU latency single-thread; "
-                 "single-dataset, no external data)", fontsize=12)
-    fig.tight_layout(rect=(0, 0, 1, 0.96))
-    fig.savefig(combined, dpi=150)
+                 "(authoritative single-thread cost; single-dataset, no external data)")
+    _style.save_vector(fig, combined, dpi=DPI)
     plt.close(fig)
-    print(f"wrote {combined}")
+    print(f"wrote {combined}.{{svg,png}}")
 
     return df, gbdt_pauc
 

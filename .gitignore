@@ -5,8 +5,11 @@ experiments/*
 !experiments/*.py
 reports/*.png
 reports/*.csv
+reports/*.svg
 reports/**/*.png
 reports/**/*.csv
+reports/**/*.svg
+reports/tables/*.html
 *.ckpt
 *.pt
 *.parquet
